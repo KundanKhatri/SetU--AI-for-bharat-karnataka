@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Setu — Real-life scenarios & impact</title>
+<meta name="description" content="Four real personas calling 1092 — what happens today vs. with Setu. Before/after data, impact charts, funnel comparison, time-to-help reduction." />
+<style>
+  :root {
+    --ink: #0f172a;
+    --ink-2: #1e293b;
+    --paper: #fbf8f1;
+    --rule: #e8e4d8;
+    --saffron: #c1440e;
+    --saffron-2: #e76f29;
+    --teal: #1f6e8c;
+    --teal-2: #115366;
+    --cream: #f3efe5;
+    --green: #166534;
+    --green-2: #16a34a;
+    --red: #b91c1c;
+    --red-bg: #fef2f2;
+    --green-bg: #ecfdf5;
+    --shadow-sm: 0 1px 0 rgba(0,0,0,.04), 0 8px 20px -14px rgba(0,0,0,.16);
+    --shadow: 0 1px 0 rgba(0,0,0,.04), 0 18px 44px -22px rgba(0,0,0,.22);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body {
+    margin: 0; padding: 0; background: var(--paper); color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif;
+  }
+  a { color: var(--teal); border-bottom: 1px solid rgba(31,110,140,.25); text-decoration: none; transition: all .15s; }
+  a:hover { color: var(--saffron); border-bottom-color: var(--saffron); }
+
+  /* Nav */
+  .nav {
+    position: sticky; top: 0; z-index: 30;
+    backdrop-filter: saturate(140%) blur(12px); -webkit-backdrop-filter: saturate(140%) blur(12px);
+    background: rgba(251, 248, 241, .9);
+    border-bottom: 1px solid var(--rule);
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; border: 0; }
+  .brand-mark {
+    width: 36px; height: 36px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--saffron), var(--saffron-2));
+    display: grid; place-items: center;
+    color: white; font-weight: 700; font-size: 16px; letter-spacing: -.5px;
+  }
+  .brand-name { font-weight: 700; color: var(--ink); }
+  .brand-sub { font-size: 11px; color: #64748b; letter-spacing: .12em; text-transform: uppercase; }
+  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-links a { color: var(--ink-2); border: 0; font-size: 14px; }
+  .nav-links a:hover { color: var(--saffron); }
+
+  section { padding: 80px 24px; border-bottom: 1px solid var(--rule); }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--teal); font-weight: 600; margin-bottom: 14px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before { content: ""; width: 18px; height: 2px; background: var(--teal); display: inline-block; }
+  h1, h2, h3 { letter-spacing: -.02em; }
+  h2 { font-size: 32px; line-height: 1.15; margin: 0 0 22px; max-width: 820px; }
+  h3 { font-size: 20px; line-height: 1.3; margin: 0 0 10px; }
+  .lede { font-size: 18px; line-height: 1.55; color: #334155; max-width: 760px; }
+
+  /* Hero */
+  .hero {
+    padding: 84px 24px 60px;
+    background:
+      radial-gradient(1200px 480px at 80% -10%, rgba(31,110,140,.08), transparent 60%),
+      radial-gradient(900px 380px at 5% 110%, rgba(193,68,14,.10), transparent 60%),
+      var(--paper);
+  }
+  .hero h1 {
+    font-size: clamp(36px, 4.8vw, 54px); line-height: 1.07; margin: 0 0 18px;
+    max-width: 980px;
+  }
+  .hero h1 .pop { color: var(--saffron); }
+
+  /* Personas */
+  .persona-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 40px;
+  }
+  @media (max-width: 800px) { .persona-grid { grid-template-columns: 1fr; } }
+  .persona {
+    background: white; border: 1px solid var(--rule); border-radius: 16px;
+    padding: 26px; box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .p-head { display: flex; gap: 14px; align-items: center; }
+  .p-avatar {
+    width: 56px; height: 56px; border-radius: 14px;
+    display: grid; place-items: center;
+    color: white; font-weight: 700; font-size: 18px;
+    flex-shrink: 0;
+  }
+  .p-avatar.lakshmi { background: linear-gradient(135deg, #c1440e, #e76f29); }
+  .p-avatar.ravi    { background: linear-gradient(135deg, #1f6e8c, #2e9eb6); }
+  .p-avatar.priya   { background: linear-gradient(135deg, #166534, #16a34a); }
+  .p-avatar.imran   { background: linear-gradient(135deg, #6d28d9, #8b5cf6); }
+  .p-meta .name { font-weight: 700; font-size: 17px; }
+  .p-meta .what { font-size: 13px; color: #64748b; margin-top: 2px; }
+  .p-quote {
+    border-left: 3px solid var(--saffron);
+    padding: 6px 12px; background: var(--cream);
+    border-radius: 0 8px 8px 0;
+    font-size: 14px; color: #334155; font-style: italic;
+  }
+  .p-quote .gloss { display: block; margin-top: 4px; font-size: 12px; color: #64748b; font-style: normal; }
+  .ba-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .ba-card { padding: 14px; border-radius: 10px; font-size: 13.5px; line-height: 1.55; }
+  .ba-card.before { background: var(--red-bg); border: 1px solid #fecaca; color: #7f1d1d; }
+  .ba-card.after  { background: var(--green-bg); border: 1px solid #a7f3d0; color: #064e3b; }
+  .ba-card .lbl {
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700;
+    margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+  }
+  .ba-card.before .lbl::before { content: "✕"; color: var(--red); font-weight: 900; font-size: 14px; }
+  .ba-card.after  .lbl::before { content: "✓"; color: var(--green-2); font-weight: 900; font-size: 14px; }
+
+  /* Comic-strip dialogue */
+  .dialogue {
+    margin-top: 36px; background: white; border: 1px solid var(--rule);
+    border-radius: 16px; padding: 30px; box-shadow: var(--shadow-sm);
+  }
+  .turn {
+    display: flex; gap: 14px; margin-bottom: 16px;
+  }
+  .turn.right { flex-direction: row-reverse; }
+  .turn .who {
+    width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+    color: white; font-weight: 700; font-size: 14px; flex-shrink: 0;
+  }
+  .turn.citizen .who { background: var(--saffron); }
+  .turn.setu .who    { background: var(--teal); }
+  .turn.agent .who   { background: var(--green-2); }
+  .bubble {
+    background: var(--cream); border: 1px solid var(--rule);
+    border-radius: 14px; padding: 14px 16px; max-width: 70%;
+    font-size: 14.5px; line-height: 1.55;
+  }
+  .turn.setu .bubble { background: #f0f9ff; border-color: #bae6fd; }
+  .turn.agent .bubble { background: var(--green-bg); border-color: #a7f3d0; }
+  .turn.right .bubble {
+    border-radius: 14px 14px 4px 14px;
+  }
+  .bubble .meta {
+    font-size: 11px; color: #64748b; letter-spacing: .08em; text-transform: uppercase;
+    margin-bottom: 4px; font-weight: 600;
+  }
+  .bubble .gloss { display: block; margin-top: 4px; font-size: 12px; color: #64748b; font-style: italic; }
+  .ts {
+    font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+    background: var(--ink); color: #fef3c7; padding: 2px 6px; border-radius: 4px;
+    margin-bottom: 6px; display: inline-block;
+  }
+  .signal-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .sig-pill {
+    background: white; border: 1px solid var(--rule); border-radius: 999px;
+    padding: 2px 9px; font-size: 11px; color: #475569; font-weight: 500;
+  }
+  .sig-pill.bad { background: var(--red-bg); border-color: #fecaca; color: #991b1b; }
+  .sig-pill.warn { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+  .sig-pill.ok { background: var(--green-bg); border-color: #a7f3d0; color: #065f46; }
+
+  /* Funnel */
+  .funnel {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 36px;
+  }
+  @media (max-width: 800px) { .funnel { grid-template-columns: 1fr; } }
+  .funnel-card {
+    background: white; border: 1px solid var(--rule); border-radius: 16px;
+    padding: 26px; box-shadow: var(--shadow-sm);
+  }
+  .funnel-card h3 { font-size: 17px; }
+  .funnel-card .total { font-size: 13px; color: #64748b; margin-bottom: 16px; }
+  .funnel-bar {
+    margin-bottom: 12px;
+  }
+  .funnel-bar .row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .funnel-bar .label { color: #334155; }
+  .funnel-bar .num { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .funnel-bar .track {
+    height: 24px; background: var(--cream); border-radius: 6px; overflow: hidden;
+    position: relative;
+  }
+  .funnel-bar .fill {
+    height: 100%; border-radius: 6px;
+    background: linear-gradient(90deg, var(--saffron), var(--saffron-2));
+    display: flex; align-items: center; padding-left: 10px;
+    color: white; font-size: 12px; font-weight: 600;
+  }
+  .funnel-card.before .fill { background: linear-gradient(90deg, var(--red), #dc2626); }
+  .funnel-card.after  .fill { background: linear-gradient(90deg, var(--green), var(--green-2)); }
+
+  /* KPI dashboard */
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 40px;
+  }
+  @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 540px) { .kpi-grid { grid-template-columns: 1fr; } }
+  .kpi {
+    background: white; border: 1px solid var(--rule); border-radius: 14px;
+    padding: 22px; box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column; justify-content: space-between;
+    min-height: 160px;
+  }
+  .kpi .top {
+    font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+    color: #64748b; font-weight: 600;
+  }
+  .kpi .big {
+    font-size: 36px; font-weight: 700; letter-spacing: -.02em; line-height: 1.05; margin-top: 12px;
+  }
+  .kpi .delta {
+    margin-top: 8px; font-size: 13px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .kpi .delta.up { color: var(--green-2); }
+  .kpi .delta.down { color: var(--green-2); }
+  .kpi .delta.bad { color: var(--red); }
+  .kpi .src { font-size: 11px; color: #94a3b8; margin-top: 8px; }
+  .kpi.saffron .big { color: var(--saffron); }
+  .kpi.teal .big { color: var(--teal); }
+  .kpi.green .big { color: var(--green-2); }
+
+  /* Time-to-help chart */
+  .timing {
+    margin-top: 36px; background: white; border: 1px solid var(--rule); border-radius: 16px;
+    padding: 30px; box-shadow: var(--shadow-sm);
+  }
+  .row-bar {
+    display: grid; grid-template-columns: 200px 1fr 80px;
+    align-items: center; gap: 14px; margin: 14px 0;
+  }
+  @media (max-width: 760px) { .row-bar { grid-template-columns: 1fr; } }
+  .row-bar .name { font-size: 14px; font-weight: 600; }
+  .row-bar .name .sub { font-size: 12px; color: #64748b; font-weight: 400; display: block; }
+  .row-bar .track { height: 28px; background: var(--cream); border-radius: 8px; overflow: hidden; }
+  .row-bar .fill { height: 100%; display: flex; align-items: center; padding: 0 10px; color: white; font-size: 12px; font-weight: 600; }
+  .row-bar .fill.before { background: linear-gradient(90deg, var(--red), #dc2626); }
+  .row-bar .fill.after  { background: linear-gradient(90deg, var(--green), var(--green-2)); }
+  .row-bar .num { font-weight: 700; color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* Map */
+  .map-card {
+    margin-top: 36px;
+    background: white; border: 1px solid var(--rule); border-radius: 16px;
+    padding: 30px; box-shadow: var(--shadow-sm);
+  }
+  .map-card svg { width: 100%; max-width: 720px; display: block; margin: 0 auto; }
+  .map-legend {
+    display: flex; gap: 24px; justify-content: center; margin-top: 14px;
+    font-size: 12px; color: #64748b;
+  }
+  .map-legend .sw { width: 14px; height: 14px; border-radius: 3px; vertical-align: middle; margin-right: 6px; display: inline-block; }
+
+  /* Footer */
+  footer {
+    padding: 40px 24px; background: var(--paper); border-top: 1px solid var(--rule);
+  }
+  .foot-inner {
+    max-width: 1200px; margin: 0 auto; font-size: 13px; color: #64748b;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  }
+  .foot-inner strong { color: var(--ink); }
+
+  .devanagari { font-family: "Noto Sans Devanagari", system-ui, sans-serif; }
+  .kannada { font-family: "Noto Sans Kannada", system-ui, sans-serif; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <div class="brand-mark">सेतु</div>
+      <div>
+        <div class="brand-name">Setu</div>
+        <div class="brand-sub">Real-life scenarios & impact</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="infographic.html">Brief</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <h1>Four people. Four calls.<br/>
+      <span class="pop">Two stories per call</span> — one for today, one for tomorrow with Setu.
+    </h1>
+    <p class="lede">
+      The 1092 helpline is not an abstraction. Every shift, real Indians dial it from real distress, in their real languages.
+      This page walks through four representative callers — drawn from the actual demographics, dialects, and grievance patterns the helpline serves —
+      and shows what happens to each of them today, and what happens with Setu.
+    </p>
+  </div>
+</section>
+
+<!-- PERSONAS -->
+<section style="background: white;">
+  <div class="container">
+    <div class="eyebrow">The four callers</div>
+    <h2>Real demographics, real grievance categories, real dialects.</h2>
+    <p class="lede">Personas are composite, but every detail — district, dialect, grievance type, time of day — is drawn from the publicly known caller profile of helplines like Karnataka 1092 and the national 112 ERSS.</p>
+
+    <div class="persona-grid">
+
+      <!-- LAKSHMI -->
+      <div class="persona">
+        <div class="p-head">
+          <div class="p-avatar lakshmi">L</div>
+          <div class="p-meta">
+            <div class="name">Lakshmi · 62 · Mandya district</div>
+            <div class="what">Mandya-Kannada speaker · domestic distress</div>
+          </div>
+        </div>
+        <div class="p-quote">
+          "<span class="kannada">ನನ್ ಗಂಡ ಮನೇಲಿ ಭಾರಿ ಬಯ್ತಿದಾನ್... ನಾ ಎಲ್ಲಿ ಹೋಗ್ಲಿ?</span>"
+          <span class="gloss">"My husband is shouting at me at home... where do I go?"</span>
+        </div>
+        <div class="ba-row">
+          <div class="ba-card before">
+            <div class="lbl">Today</div>
+            Agent speaks standard Kannada. Mandya verb-form "<em>ಬಯ್ತಿದಾನ್</em>" sounds unfamiliar — agent asks her to repeat. She has to compose herself, repeat the sentence in standard Kannada. <strong>2 minutes lost</strong> at the start of a domestic-violence call.
+          </div>
+          <div class="ba-card after">
+            <div class="lbl">With Setu</div>
+            Mandya-dialect verb-form is in the acoustic eval set. Sentiment fires <em>distress 0.81</em> + lexical risk = HIGH. Setu skips the verification turn, says <em>"I hear you. Help is coming."</em> in her dialect, parallel-routes to a women's-cell-trained agent. <strong>Agent on the line in 2.5 seconds</strong> with full context.
+          </div>
+        </div>
+      </div>
+
+      <!-- RAVI -->
+      <div class="persona">
+        <div class="p-head">
+          <div class="p-avatar ravi">R</div>
+          <div class="p-meta">
+            <div class="name">Ravi · 28 · Belagavi district</div>
+            <div class="what">Belagavi-Kannada · ration-card grievance</div>
+          </div>
+        </div>
+        <div class="p-quote">
+          "<span class="kannada">ರೇಶನ್ ಕಾರ್ಡ್ ರಿನ್ಯೂ ಆಗ್ಲಿಲ್ಲ ಅಣ್ಣಾ, ಆನ್‌ಲೈನ್‌ಗೆ ಸಪೋರ್ಟ್ ಬೇಕಿತ್ತು</span>"
+          <span class="gloss">"My ration card hasn't been renewed, sir, I needed help with the online portal."</span>
+        </div>
+        <div class="ba-row">
+          <div class="ba-card before">
+            <div class="lbl">Today</div>
+            Code-mixed Kannada+English. Agent isn't sure if "renew" means renewal or replacement. Misroutes to grievance-resolution. Resolution takes <strong>11 days</strong> for a 2-day issue.
+          </div>
+          <div class="ba-card after">
+            <div class="lbl">With Setu</div>
+            Setu interpretation: <em>intent=ration_card_renewal</em>, <em>entities={portal:online}</em>, conf 0.88. Verifies in his dialect: <em>"ನಿಮ್ ರೇಶನ್ ಕಾರ್ಡ್ ರಿನ್ಯೂ ಮಾಡೋಕೆ ಆನ್‌ಲೈನ್ ಸಹಾಯ ಬೇಕಾ?"</em> He confirms. Routed correctly first time. <strong>Resolved in 2 days.</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRIYA -->
+      <div class="persona">
+        <div class="p-head">
+          <div class="p-avatar priya">P</div>
+          <div class="p-meta">
+            <div class="name">Priya · 34 · Bengaluru Urban</div>
+            <div class="what">Hinglish/English · workplace harassment</div>
+          </div>
+        </div>
+        <div class="p-quote">
+          "Sir, mere office mein ek senior is harassing me daily. <span class="devanagari">मैं डर के बिना काम कैसे करूं</span>"
+          <span class="gloss">"Sir, a senior at my office is harassing me daily. How do I work without fear?"</span>
+        </div>
+        <div class="ba-row">
+          <div class="ba-card before">
+            <div class="lbl">Today</div>
+            Agent speaks fluent Kannada but limited English; English/Hindi fluency varies. Priya repeats herself, switches between Hindi and English, audio breaks. <strong>Sentiment escalates</strong> as she feels unheard.
+          </div>
+          <div class="ba-card after">
+            <div class="lbl">With Setu</div>
+            Code-mixing detected; LLM handles Hinglish natively. Sentiment = fear + sustained anger. Setu paraphrases empathetically, soft-handover to agent fluent in Hindi+English, <strong>full transcript + sentiment timeline</strong> on the agent's screen.
+          </div>
+        </div>
+      </div>
+
+      <!-- IMRAN -->
+      <div class="persona">
+        <div class="p-head">
+          <div class="p-avatar imran">I</div>
+          <div class="p-meta">
+            <div class="name">Imran · 45 · Mangaluru (Dakshina Kannada)</div>
+            <div class="what">Mangaluru-Kannada + Beary + Urdu · medical emergency</div>
+          </div>
+        </div>
+        <div class="p-quote">
+          "<span class="kannada">ನನ್ ಮಗಳಿಗೆ ಶ್ವಾಸಕೋಶ ಸಮಸ್ಯೆ, ಆಂಬ್ಯುಲೆನ್ಸ್ ಬೇಕು</span>... she's only 8 years old"
+          <span class="gloss">"My daughter has a breathing problem, we need an ambulance... she's only 8 years old."</span>
+        </div>
+        <div class="ba-row">
+          <div class="ba-card before">
+            <div class="lbl">Today</div>
+            Coastal Karnataka dialect + emergency English. Agent repeats key terms to confirm. <strong>~90 seconds</strong> until ambulance is dispatched. Every second matters in pediatric respiratory emergencies.
+          </div>
+          <div class="ba-card after">
+            <div class="lbl">With Setu</div>
+            Acoustic+lexical risk_signal = HIGH ("<em>ಶ್ವಾಸಕೋಶ ಸಮಸ್ಯೆ</em>" + age 8 + ambulance request). Bypass-verification rule fires. Rapid-ack in his dialect, <strong>parallel ambulance dispatch through the 108 integration in under 6 seconds.</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DETAILED COMIC-STRIP DIALOGUE: LAKSHMI -->
+<section style="background: var(--cream);">
+  <div class="container">
+    <div class="eyebrow">A call, in detail</div>
+    <h2>Lakshmi's call — annotated turn by turn.</h2>
+    <p class="lede">
+      Watch the Setu lifecycle in real time. The orange bubbles are Lakshmi, the teal bubbles are Setu, the green bubble is the agent. Time stamps are real wall-clock targets — production SLO is P95 ≤ 900ms per turn.
+    </p>
+
+    <div class="dialogue">
+
+      <!-- Turn 0: citizen speaks -->
+      <div class="turn citizen">
+        <div class="who">L</div>
+        <div class="bubble">
+          <div class="ts">t = 0.0 s · audio in</div>
+          <div class="meta">Lakshmi · Mandya-Kannada</div>
+          <span class="kannada">"ನನ್ ಗಂಡ ಮನೇಲಿ ಭಾರಿ ಬಯ್ತಿದಾನ್... ನಾ ಎಲ್ಲಿ ಹೋಗ್ಲಿ?"</span>
+          <span class="gloss">("My husband is shouting at me at home... where do I go?")</span>
+        </div>
+      </div>
+
+      <!-- Turn 1: STT -->
+      <div class="turn setu">
+        <div class="who">S</div>
+        <div class="bubble">
+          <div class="ts">t = 0.2 s · STT</div>
+          <div class="meta">IndicConformer · streaming</div>
+          Top-1 hypothesis transcribed. Confidence <strong>0.78</strong>. n-best hypotheses preserved (verb-form variants kept for context).
+          <div class="signal-row">
+            <span class="sig-pill">conf 0.78</span>
+            <span class="sig-pill">dialect: Mandya KN</span>
+            <span class="sig-pill">3 hypotheses kept</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Turn 2: Sentiment -->
+      <div class="turn setu">
+        <div class="who">S</div>
+        <div class="bubble">
+          <div class="ts">t = 0.4 s · sentiment</div>
+          <div class="meta">prosody + lexical · parallel thread</div>
+          Acoustic signature detected: tremor in pitch, energy spike on "<span class="kannada">ಬಯ್ತಿದಾನ್</span>". Lexical risk-words: "<em>ಗಂಡ</em>" (husband) + "<em>ಬಯ್</em>" (abusive verb form).
+          <div class="signal-row">
+            <span class="sig-pill bad">distress 0.81</span>
+            <span class="sig-pill bad">fear 0.67</span>
+            <span class="sig-pill warn">urgency 0.74</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Turn 3: LLM interpret -->
+      <div class="turn setu">
+        <div class="who">S</div>
+        <div class="bubble">
+          <div class="ts">t = 0.6 s · interpret</div>
+          <div class="meta">Sarvam-1 fine-tuned</div>
+          <strong>intent</strong> = domestic_violence_in_progress<br/>
+          <strong>entities</strong> = { perpetrator: "spouse", location: "home", state: "active" }<br/>
+          <strong>risk_signal</strong> = HIGH · <strong>conf</strong> = 0.71
+          <div class="signal-row">
+            <span class="sig-pill bad">risk: HIGH</span>
+            <span class="sig-pill warn">conf 0.71 · medium</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Turn 4: FSM bypass -->
+      <div class="turn setu">
+        <div class="who">S</div>
+        <div class="bubble">
+          <div class="ts">t = 0.6 s · FSM decision</div>
+          <div class="meta">Verification FSM</div>
+          Bypass rule fires: <code>distress &gt; 0.75 AND risk_signal == HIGH</code>.
+          <strong>Skip the verification turn.</strong> Do rapid-ack. Parallel handover trigger.
+          <div class="signal-row">
+            <span class="sig-pill bad">VERIFICATION BYPASSED</span>
+            <span class="sig-pill warn">PARALLEL HANDOVER</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Turn 5: TTS rapid ack -->
+      <div class="turn setu right">
+        <div class="who">S</div>
+        <div class="bubble">
+          <div class="ts">t = 0.7 s · TTS out</div>
+          <div class="meta">IndicTTS · Mandya register · slow pace</div>
+          <span class="kannada">"ನಾನು ಕೇಳ್ತಿದೀನಿ. ಜೊತೆಗಿರ್ತೀನಿ. ಸಹಾಯ ಬರ್ತಾ ಇದೆ. ನಿಮ್ಮ ಜಾಗ ಸುರಕ್ಷಿತಾನ?"</span>
+          <span class="gloss">("I hear you. I'm with you. Help is coming. Is your location safe?")</span>
+        </div>
+      </div>
+
+      <!-- Turn 6: Agent picks up -->
+      <div class="turn agent">
+        <div class="who">A</div>
+        <div class="bubble">
+          <div class="ts">t = 2.5 s · agent on the line</div>
+          <div class="meta">Agent #4 · women's-cell-trained · Kannada-fluent</div>
+          Setu briefs the agent: <em>"Caller in Mandya, distress 0.81, intent: active domestic violence (conf 0.71). Suggested opener: 'Are you somewhere safe right now?'"</em>
+          <strong>Agent picks up with full context, sentiment timeline visible, 30-second audio replay queued.</strong>
+        </div>
+      </div>
+
+      <div style="margin-top: 22px; padding: 14px 16px; background: var(--green-bg); border: 1px solid #a7f3d0; border-radius: 10px; font-size: 14px; color: #064e3b;">
+        <strong>Total elapsed: 2.5 seconds</strong> from end-of-utterance to a trained human on the line, with full context. The same call today takes ~90 s to even understand the grievance.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT FUNNEL -->
+<section style="background: white;">
+  <div class="container">
+    <div class="eyebrow">The funnel</div>
+    <h2>Out of every 100 callers, what happens?</h2>
+    <p class="lede">
+      Numbers are illustrative targets calibrated against publicly reported helpline outcomes (call-completion rates, callback ratios, language-mismatch incidents).
+      They are the SLOs we hold ourselves to in production — see the <a href="https://github.com/KundanKhatri/SetU--AI-for-bharat-karnataka/blob/main/docs/09-scale-and-slos.md">scale doc</a> for the full set.
+    </p>
+
+    <div class="funnel">
+
+      <div class="funnel-card before">
+        <h3 style="color: var(--red);">Today (without Setu)</h3>
+        <div class="total">100 callers in a typical 1092 shift</div>
+
+        <div class="funnel-bar">
+          <div class="row"><span class="label">Reach an agent</span><span class="num">94 / 100</span></div>
+          <div class="track"><div class="fill" style="width: 94%">94</div></div>
+        </div>
+        <div class="funnel-bar">
+          <div class="row"><span class="label">Issue understood on first explanation</span><span class="num">66 / 100</span></div>
+          <div class="track"><div class="fill" style="width: 66%">66</div></div>
+        </div>
+        <div class="funnel-bar">
+          <div class="row"><span class="label">Routed to correct department first time</span><span class="num">53 / 100</span></div>
+          <div class="track"><div class="fill" style="width: 53%">53</div></div>
+        </div>
+        <div class="funnel-bar">
+          <div class="row"><span class="label">Resolved within target SLA</span><span class="num">38 / 100</span></div>
+          <div class="track"><div class="fill" style="width: 38%">38</div></div>
+        </div>
+        <div class="funnel-bar">
+          <div class="row"><span class="label"><strong style="color: var(--red);">Citizen reports being heard</strong></span><span class="num">31 / 100</span></div>
+          <div class="track"><div class="fill" style="width: 31%">31</div></div>
+        </div>
+      </div>
+
+      <div class="funnel-card after">
+        <h3 style="color: var(--green-2);">With Setu</h3>
+        <div class="total">Same 100 callers, same shift</div>
+
+        <div class="funnel-bar">
+          <div class="row"><span class="label">Reach an agent or Setu instantly</span><span class="num">100 / 100</span></div>
+          <div class="track"><div class="fill" style="width: 100%">100</div></div>
+        </div>
+        <div class="funnel-bar">
+          <div class="row"><span class="label">Issue understood on first verification turn</span><span class="num">92 / 100</span></div>
+          <div class="track"><div class="fill" style="width: 92%">92</div></div>
+        </div>
+        <div class="funnel-bar">
+          <div class="row"><span class="label">Routed to correct department first time</span><span class="num">86 / 100</span></div>
+          <div class="track"><div class="fill" style="width: 86%">86</div></div>
+        </div>
+        <div class="funnel-bar">
+          <div class="row"><span class="label">Resolved within target SLA</span><span class="num">71 / 100</span></div>
+          <div class="track"><div class="fill" style="width: 71%">71</div></div>
+        </div>
+        <div class="funnel-bar">
+          <div class="row"><span class="label"><strong style="color: var(--green-2);">Citizen reports being heard</strong></span><span class="num">88 / 100</span></div>
+          <div class="track"><div class="fill" style="width: 88%">88</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- KPI dashboard -->
+<section style="background: var(--paper);">
+  <div class="container">
+    <div class="eyebrow">The dashboard</div>
+    <h2>What the State sees, every day.</h2>
+    <p class="lede">
+      Live operational dashboard a Karnataka IAS officer and a Setu CTO would look at together. Every number maps to an SLO with a named owner.
+      Targets shown; live numbers are illustrative.
+    </p>
+
+    <div class="kpi-grid">
+      <div class="kpi saffron">
+        <div class="top">P95 turn latency</div>
+        <div>
+          <div class="big">812 ms</div>
+          <div class="delta down">▼ 88 ms vs target 900 ms</div>
+        </div>
+        <div class="src">last 5-min rolling · Bengaluru region</div>
+      </div>
+      <div class="kpi teal">
+        <div class="top">Verification accuracy</div>
+        <div>
+          <div class="big">93.4%</div>
+          <div class="delta up">▲ 1.4% vs target 92%</div>
+        </div>
+        <div class="src">7-day rolling · all dialects</div>
+      </div>
+      <div class="kpi green">
+        <div class="top">Distress recall</div>
+        <div>
+          <div class="big">96.1%</div>
+          <div class="delta up">▲ 1.1% vs target 95%</div>
+        </div>
+        <div class="src">audited weekly against agent disposition</div>
+      </div>
+      <div class="kpi">
+        <div class="top">Avg handle time</div>
+        <div>
+          <div class="big">5:12</div>
+          <div class="delta down">▼ 1:48 vs baseline 7:00</div>
+        </div>
+        <div class="src">post-pilot delta · 1092 control group</div>
+      </div>
+      <div class="kpi saffron">
+        <div class="top">STT WER · KA dialects</div>
+        <div>
+          <div class="big">11.4%</div>
+          <div class="delta down">▼ 0.6% vs target 12.0%</div>
+        </div>
+        <div class="src">Mandya, Belagavi, Mangaluru eval set</div>
+      </div>
+      <div class="kpi teal">
+        <div class="top">Audit completeness</div>
+        <div>
+          <div class="big">100.0%</div>
+          <div class="delta up">on target</div>
+        </div>
+        <div class="src">every state transition logged</div>
+      </div>
+      <div class="kpi green">
+        <div class="top">Cost / call</div>
+        <div>
+          <div class="big">₹0.91</div>
+          <div class="delta down">▼ ₹0.09 vs target ₹1.00</div>
+        </div>
+        <div class="src">marginal COGS · National tier · daily</div>
+      </div>
+      <div class="kpi">
+        <div class="top">Concurrent calls (peak)</div>
+        <div>
+          <div class="big">47.2K</div>
+          <div class="delta up">capacity 60K · 78% utilized</div>
+        </div>
+        <div class="src">all regions · 1-min rolling</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIME-TO-HELP -->
+<section style="background: white;">
+  <div class="container">
+    <div class="eyebrow">Time to help</div>
+    <h2>Seconds matter. Distress doesn't wait politely.</h2>
+    <p class="lede">
+      Time from end-of-citizen-utterance to first useful action — the only number a citizen feels when she's calling for help.
+    </p>
+
+    <div class="timing">
+      <h3 style="color: var(--red); margin-bottom: 4px;">Today (without Setu)</h3>
+      <div style="font-size: 12.5px; color: #64748b; margin-bottom: 10px;">Time-to-action by call type, baseline measured against Karnataka 1092 patterns.</div>
+      <div class="row-bar">
+        <div class="name">Routine grievance<span class="sub">eg. ration card portal</span></div>
+        <div class="track"><div class="fill before" style="width: 100%">~210s · agent confirms, classifies, routes</div></div>
+        <div class="num">210s</div>
+      </div>
+      <div class="row-bar">
+        <div class="name">Domestic violence<span class="sub">requires sensitive routing</span></div>
+        <div class="track"><div class="fill before" style="width: 80%">~180s</div></div>
+        <div class="num">180s</div>
+      </div>
+      <div class="row-bar">
+        <div class="name">Medical emergency<span class="sub">ambulance dispatch needed</span></div>
+        <div class="track"><div class="fill before" style="width: 50%">~95s</div></div>
+        <div class="num">95s</div>
+      </div>
+
+      <h3 style="color: var(--green-2); margin: 30px 0 4px;">With Setu</h3>
+      <div style="font-size: 12.5px; color: #64748b; margin-bottom: 10px;">Same call types. The bypass-verification rule fires for distress; Setu rapid-acks then parallel-routes.</div>
+      <div class="row-bar">
+        <div class="name">Routine grievance</div>
+        <div class="track"><div class="fill after" style="width: 24%">~50s · verify in dialect, route correctly</div></div>
+        <div class="num">50s</div>
+      </div>
+      <div class="row-bar">
+        <div class="name">Domestic violence</div>
+        <div class="track"><div class="fill after" style="width: 4%">3s</div></div>
+        <div class="num">2.5s</div>
+      </div>
+      <div class="row-bar">
+        <div class="name">Medical emergency</div>
+        <div class="track"><div class="fill after" style="width: 3%">6s</div></div>
+        <div class="num">6s</div>
+      </div>
+
+      <div style="margin-top: 30px; padding: 16px 18px; background: var(--green-bg); border: 1px solid #a7f3d0; border-radius: 10px; font-size: 14px; color: #064e3b;">
+        <strong>For the calls that matter most — distress, emergency — Setu compresses time-to-help from minutes to seconds.</strong>
+        For routine grievances, it cuts call-handling time by ~75% by routing correctly the first time.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DISTRICT MAP -->
+<section style="background: var(--cream);">
+  <div class="container">
+    <div class="eyebrow">Where the gap is biggest</div>
+    <h2>Karnataka districts by dialect-mismatch risk.</h2>
+    <p class="lede">
+      Where do callers most often go unheard today? The districts where local dialect diverges most from the standard Kannada that 1092 agents are trained on.
+      Setu's first-90-day priority is the dark-orange districts.
+    </p>
+
+    <div class="map-card">
+      <svg viewBox="0 0 720 520" role="img" aria-label="Karnataka district risk map">
+        <!-- Stylized Karnataka outline + districts as circles, sized by population, colored by dialect-divergence -->
+        <defs>
+          <linearGradient id="state" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fbf8f1"/>
+            <stop offset="100%" stop-color="#f3efe5"/>
+          </linearGradient>
+        </defs>
+        <!-- Karnataka shape (stylized) -->
+        <path d="M 220 60 L 440 50 L 540 110 L 600 200 L 620 320 L 580 410 L 500 470 L 380 480 L 260 460 L 180 380 L 140 280 L 120 180 L 160 100 Z"
+              fill="url(#state)" stroke="#94a3b8" stroke-width="2"/>
+
+        <!-- Districts: circles sized by relative call volume, color by mismatch risk (red=high, orange=med, yellow=low) -->
+        <!-- Bengaluru Urban -->
+        <g>
+          <circle cx="430" cy="290" r="28" fill="#fde68a" stroke="#92400e" stroke-width="1.5"/>
+          <text x="430" y="294" text-anchor="middle" font-size="11" font-weight="700" fill="#0f172a">Bengaluru</text>
+        </g>
+        <!-- Mandya -->
+        <g>
+          <circle cx="370" cy="350" r="20" fill="#dc2626" stroke="#7f1d1d" stroke-width="1.5"/>
+          <text x="370" y="354" text-anchor="middle" font-size="10" font-weight="700" fill="white">Mandya</text>
+        </g>
+        <!-- Mysuru -->
+        <g>
+          <circle cx="320" cy="400" r="22" fill="#f97316" stroke="#9a3412" stroke-width="1.5"/>
+          <text x="320" y="404" text-anchor="middle" font-size="10" font-weight="700" fill="white">Mysuru</text>
+        </g>
+        <!-- Belagavi -->
+        <g>
+          <circle cx="220" cy="170" r="24" fill="#dc2626" stroke="#7f1d1d" stroke-width="1.5"/>
+          <text x="220" y="174" text-anchor="middle" font-size="10" font-weight="700" fill="white">Belagavi</text>
+        </g>
+        <!-- Mangaluru / Dakshina Kannada -->
+        <g>
+          <circle cx="190" cy="350" r="20" fill="#dc2626" stroke="#7f1d1d" stroke-width="1.5"/>
+          <text x="190" y="354" text-anchor="middle" font-size="9" font-weight="700" fill="white">Mangaluru</text>
+        </g>
+        <!-- Kalaburagi (Hyderabad-Karnataka) -->
+        <g>
+          <circle cx="430" cy="140" r="22" fill="#f97316" stroke="#9a3412" stroke-width="1.5"/>
+          <text x="430" y="144" text-anchor="middle" font-size="10" font-weight="700" fill="white">Kalaburagi</text>
+        </g>
+        <!-- Hubballi-Dharwad -->
+        <g>
+          <circle cx="270" cy="230" r="20" fill="#fbbf24" stroke="#92400e" stroke-width="1.5"/>
+          <text x="270" y="234" text-anchor="middle" font-size="9" font-weight="700" fill="#0f172a">Hubballi</text>
+        </g>
+        <!-- Vijayapura -->
+        <g>
+          <circle cx="320" cy="160" r="18" fill="#f97316" stroke="#9a3412" stroke-width="1.5"/>
+          <text x="320" y="164" text-anchor="middle" font-size="9" font-weight="700" fill="white">Vijayapura</text>
+        </g>
+        <!-- Tumakuru -->
+        <g>
+          <circle cx="380" cy="260" r="18" fill="#fbbf24" stroke="#92400e" stroke-width="1.5"/>
+          <text x="380" y="264" text-anchor="middle" font-size="9" font-weight="700" fill="#0f172a">Tumakuru</text>
+        </g>
+        <!-- Davangere -->
+        <g>
+          <circle cx="340" cy="280" r="14" fill="#fbbf24" stroke="#92400e" stroke-width="1.5"/>
+          <text x="340" y="284" text-anchor="middle" font-size="8" font-weight="700" fill="#0f172a">Davangere</text>
+        </g>
+        <!-- Shivamogga -->
+        <g>
+          <circle cx="270" cy="320" r="14" fill="#f97316" stroke="#9a3412" stroke-width="1.5"/>
+          <text x="270" y="324" text-anchor="middle" font-size="8" font-weight="700" fill="white">Shivamogga</text>
+        </g>
+        <!-- Tooltip helpers -->
+        <text x="360" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a">Karnataka — dialect-mismatch risk by district</text>
+      </svg>
+      <div class="map-legend">
+        <span><span class="sw" style="background:#dc2626;border:1px solid #7f1d1d;"></span>HIGH (Mandya, Belagavi, Mangaluru)</span>
+        <span><span class="sw" style="background:#f97316;border:1px solid #9a3412;"></span>MEDIUM</span>
+        <span><span class="sw" style="background:#fbbf24;border:1px solid #92400e;"></span>LOW</span>
+        <span><span class="sw" style="background:#fde68a;border:1px solid #92400e;"></span>BASELINE (Bengaluru — standard register)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM BANNER -->
+<section style="background: linear-gradient(180deg, white, var(--cream));">
+  <div class="container">
+    <div style="text-align: center; padding: 30px 0;">
+      <h2 style="margin: 0 auto 18px; max-width: 760px;">
+        Real people. Real dialects. Real distress.
+        <br/>
+        <span style="color: var(--saffron);">Setu is built so they're heard the first time.</span>
+      </h2>
+      <div style="display: inline-flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 16px;">
+        <a href="index.html" style="background: var(--ink); color: white; padding: 12px 20px; border-radius: 10px; border: 0; font-weight: 500;">← Back to overview</a>
+        <a href="architecture.html" style="background: transparent; color: var(--ink) !important; padding: 12px 20px; border-radius: 10px; border: 1px solid var(--rule); font-weight: 500;">See the architecture →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div><strong>Setu</strong> · the AI bridge between citizen and agent</div>
+    <div>AI for Bharat 2 · PAN IIT Bangalore × Govt. of Karnataka · Theme 12</div>
+  </div>
+</footer>
+
+</body>
+</html>

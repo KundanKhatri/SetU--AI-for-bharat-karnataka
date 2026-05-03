@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Setu — Architecture Blueprint</title>
+<style>
+  :root {
+    --ink: #0f172a;
+    --ink-2: #1e293b;
+    --paper: #fafaf7;
+    --rule: #e8e5dd;
+    --accent: #c1440e;       /* Indian saffron-ish */
+    --accent-2: #1f6e8c;     /* deep teal */
+    --good: #1d6f42;
+    --warn: #b45309;
+    --bad: #991b1b;
+    --pill: #f3efe5;
+    --shadow: 0 1px 0 rgba(0,0,0,.04), 0 12px 28px -18px rgba(0,0,0,.18);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 48px 32px 80px; }
+  header { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-bottom: 8px; }
+  h1 { font-size: 34px; line-height: 1.1; margin: 0; letter-spacing: -0.02em; }
+  h1 .accent { color: var(--accent); }
+  .lede { color: #475569; max-width: 780px; margin: 8px 0 28px; }
+  .meta { font-size: 12px; color: #64748b; letter-spacing: .12em; text-transform: uppercase; }
+  h2 { font-size: 18px; margin: 36px 0 14px; letter-spacing: -.01em; }
+  h2 .num { color: var(--accent-2); font-variant-numeric: tabular-nums; margin-right: 8px; }
+  .card { background: white; border: 1px solid var(--rule); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); }
+  .grid { display: grid; gap: 16px; }
+  .stack { display: flex; flex-direction: column; gap: 10px; }
+  .pill { display: inline-block; background: var(--pill); border: 1px solid var(--rule); border-radius: 999px; padding: 4px 10px; font-size: 12px; color: var(--ink-2); margin: 2px 4px 2px 0; }
+  .pill.good { background: #ecfdf5; border-color: #a7f3d0; color: #065f46; }
+  .pill.warn { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+  .pill.bad  { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+  .pill.tool { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; font-size: 14px; }
+  th { font-weight: 600; color: #475569; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: #475569; }
+  .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: middle; margin-right: 6px; }
+  /* Diagram */
+  .diagram { background: white; border: 1px solid var(--rule); border-radius: 14px; padding: 8px; box-shadow: var(--shadow); overflow-x: auto; }
+  svg { display: block; min-width: 1080px; width: 100%; height: auto; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif; }
+  text { fill: var(--ink); }
+  .label-sm { font-size: 11px; fill: #64748b; }
+  .label-md { font-size: 12.5px; }
+  .label-lg { font-size: 14px; font-weight: 600; }
+  .arrow { stroke: #94a3b8; stroke-width: 1.4; fill: none; marker-end: url(#arrow); }
+  .arrow.feedback { stroke-dasharray: 5 4; stroke: #c1440e; }
+  .arrow.escalate { stroke: #991b1b; stroke-width: 1.8; }
+  rect.box { fill: white; stroke: #cbd5e1; stroke-width: 1.2; rx: 10; ry: 10; }
+  rect.box.ingress { fill: #fff7ed; stroke: #fed7aa; }
+  rect.box.brain   { fill: #f0f9ff; stroke: #bae6fd; }
+  rect.box.fsm     { fill: #fef3c7; stroke: #fde68a; }
+  rect.box.egress  { fill: #ecfdf5; stroke: #a7f3d0; }
+  rect.box.store   { fill: #faf5ff; stroke: #e9d5ff; }
+  rect.box.agent   { fill: #fef2f2; stroke: #fecaca; }
+  /* Cards */
+  .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (max-width: 760px) { .three, .two { grid-template-columns: 1fr; } }
+  .small { font-size: 13px; color: #475569; }
+  .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--rule); }
+  .footer { margin-top: 36px; font-size: 12px; color: #64748b; }
+  .step { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-top: 1px dashed var(--rule); }
+  .step:first-child { border-top: 0; }
+  .step .n { flex: 0 0 26px; height: 26px; border-radius: 50%; background: var(--ink); color: white; display: grid; place-items: center; font-size: 12px; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="meta">Setu · Round 1 Architecture Blueprint · AI for Bharat 2 · Theme 12</div>
+  <header>
+    <h1>Setu — the AI <span class="accent">verify-before-act</span> bridge for the 1092 helpline</h1>
+  </header>
+  <p class="lede">A voice-to-voice assistive layer for Karnataka's citizen helpline. Hears the caller in their dialect, restates back what it understood, only then acts. Hands off gracefully — with full context — when confidence drops or distress spikes.</p>
+
+  <div class="legend" style="margin: 6px 0 26px;">
+    <span><span class="swatch" style="background:#fff7ed;border:1px solid #fed7aa"></span>Ingress (audio in)</span>
+    <span><span class="swatch" style="background:#f0f9ff;border:1px solid #bae6fd"></span>Brain (interpret + feel)</span>
+    <span><span class="swatch" style="background:#fef3c7;border:1px solid #fde68a"></span>Verification FSM</span>
+    <span><span class="swatch" style="background:#ecfdf5;border:1px solid #a7f3d0"></span>Egress (voice out)</span>
+    <span><span class="swatch" style="background:#fef2f2;border:1px solid #fecaca"></span>Agent console</span>
+    <span><span class="swatch" style="background:#faf5ff;border:1px solid #e9d5ff"></span>Storage + flywheel</span>
+  </div>
+
+  <h2><span class="num">01</span> System diagram</h2>
+  <div class="diagram">
+    <svg viewBox="0 0 1100 660" role="img" aria-label="Setu system architecture">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8" />
+        </marker>
+      </defs>
+
+      <!-- Citizen / PSTN -->
+      <rect class="box ingress" x="20" y="40" width="170" height="64"/>
+      <text x="105" y="68" text-anchor="middle" class="label-lg">Citizen</text>
+      <text x="105" y="86" text-anchor="middle" class="label-sm">PSTN / VoIP / mobile</text>
+
+      <!-- 1092 switch -->
+      <rect class="box ingress" x="20" y="140" width="170" height="56"/>
+      <text x="105" y="168" text-anchor="middle" class="label-lg">1092 switch</text>
+      <text x="105" y="184" text-anchor="middle" class="label-sm">unmodified</text>
+
+      <!-- Audio gateway -->
+      <rect class="box ingress" x="220" y="90" width="200" height="60"/>
+      <text x="320" y="116" text-anchor="middle" class="label-lg">Audio gateway</text>
+      <text x="320" y="134" text-anchor="middle" class="label-sm">LiveKit Agents · SIP fork</text>
+
+      <!-- STT -->
+      <rect class="box brain" x="220" y="180" width="200" height="76"/>
+      <text x="320" y="206" text-anchor="middle" class="label-lg">STT — IndicConformer</text>
+      <text x="320" y="224" text-anchor="middle" class="label-sm">22 Indic langs · n-best</text>
+      <text x="320" y="240" text-anchor="middle" class="label-sm">confidence + alt hypotheses</text>
+
+      <!-- Sentiment -->
+      <rect class="box brain" x="220" y="280" width="200" height="76"/>
+      <text x="320" y="306" text-anchor="middle" class="label-lg">Sentiment engine</text>
+      <text x="320" y="324" text-anchor="middle" class="label-sm">Hume EVI prosody +</text>
+      <text x="320" y="340" text-anchor="middle" class="label-sm">lexical Indic classifier</text>
+
+      <!-- Cultural KB -->
+      <rect class="box brain" x="220" y="380" width="200" height="76"/>
+      <text x="320" y="406" text-anchor="middle" class="label-lg">Cultural KB</text>
+      <text x="320" y="424" text-anchor="middle" class="label-sm">honorifics · idioms ·</text>
+      <text x="320" y="440" text-anchor="middle" class="label-sm">district entities (pgvector)</text>
+
+      <!-- LLM interpretation -->
+      <rect class="box brain" x="450" y="220" width="220" height="100"/>
+      <text x="560" y="248" text-anchor="middle" class="label-lg">Interpretation LLM</text>
+      <text x="560" y="266" text-anchor="middle" class="label-sm">Sarvam-1 fine-tuned</text>
+      <text x="560" y="282" text-anchor="middle" class="label-sm">→ intent · entities ·</text>
+      <text x="560" y="298" text-anchor="middle" class="label-sm">  per-field confidence</text>
+      <text x="560" y="314" text-anchor="middle" class="label-sm">on-prem · no PII to hosted LLM</text>
+
+      <!-- FSM -->
+      <rect class="box fsm" x="450" y="360" width="220" height="120"/>
+      <text x="560" y="388" text-anchor="middle" class="label-lg">Verification FSM</text>
+      <text x="560" y="406" text-anchor="middle" class="label-sm">Heard → Interpreted →</text>
+      <text x="560" y="422" text-anchor="middle" class="label-sm">Verified → Acted</text>
+      <text x="560" y="442" text-anchor="middle" class="label-sm">3 verification patterns</text>
+      <text x="560" y="458" text-anchor="middle" class="label-sm">3 escalation triggers</text>
+      <text x="560" y="474" text-anchor="middle" class="label-sm">audit-logged transitions</text>
+
+      <!-- TTS -->
+      <rect class="box egress" x="700" y="220" width="200" height="76"/>
+      <text x="800" y="246" text-anchor="middle" class="label-lg">TTS — IndicTTS</text>
+      <text x="800" y="264" text-anchor="middle" class="label-sm">Sarvam Bulbul fallback</text>
+      <text x="800" y="280" text-anchor="middle" class="label-sm">register-aware prosody</text>
+
+      <!-- Citizen voice out -->
+      <rect class="box egress" x="700" y="320" width="200" height="56"/>
+      <text x="800" y="348" text-anchor="middle" class="label-lg">Verification turn out</text>
+      <text x="800" y="364" text-anchor="middle" class="label-sm">to citizen, in dialect</text>
+
+      <!-- Agent console -->
+      <rect class="box agent" x="930" y="180" width="150" height="200"/>
+      <text x="1005" y="206" text-anchor="middle" class="label-lg">Agent console</text>
+      <text x="1005" y="224" text-anchor="middle" class="label-sm">React + LiveKit</text>
+      <text x="1005" y="248" text-anchor="middle" class="label-sm">— transcript</text>
+      <text x="1005" y="266" text-anchor="middle" class="label-sm">— sentiment timeline</text>
+      <text x="1005" y="284" text-anchor="middle" class="label-sm">— suggested opener</text>
+      <text x="1005" y="302" text-anchor="middle" class="label-sm">— one-click takeover</text>
+      <text x="1005" y="320" text-anchor="middle" class="label-sm">— edit + correct AI</text>
+      <text x="1005" y="338" text-anchor="middle" class="label-sm">— full audio replay</text>
+      <text x="1005" y="362" text-anchor="middle" class="label-sm">— call disposition log</text>
+
+      <!-- Feedback store -->
+      <rect class="box store" x="450" y="520" width="220" height="80"/>
+      <text x="560" y="548" text-anchor="middle" class="label-lg">Feedback store</text>
+      <text x="560" y="566" text-anchor="middle" class="label-sm">verification outcomes ·</text>
+      <text x="560" y="582" text-anchor="middle" class="label-sm">agent edits · audit events</text>
+
+      <!-- Fine-tune -->
+      <rect class="box store" x="700" y="520" width="200" height="80"/>
+      <text x="800" y="548" text-anchor="middle" class="label-lg">Weekly fine-tune</text>
+      <text x="800" y="566" text-anchor="middle" class="label-sm">LoRA SFT · held-out eval</text>
+      <text x="800" y="582" text-anchor="middle" class="label-sm">dialect drift detection</text>
+
+      <!-- Audit -->
+      <rect class="box store" x="930" y="520" width="150" height="80"/>
+      <text x="1005" y="548" text-anchor="middle" class="label-lg">Audit log</text>
+      <text x="1005" y="566" text-anchor="middle" class="label-sm">immutable, per-call,</text>
+      <text x="1005" y="582" text-anchor="middle" class="label-sm">officer-retrievable</text>
+
+      <!-- Arrows: citizen → switch → gateway → STT -->
+      <path class="arrow" d="M105,104 L105,140"/>
+      <path class="arrow" d="M190,168 C200,168 210,120 220,120"/>
+      <path class="arrow" d="M320,150 L320,180"/>
+      <!-- STT → LLM -->
+      <path class="arrow" d="M420,218 L450,248"/>
+      <!-- Sentiment → LLM -->
+      <path class="arrow" d="M420,318 L450,290"/>
+      <!-- Cultural KB → LLM -->
+      <path class="arrow" d="M420,418 L450,310"/>
+      <!-- LLM → FSM -->
+      <path class="arrow" d="M560,320 L560,360"/>
+      <!-- FSM → TTS -->
+      <path class="arrow" d="M670,400 C700,400 710,260 700,260"/>
+      <!-- TTS → out -->
+      <path class="arrow" d="M800,296 L800,320"/>
+      <!-- TTS → audio gateway → citizen -->
+      <path class="arrow" d="M800,376 C800,440 320,440 320,150"/>
+      <!-- FSM escalation → agent console -->
+      <path class="arrow escalate" d="M670,420 L930,280"/>
+      <!-- FSM → feedback store -->
+      <path class="arrow feedback" d="M560,480 L560,520"/>
+      <!-- Agent edits → feedback -->
+      <path class="arrow feedback" d="M930,360 C780,400 700,500 700,540"/>
+      <!-- Feedback → fine-tune -->
+      <path class="arrow" d="M670,560 L700,560"/>
+      <!-- Fine-tune → LLM (loop) -->
+      <path class="arrow feedback" d="M800,520 C870,460 720,360 670,290"/>
+      <!-- FSM → audit -->
+      <path class="arrow" d="M670,460 C870,460 1005,500 1005,520"/>
+
+      <!-- Latency annotation -->
+      <rect x="450" y="40" width="450" height="44" rx="8" fill="#0f172a" />
+      <text x="675" y="64" text-anchor="middle" fill="#fef3c7" class="label-lg">End-of-utterance → start-of-response target</text>
+      <text x="675" y="80" text-anchor="middle" fill="#fef3c7" class="label-sm">≤ 800ms · streaming STT + speculative LLM + streaming TTS</text>
+
+      <!-- Legend hints -->
+      <text x="20" y="640" class="label-sm">— solid arrows: live request path · — dashed arrows (orange): feedback loop · — red arrow: escalation to human</text>
+    </svg>
+  </div>
+
+  <h2><span class="num">02</span> The four-state lifecycle (the load-bearing rule)</h2>
+  <div class="grid two">
+    <div class="card">
+      <div class="stack">
+        <div><span class="pill">State 1</span> <strong>Heard</strong></div>
+        <div class="small">Audio captured, STT produced text + n-best alternatives + per-token confidence. No interpretation yet.</div>
+        <div><span class="pill">State 2</span> <strong>Interpreted</strong></div>
+        <div class="small">LLM produced an <span class="kbd">{intent, entities, sentiment, confidence}</span> tuple. Still not actionable.</div>
+        <div><span class="pill good">State 3</span> <strong>Verified</strong></div>
+        <div class="small">Citizen has explicitly confirmed the interpretation in their own language. Only this state is actionable.</div>
+        <div><span class="pill">State 4</span> <strong>Acted</strong></div>
+        <div class="small">Routed to agent / KB / structured action. Audit event written.</div>
+      </div>
+    </div>
+    <div class="card">
+      <strong>Verification patterns by confidence</strong>
+      <table>
+        <thead><tr><th>Confidence</th><th>Pattern</th></tr></thead>
+        <tbody>
+          <tr><td>≥ 0.85</td><td>Single-shot paraphrase: <em>"Just to confirm — you're saying X. Is that right?"</em></td></tr>
+          <tr><td>0.6 – 0.85</td><td>Open-ended: <em>"You're calling because Y. Could you say that's correct, or tell me what I missed?"</em></td></tr>
+          <tr><td>&lt; 0.6</td><td>No paraphrase. One targeted clarifying question. After 2 misses → human takeover.</td></tr>
+        </tbody>
+      </table>
+      <div class="small" style="margin-top:10px;">Bypass rule: <span class="kbd">distress &gt; 0.75 AND risk_signal == HIGH</span> → suppress verification, do rapid acknowledgement, parallel handover.</div>
+    </div>
+  </div>
+
+  <h2><span class="num">03</span> Three-layer dialect handling</h2>
+  <div class="grid three">
+    <div class="card">
+      <strong>Layer 1 · Acoustic</strong>
+      <div class="small" style="margin-top:8px;">
+        AI4Bharat IndicConformer-multilingual STT. 22 Indic languages, dialect-tagged training data for Kannada (Mandya, Belagavi, Mangaluru), Hindi, Telugu. <strong>n-best hypotheses preserved</strong> — disambiguation is deferred to the LLM with surrounding context.
+      </div>
+    </div>
+    <div class="card">
+      <strong>Layer 2 · Lexical</strong>
+      <div class="small" style="margin-top:8px;">
+        Sarvam-1 (or Llama-3.3 8B Indic-tuned) fine-tuned on a curated grievance corpus. Karnataka place names, department names, dialect-paired sentence pairs. Indic-native tokenizer (3–4× more efficient than GPT tokenizer on Devanagari/Kannada script).
+      </div>
+    </div>
+    <div class="card">
+      <strong>Layer 3 · Cultural</strong>
+      <div class="small" style="margin-top:8px;">
+        Honorific normalizer (<span class="kbd">neevu</span> / <span class="kbd">neenu</span> / <span class="kbd">taavu</span>), idiom dictionary (curated, not generated), district-entity retrieval (when caller says <em>"galli"</em>, retrieve their stated location). Deterministic — belongs in code + KB, not in a stochastic model.
+      </div>
+    </div>
+  </div>
+
+  <h2><span class="num">04</span> Sentiment as a routing signal</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>Signal</th><th>Detection</th><th>System behavior</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Distress + urgency</strong> high</td><td>Prosody (pitch jitter, energy spike) + lexical risk-words</td><td>Bypass full verification · rapid-ack · parallel handover</td></tr>
+        <tr><td><strong>Sustained confusion</strong></td><td>Continuous low-confidence STT + slow turn-taking</td><td>Switch to simpler register · slower TTS pace · shorter sentences</td></tr>
+        <tr><td><strong>Anger at the system</strong></td><td>Lexical anger toward "you/AI/robot" + escalating volume</td><td>Immediate handover · no placation loop · full context to agent</td></tr>
+        <tr><td><strong>Fear escalating</strong></td><td>Prosodic fear signature growing across turns</td><td>Soft handover trigger · agent prepared · empathetic acknowledgement</td></tr>
+        <tr><td><strong>Neutral / calm</strong></td><td>Default state</td><td>Standard verification flow</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2><span class="num">05</span> Worked example — distress call from Mandya</h2>
+  <div class="card">
+    <div class="step"><div class="n">0</div><div><strong>t=0.0s</strong> &nbsp; Citizen speaks Mandya-Kannada, in distress. <span class="pill bad">distress 0.81</span> <span class="pill warn">fear 0.67</span></div></div>
+    <div class="step"><div class="n">1</div><div><strong>t=0.2s</strong> &nbsp; STT top-1 confidence 0.78, n-best includes verb-form variants — kept for LLM context.</div></div>
+    <div class="step"><div class="n">2</div><div><strong>t=0.6s</strong> &nbsp; LLM interpretation: <span class="kbd">intent=domestic_violence_in_progress</span>, <span class="kbd">risk=HIGH</span>, conf 0.71. Sentiment HIGH. <strong>FSM bypasses verification.</strong></div></div>
+    <div class="step"><div class="n">3</div><div><strong>t=0.7s</strong> &nbsp; TTS rapid-ack in Mandya register: <em>"I hear you. I'm with you. Help is coming. Is your location safe?"</em></div></div>
+    <div class="step"><div class="n">4</div><div><strong>t=0.7s</strong> &nbsp; Parallel handover: women's-cell-trained agent, full payload + 30s audio replay queued.</div></div>
+    <div class="step"><div class="n">5</div><div><strong>t=2.5s</strong> &nbsp; Agent picks up with full context. Suggested opener: <em>"Are you somewhere safe right now?"</em> Setu continues to transcribe + suggest in background.</div></div>
+  </div>
+
+  <h2><span class="num">06</span> Tool stack at a glance</h2>
+  <div class="grid two">
+    <div class="card">
+      <strong>Open-source / on-prem (production path)</strong><br/>
+      <span class="pill tool">LiveKit Agents</span>
+      <span class="pill tool">AI4Bharat IndicConformer</span>
+      <span class="pill tool">Sarvam-1</span>
+      <span class="pill tool">Llama-3.3 8B Indic</span>
+      <span class="pill tool">AI4Bharat Indic-Parler-TTS</span>
+      <span class="pill tool">Sarvam Bulbul TTS</span>
+      <span class="pill tool">FastAPI</span>
+      <span class="pill tool">Redis Streams</span>
+      <span class="pill tool">Postgres + pgvector</span>
+      <span class="pill tool">MinIO</span>
+      <span class="pill tool">k3s / Docker</span>
+      <span class="pill tool">React + Tailwind</span>
+    </div>
+    <div class="card">
+      <strong>Hosted / managed (dev-time + fallback only)</strong><br/>
+      <span class="pill tool">Bhashini APIs</span>
+      <span class="pill tool">Hume EVI (sentiment)</span>
+      <span class="pill tool">Claude Sonnet 4.6 (synthetic data only)</span>
+      <span class="pill tool">Gemini 2.5 Pro (synthetic data only)</span>
+      <span class="pill tool">Cartesia Sonic TTS (English fallback)</span>
+      <div class="small" style="margin-top:10px;">No production traffic with PII reaches a hosted LLM. Hosted models are used for synthetic-data prototyping and as a documented fallback only.</div>
+    </div>
+  </div>
+
+  <h2><span class="num">07</span> Why this wins on the rubric</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>Criterion (weight)</th><th>How Setu wins it</th></tr></thead>
+      <tbody>
+        <tr><td>Voice-to-voice effectiveness (25%)</td><td>Streaming STT + streaming TTS + ≤ 800ms turn-taking; live phone-call demo at finals</td></tr>
+        <tr><td>Verification & guardrails (20%)</td><td>Four-state FSM as load-bearing element; three verification patterns; explicit Correct / Partial / Incorrect modeling</td></tr>
+        <tr><td>Dialect & cultural understanding (15%)</td><td>Three-layer stack — acoustic + lexical + curated cultural KB</td></tr>
+        <tr><td>Sentiment & emotion (15%)</td><td>Six-state detector that <em>changes system behavior</em>, not a UI badge</td></tr>
+        <tr><td>Agent ease-of-use (15%)</td><td>Full-context handover payload + suggested opener + one-click takeover + edit-and-correct</td></tr>
+        <tr><td>Technical design & extensibility (10%)</td><td>Language-agnostic at orchestration layer; ~2 weeks per new Indian language to production quality</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="footer">Setu · the AI bridge between citizen and agent · for the 1092 helpline of Karnataka, then for Bharat.</p>
+</div>
+</body>
+</html>

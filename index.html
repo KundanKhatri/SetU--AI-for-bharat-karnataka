@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Setu — the AI bridge for India's helplines · AI for Bharat 2</title>
+<meta name="description" content="Setu is a verify-before-act voice AI for India's citizen helplines. Built for the AI for Bharat 2 hackathon — Theme 12: AI for the 1092 Helpline. Dialect-aware, sentiment-aware, audit-logged, on-prem-capable." />
+<meta property="og:title" content="Setu — the AI bridge for India's helplines" />
+<meta property="og:description" content="Voice-to-voice AI for India's citizen helplines. Verify before act. Hear in dialect, restate, then act. Hand off to a human when distress spikes — with full context." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23c1440e'/%3E%3Ctext x='50' y='62' font-family='system-ui' font-size='42' font-weight='700' text-anchor='middle' fill='white'%3ES%3C/text%3E%3C/svg%3E" />
+<style>
+  :root {
+    --ink: #0f172a;
+    --ink-2: #1e293b;
+    --paper: #fbf8f1;
+    --rule: #e8e4d8;
+    --saffron: #c1440e;
+    --saffron-2: #e76f29;
+    --teal: #1f6e8c;
+    --teal-2: #115366;
+    --cream: #f3efe5;
+    --green: #166534;
+    --shadow-sm: 0 1px 0 rgba(0,0,0,.04), 0 8px 20px -14px rgba(0,0,0,.16);
+    --shadow: 0 1px 0 rgba(0,0,0,.04), 0 18px 44px -22px rgba(0,0,0,.22);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body {
+    margin: 0; padding: 0; background: var(--paper); color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+  a { color: var(--teal); text-decoration: none; border-bottom: 1px solid rgba(31,110,140,.25); transition: border-color .15s ease, color .15s ease; }
+  a:hover { color: var(--saffron); border-bottom-color: rgba(193,68,14,.5); }
+  ::selection { background: var(--saffron); color: white; }
+
+  /* Header */
+  .nav {
+    position: sticky; top: 0; z-index: 30;
+    backdrop-filter: saturate(140%) blur(12px); -webkit-backdrop-filter: saturate(140%) blur(12px);
+    background: rgba(251, 248, 241, .85);
+    border-bottom: 1px solid var(--rule);
+  }
+  .nav-inner {
+    max-width: 1180px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; border: 0; }
+  .brand-mark {
+    width: 36px; height: 36px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--saffron), var(--saffron-2));
+    display: grid; place-items: center;
+    color: white; font-weight: 700; font-size: 16px; letter-spacing: -.5px;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,.15);
+  }
+  .brand-name { font-weight: 700; letter-spacing: -.01em; color: var(--ink); }
+  .brand-sub { font-size: 11px; color: #64748b; letter-spacing: .12em; text-transform: uppercase; }
+  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-links a { color: var(--ink-2); border: 0; font-size: 14px; }
+  .nav-links a:hover { color: var(--saffron); }
+  .nav-cta {
+    background: var(--ink); color: white !important; padding: 8px 14px; border-radius: 999px;
+    font-size: 13px; font-weight: 500; border: 0 !important;
+  }
+  .nav-cta:hover { background: var(--saffron); }
+  @media (max-width: 760px) { .nav-links a:not(.nav-cta) { display: none; } }
+
+  /* Section base */
+  section { padding: 84px 24px; border-bottom: 1px solid var(--rule); }
+  .container { max-width: 1080px; margin: 0 auto; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--teal); font-weight: 600; margin-bottom: 14px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before { content: ""; width: 18px; height: 2px; background: var(--teal); display: inline-block; }
+  h1, h2, h3 { letter-spacing: -.02em; }
+  h2 { font-size: 32px; line-height: 1.15; margin: 0 0 22px; max-width: 760px; }
+  h3 { font-size: 20px; line-height: 1.25; margin: 0 0 10px; }
+  .lede { font-size: 19px; line-height: 1.55; color: #334155; max-width: 720px; }
+
+  /* Hero */
+  .hero {
+    padding: 92px 24px 100px;
+    background:
+      radial-gradient(1200px 480px at 80% -10%, rgba(31,110,140,.08), transparent 60%),
+      radial-gradient(900px 380px at 5% 110%, rgba(193,68,14,.10), transparent 60%),
+      var(--paper);
+    border-bottom: 1px solid var(--rule);
+  }
+  .hero h1 {
+    font-size: clamp(36px, 5.4vw, 64px); line-height: 1.05; margin: 0 0 22px;
+    max-width: 980px;
+  }
+  .hero h1 .pop { color: var(--saffron); }
+  .hero h1 .underline {
+    background: linear-gradient(transparent 64%, rgba(193,68,14,.22) 64%);
+    padding: 0 4px;
+  }
+  .hero-stamp {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: white; border: 1px solid var(--rule); border-radius: 999px;
+    padding: 6px 14px; font-size: 12px; color: #475569;
+    margin-bottom: 22px;
+  }
+  .hero-stamp .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--saffron); }
+  .hero-quote {
+    margin-top: 36px; max-width: 720px;
+    border-left: 3px solid var(--saffron);
+    padding: 12px 18px;
+    background: rgba(255,255,255,.5);
+    border-radius: 0 10px 10px 0;
+    font-size: 15px; color: #334155;
+  }
+  .hero-quote em { display: block; margin-top: 6px; font-size: 12px; color: #64748b; font-style: normal; letter-spacing: .04em; }
+  .hero-cta { margin-top: 36px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 18px; border-radius: 10px; font-size: 14px; font-weight: 500;
+    border: 1px solid transparent; transition: transform .12s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--ink); color: white !important; border: 0 !important; }
+  .btn-primary:hover { background: var(--saffron); }
+  .btn-ghost { background: transparent; color: var(--ink) !important; border: 1px solid var(--rule) !important; }
+  .btn-ghost:hover { border-color: var(--saffron) !important; color: var(--saffron) !important; }
+
+  /* Stats strip */
+  .stats {
+    background: white; border-bottom: 1px solid var(--rule);
+    padding: 50px 24px;
+  }
+  .stats-grid {
+    max-width: 1080px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+  }
+  .stat-num {
+    font-size: 50px; font-weight: 700; letter-spacing: -.03em; line-height: 1;
+    color: var(--saffron);
+  }
+  .stat-label { font-size: 14px; color: #475569; margin-top: 10px; line-height: 1.5; max-width: 280px; }
+  @media (max-width: 760px) { .stats-grid { grid-template-columns: 1fr; gap: 28px; } .stat-num { font-size: 40px; } }
+
+  /* Verify-before-act */
+  #thesis { background: var(--paper); }
+  .lifecycle {
+    margin-top: 36px;
+    background: white; border: 1px solid var(--rule); border-radius: 16px;
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .lc-row {
+    display: grid; grid-template-columns: repeat(7, auto); align-items: center; gap: 10px;
+    justify-content: center; flex-wrap: wrap;
+  }
+  .chip {
+    background: var(--cream); border: 1px solid var(--rule); border-radius: 12px;
+    padding: 14px 18px; text-align: center; min-width: 130px;
+  }
+  .chip .t { font-size: 11px; color: #64748b; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; }
+  .chip .b { font-size: 17px; font-weight: 700; color: var(--ink); margin-top: 4px; letter-spacing: -.01em; }
+  .chip.green { background: #ecfdf5; border-color: #a7f3d0; }
+  .chip.green .b { color: var(--green); }
+  .arr { color: #94a3b8; font-size: 22px; font-weight: 300; }
+  .lc-rule {
+    margin-top: 24px; padding: 16px 20px; background: var(--cream); border-radius: 10px; border: 1px solid var(--rule);
+    font-size: 14px; color: #334155;
+  }
+  .lc-rule strong { color: var(--saffron); }
+  @media (max-width: 760px) {
+    .lc-row { display: flex; flex-direction: column; }
+    .arr { transform: rotate(90deg); }
+  }
+
+  /* How it works (3-col cards) */
+  #how { background: white; }
+  .three-col {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 36px;
+  }
+  @media (max-width: 760px) { .three-col { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 14px;
+    padding: 26px 24px; box-shadow: var(--shadow-sm);
+  }
+  .card .badge {
+    display: inline-block; background: var(--cream); border: 1px solid var(--rule);
+    border-radius: 6px; padding: 3px 8px; font-size: 11px; color: #475569;
+    letter-spacing: .08em; text-transform: uppercase; font-weight: 600; margin-bottom: 14px;
+  }
+  .card p { color: #334155; margin: 8px 0 0; font-size: 14.5px; line-height: 1.6; }
+
+  /* Sentiment table */
+  #sentiment { background: var(--paper); }
+  .table-wrap {
+    margin-top: 32px;
+    background: white; border: 1px solid var(--rule); border-radius: 14px;
+    overflow: hidden; box-shadow: var(--shadow-sm);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 16px 22px; border-bottom: 1px solid var(--rule); font-size: 14.5px; color: var(--ink-2); vertical-align: top; }
+  th { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #64748b; background: #f8fafc; font-weight: 600; }
+  tr:last-child td { border-bottom: 0; }
+  .pill {
+    display: inline-block; background: var(--cream); border: 1px solid var(--rule); border-radius: 999px;
+    padding: 3px 10px; font-size: 12px; font-weight: 500; color: var(--ink-2);
+  }
+  .pill.bad { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+  .pill.warn { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+  .pill.ok { background: #ecfdf5; border-color: #a7f3d0; color: #065f46; }
+
+  /* Architecture */
+  #architecture { background: white; }
+  .arch-card {
+    margin-top: 36px;
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 16px;
+    padding: 32px; text-align: center; box-shadow: var(--shadow-sm);
+  }
+  .arch-card svg { width: 100%; max-width: 980px; height: auto; display: block; margin: 0 auto; }
+  .arch-link { margin-top: 20px; }
+
+  /* Stack */
+  #stack { background: var(--paper); }
+  .stack-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 32px;
+  }
+  @media (max-width: 760px) { .stack-grid { grid-template-columns: 1fr; } }
+  .stack-card {
+    background: white; border: 1px solid var(--rule); border-radius: 14px;
+    padding: 24px; box-shadow: var(--shadow-sm);
+  }
+  .stack-card h4 { margin: 0 0 14px; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; color: var(--teal); }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tool-pill {
+    background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412;
+    border-radius: 8px; padding: 5px 10px; font-size: 12.5px; font-weight: 500;
+  }
+  .stack-note { font-size: 13px; color: #475569; margin-top: 14px; line-height: 1.55; }
+
+  /* Roadmap */
+  #roadmap { background: white; }
+  .road {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; margin-top: 36px;
+  }
+  @media (max-width: 760px) { .road { grid-template-columns: 1fr; } }
+  .stop {
+    background: var(--paper); border: 1px solid var(--rule); border-radius: 14px;
+    padding: 22px; box-shadow: var(--shadow-sm);
+  }
+  .stop .when {
+    font-size: 11px; color: var(--saffron); letter-spacing: .14em; text-transform: uppercase;
+    font-weight: 700;
+  }
+  .stop .what { font-size: 15px; color: var(--ink); margin-top: 8px; line-height: 1.4; font-weight: 500; }
+
+  /* Why now */
+  #why-now { background: var(--paper); }
+
+  /* Ask */
+  #ask {
+    background: linear-gradient(180deg, white, var(--cream));
+  }
+  .ask-card {
+    margin-top: 36px;
+    background: var(--ink); color: white;
+    border-radius: 18px; padding: 44px;
+    box-shadow: var(--shadow);
+  }
+  .ask-card h2 { color: white; margin-bottom: 14px; max-width: 100%; }
+  .ask-card p { color: #cbd5e1; font-size: 17px; line-height: 1.6; margin: 0 0 24px; max-width: 700px; }
+  .ask-card .btn-primary { background: var(--saffron); }
+  .ask-card .btn-primary:hover { background: var(--saffron-2); }
+  .ask-card .btn-ghost { color: white !important; border-color: rgba(255,255,255,.25) !important; }
+  .ask-card .btn-ghost:hover { border-color: white !important; color: white !important; }
+
+  /* Footer */
+  footer {
+    padding: 48px 24px; background: var(--paper);
+    border-top: 1px solid var(--rule);
+  }
+  .foot-inner {
+    max-width: 1080px; margin: 0 auto;
+    display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center;
+    font-size: 13px; color: #64748b;
+  }
+  .foot-inner strong { color: var(--ink); }
+
+  /* Hindi/Kannada flourish */
+  .devanagari { font-family: "Noto Sans Devanagari", system-ui, sans-serif; }
+  .kannada { font-family: "Noto Sans Kannada", system-ui, sans-serif; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <div class="brand-mark">सेतु</div>
+      <div>
+        <div class="brand-name">Setu</div>
+        <div class="brand-sub">AI for Bharat 2 · Theme 12</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="story.html">For everyone</a>
+      <a href="scenarios.html">Real stories</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#ask" class="nav-cta">The ask</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top" style="border-bottom: 1px solid var(--rule);">
+  <div class="container">
+    <div class="hero-stamp">
+      <span class="dot"></span>
+      <span>PAN IIT Bangalore × Govt. of Karnataka · Grand Finale 16 May 2026 · Taj Yeshwantpur</span>
+    </div>
+    <h1>
+      A voice AI for India's helplines that ensures
+      <span class="underline pop">being understood</span>
+      comes before being answered.
+    </h1>
+    <p class="lede">
+      Setu is the AI bridge between citizen and agent — built for Theme 12 of the AI for Bharat 2 hackathon.
+      It hears the caller in her dialect, restates back what it understood, only then acts.
+      When confidence drops or distress spikes, it hands off to a human agent — with full context, sentiment timeline, and a suggested opening line.
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="story.html">A picture story · for everyone →</a>
+      <a class="btn btn-ghost" href="scenarios.html">Real-life scenarios</a>
+      <a class="btn btn-ghost" href="architecture.html">For the technical reader</a>
+    </div>
+    <div class="hero-quote">
+      "The biggest failure on a citizen helpline is not lack of response — it is the wrong response, born of the wrong understanding."
+      <em>— Karnataka Department of Personnel & Administrative Reforms · Theme 12 problem brief</em>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats" style="padding: 50px 24px;">
+  <div class="stats-grid">
+    <div>
+      <div class="stat-num">22</div>
+      <div class="stat-label">Indian languages and hundreds of dialects spoken by citizens calling helplines like 1092.</div>
+    </div>
+    <div>
+      <div class="stat-num">1</div>
+      <div class="stat-label">Number of languages most 1092 agents speak fluently. The gap is structural, not personal.</div>
+    </div>
+    <div>
+      <div class="stat-num">0</div>
+      <div class="stat-label">Systems today that ensure the citizen has been understood before action is taken. That is what Setu fixes.</div>
+    </div>
+  </div>
+</section>
+
+<!-- THESIS / VERIFY-BEFORE-ACT -->
+<section id="thesis">
+  <div class="container">
+    <div class="eyebrow">The thesis</div>
+    <h2>Verify before act. The four-state lifecycle is the load-bearing rule of the system.</h2>
+    <p class="lede">
+      Most voice AI products optimize for hear → respond. Setu inverts this: hear → restate → verify → only then act.
+      The verification turn is not a usability afterthought. It is the structural element on which the whole product rests.
+    </p>
+
+    <div class="lifecycle">
+      <div class="lc-row">
+        <div class="chip"><div class="t">State 1</div><div class="b">Heard</div></div>
+        <div class="arr">→</div>
+        <div class="chip"><div class="t">State 2</div><div class="b">Interpreted</div></div>
+        <div class="arr">→</div>
+        <div class="chip green"><div class="t">State 3</div><div class="b">Verified</div></div>
+        <div class="arr">→</div>
+        <div class="chip"><div class="t">State 4</div><div class="b">Acted</div></div>
+      </div>
+      <div class="lc-rule">
+        <strong>The one rule we will not break:</strong>
+        no interpretation, however confident, is acted upon without explicit citizen confirmation —
+        <em>except</em> when distress and risk_signal both exceed threshold, in which case Setu rapid-acks and hands off to a human in parallel.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS — three layers -->
+<section id="how">
+  <div class="container">
+    <div class="eyebrow">How it works</div>
+    <h2>Three engineered layers for dialect — not a bigger model and a hope.</h2>
+    <p class="lede">
+      Generic LLMs handle written Hindi and written Kannada. They struggle with spoken Mandya Kannada, code-mixed Hinglish,
+      and cultural shorthand that depends on local context. Setu addresses each layer deliberately.
+    </p>
+
+    <div class="three-col">
+      <div class="card">
+        <div class="badge">Layer 1</div>
+        <h3>Acoustic</h3>
+        <p>
+          AI4Bharat IndicConformer for streaming STT across 22 Indian languages. Trained on dialect-tagged data — Mandya, Belagavi, Mangaluru Kannada, Bhojpuri, Telangana Telugu. n-best hypotheses preserved; ambiguity is deferred to context, not collapsed early.
+        </p>
+      </div>
+      <div class="card">
+        <div class="badge">Layer 2</div>
+        <h3>Lexical</h3>
+        <p>
+          Sarvam-1 fine-tuned on a curated grievance corpus and Karnataka context. Indic-native tokenizer is 3–4× more efficient than GPT-style on Devanagari and Kannada — direct latency and cost win on every turn.
+        </p>
+      </div>
+      <div class="card">
+        <div class="badge">Layer 3</div>
+        <h3>Cultural</h3>
+        <p>
+          Honorific normalizer (<code>neevu</code> / <code>neenu</code>), curated idiom dictionary, district-entity gazetteer (pgvector). When the citizen says <em>"galli"</em>, we retrieve their stated location. Deterministic — code, not stochastic.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SENTIMENT TABLE -->
+<section id="sentiment">
+  <div class="container">
+    <div class="eyebrow">Sentiment</div>
+    <h2>Sentiment is a routing signal, not a UI badge.</h2>
+    <p class="lede">
+      Most voice products treat emotion as a colored dot on a dashboard. For 1092, it must change the system's behavior.
+      Setu detects six states from acoustic and lexical signals, continuously, at 500ms granularity.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Signal</th><th>Detection</th><th>System behavior</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="pill bad">Distress + urgency high</span></td>
+            <td>Prosody (pitch jitter, energy spike) + lexical risk-words</td>
+            <td><strong>Bypass full verification</strong> · rapid-ack · parallel handover</td>
+          </tr>
+          <tr>
+            <td><span class="pill warn">Sustained confusion</span></td>
+            <td>Continuous low-confidence STT + slow turn-taking</td>
+            <td>Switch to simpler register · slower TTS pace · shorter sentences</td>
+          </tr>
+          <tr>
+            <td><span class="pill bad">Anger at the system</span></td>
+            <td>Lexical anger toward AI + escalating volume</td>
+            <td>Immediate handover · no placation loop · full context to agent</td>
+          </tr>
+          <tr>
+            <td><span class="pill warn">Fear escalating</span></td>
+            <td>Prosodic fear signature growing across turns</td>
+            <td>Soft handover trigger · agent prepared · empathetic acknowledgement</td>
+          </tr>
+          <tr>
+            <td><span class="pill ok">Neutral · calm</span></td>
+            <td>Default state</td>
+            <td>Standard verification flow</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="container">
+    <div class="eyebrow">Architecture</div>
+    <h2>One stack. On-prem-capable. No PII to hosted LLMs.</h2>
+    <p class="lede">
+      Setu's production path is self-hosted Indian foundation models — Sarvam-1 for interpretation, AI4Bharat IndicConformer for STT, IndicTTS for voice. Bhashini is wired in as a government-blessed fallback. Hosted LLMs are used only at development time on synthetic data.
+    </p>
+
+    <div class="arch-card">
+      <svg viewBox="0 0 1100 560" role="img" aria-label="Setu architecture">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8" />
+          </marker>
+        </defs>
+        <g font-family="-apple-system, BlinkMacSystemFont, 'Inter', sans-serif" font-size="13">
+          <!-- Citizen -->
+          <rect x="20" y="30" width="170" height="60" rx="10" fill="#fff7ed" stroke="#fed7aa"/>
+          <text x="105" y="58" text-anchor="middle" font-weight="600">Citizen</text>
+          <text x="105" y="76" text-anchor="middle" font-size="11" fill="#64748b">PSTN · VoIP · mobile</text>
+          <!-- 1092 switch -->
+          <rect x="20" y="120" width="170" height="50" rx="10" fill="#fff7ed" stroke="#fed7aa"/>
+          <text x="105" y="148" text-anchor="middle" font-weight="600">1092 switch</text>
+          <text x="105" y="163" text-anchor="middle" font-size="11" fill="#64748b">unmodified</text>
+          <!-- Audio gateway -->
+          <rect x="220" y="80" width="190" height="60" rx="10" fill="#fff7ed" stroke="#fed7aa"/>
+          <text x="315" y="106" text-anchor="middle" font-weight="600">Audio gateway</text>
+          <text x="315" y="124" text-anchor="middle" font-size="11" fill="#64748b">LiveKit · SIP fork</text>
+
+          <!-- STT -->
+          <rect x="220" y="170" width="190" height="68" rx="10" fill="#f0f9ff" stroke="#bae6fd"/>
+          <text x="315" y="196" text-anchor="middle" font-weight="600">STT — IndicConformer</text>
+          <text x="315" y="214" text-anchor="middle" font-size="11" fill="#64748b">22 Indic langs · n-best</text>
+          <text x="315" y="228" text-anchor="middle" font-size="11" fill="#64748b">confidence + alts</text>
+
+          <!-- Sentiment -->
+          <rect x="220" y="260" width="190" height="68" rx="10" fill="#f0f9ff" stroke="#bae6fd"/>
+          <text x="315" y="286" text-anchor="middle" font-weight="600">Sentiment engine</text>
+          <text x="315" y="304" text-anchor="middle" font-size="11" fill="#64748b">Hume EVI prosody +</text>
+          <text x="315" y="318" text-anchor="middle" font-size="11" fill="#64748b">lexical Indic classifier</text>
+
+          <!-- Cultural KB -->
+          <rect x="220" y="350" width="190" height="68" rx="10" fill="#f0f9ff" stroke="#bae6fd"/>
+          <text x="315" y="376" text-anchor="middle" font-weight="600">Cultural KB</text>
+          <text x="315" y="394" text-anchor="middle" font-size="11" fill="#64748b">honorifics · idioms ·</text>
+          <text x="315" y="408" text-anchor="middle" font-size="11" fill="#64748b">district entities</text>
+
+          <!-- LLM -->
+          <rect x="450" y="200" width="220" height="92" rx="10" fill="#f0f9ff" stroke="#bae6fd"/>
+          <text x="560" y="226" text-anchor="middle" font-weight="600">Interpretation LLM</text>
+          <text x="560" y="244" text-anchor="middle" font-size="11" fill="#64748b">Sarvam-1 fine-tuned</text>
+          <text x="560" y="260" text-anchor="middle" font-size="11" fill="#64748b">→ intent · entities ·</text>
+          <text x="560" y="274" text-anchor="middle" font-size="11" fill="#64748b">  per-field confidence</text>
+
+          <!-- FSM -->
+          <rect x="450" y="320" width="220" height="116" rx="10" fill="#fef3c7" stroke="#fde68a"/>
+          <text x="560" y="346" text-anchor="middle" font-weight="600">Verification FSM</text>
+          <text x="560" y="364" text-anchor="middle" font-size="11" fill="#64748b">Heard → Interpreted →</text>
+          <text x="560" y="378" text-anchor="middle" font-size="11" fill="#64748b">Verified → Acted</text>
+          <text x="560" y="396" text-anchor="middle" font-size="11" fill="#64748b">3 verification patterns</text>
+          <text x="560" y="410" text-anchor="middle" font-size="11" fill="#64748b">3 escalation triggers</text>
+          <text x="560" y="424" text-anchor="middle" font-size="11" fill="#64748b">audit-logged transitions</text>
+
+          <!-- TTS -->
+          <rect x="700" y="200" width="190" height="68" rx="10" fill="#ecfdf5" stroke="#a7f3d0"/>
+          <text x="795" y="226" text-anchor="middle" font-weight="600">TTS — IndicTTS</text>
+          <text x="795" y="244" text-anchor="middle" font-size="11" fill="#64748b">Sarvam Bulbul fallback</text>
+          <text x="795" y="258" text-anchor="middle" font-size="11" fill="#64748b">register-aware</text>
+
+          <!-- Verification turn -->
+          <rect x="700" y="290" width="190" height="50" rx="10" fill="#ecfdf5" stroke="#a7f3d0"/>
+          <text x="795" y="316" text-anchor="middle" font-weight="600">Verification turn out</text>
+          <text x="795" y="331" text-anchor="middle" font-size="11" fill="#64748b">to citizen, in dialect</text>
+
+          <!-- Agent console -->
+          <rect x="920" y="160" width="160" height="200" rx="10" fill="#fef2f2" stroke="#fecaca"/>
+          <text x="1000" y="186" text-anchor="middle" font-weight="600">Agent console</text>
+          <text x="1000" y="204" text-anchor="middle" font-size="11" fill="#64748b">React + LiveKit</text>
+          <text x="1000" y="226" text-anchor="middle" font-size="11" fill="#475569">— transcript</text>
+          <text x="1000" y="242" text-anchor="middle" font-size="11" fill="#475569">— sentiment timeline</text>
+          <text x="1000" y="258" text-anchor="middle" font-size="11" fill="#475569">— suggested opener</text>
+          <text x="1000" y="274" text-anchor="middle" font-size="11" fill="#475569">— one-click takeover</text>
+          <text x="1000" y="290" text-anchor="middle" font-size="11" fill="#475569">— edit + correct AI</text>
+          <text x="1000" y="306" text-anchor="middle" font-size="11" fill="#475569">— audio replay</text>
+          <text x="1000" y="322" text-anchor="middle" font-size="11" fill="#475569">— call disposition</text>
+
+          <!-- Feedback store -->
+          <rect x="450" y="465" width="220" height="60" rx="10" fill="#faf5ff" stroke="#e9d5ff"/>
+          <text x="560" y="491" text-anchor="middle" font-weight="600">Feedback store</text>
+          <text x="560" y="507" text-anchor="middle" font-size="11" fill="#64748b">verification outcomes · agent edits</text>
+
+          <!-- Fine-tune -->
+          <rect x="700" y="465" width="190" height="60" rx="10" fill="#faf5ff" stroke="#e9d5ff"/>
+          <text x="795" y="491" text-anchor="middle" font-weight="600">Weekly fine-tune</text>
+          <text x="795" y="507" text-anchor="middle" font-size="11" fill="#64748b">LoRA · drift detection</text>
+
+          <!-- Audit -->
+          <rect x="920" y="465" width="160" height="60" rx="10" fill="#faf5ff" stroke="#e9d5ff"/>
+          <text x="1000" y="491" text-anchor="middle" font-weight="600">Audit log</text>
+          <text x="1000" y="507" text-anchor="middle" font-size="11" fill="#64748b">officer-retrievable</text>
+
+          <!-- Arrows -->
+          <path d="M105,90 L105,120" stroke="#94a3b8" fill="none" marker-end="url(#arr)"/>
+          <path d="M190,150 C200,150 210,110 220,110" stroke="#94a3b8" fill="none" marker-end="url(#arr)"/>
+          <path d="M315,140 L315,170" stroke="#94a3b8" fill="none" marker-end="url(#arr)"/>
+          <path d="M410,202 L450,232" stroke="#94a3b8" fill="none" marker-end="url(#arr)"/>
+          <path d="M410,294 L450,266" stroke="#94a3b8" fill="none" marker-end="url(#arr)"/>
+          <path d="M410,384 L450,288" stroke="#94a3b8" fill="none" marker-end="url(#arr)"/>
+          <path d="M560,292 L560,320" stroke="#94a3b8" fill="none" marker-end="url(#arr)"/>
+          <path d="M670,360 C700,360 705,240 700,240" stroke="#94a3b8" fill="none" marker-end="url(#arr)"/>
+          <path d="M795,268 L795,290" stroke="#94a3b8" fill="none" marker-end="url(#arr)"/>
+          <path d="M795,340 C795,420 315,420 315,170" stroke="#94a3b8" fill="none" marker-end="url(#arr)"/>
+          <path d="M670,380 L920,260" stroke="#991b1b" fill="none" marker-end="url(#arr)" stroke-width="1.6"/>
+          <text x="780" y="305" font-size="10" fill="#991b1b" font-weight="600">escalation</text>
+          <path d="M560,436 L560,465" stroke="#c1440e" fill="none" marker-end="url(#arr)" stroke-dasharray="5 4"/>
+          <path d="M920,360 C780,400 700,440 700,475" stroke="#c1440e" fill="none" marker-end="url(#arr)" stroke-dasharray="5 4"/>
+          <path d="M670,500 L700,500" stroke="#94a3b8" fill="none" marker-end="url(#arr)"/>
+          <path d="M795,465 C870,400 720,330 670,250" stroke="#c1440e" fill="none" marker-end="url(#arr)" stroke-dasharray="5 4"/>
+          <path d="M670,400 C870,400 1000,440 1000,465" stroke="#94a3b8" fill="none" marker-end="url(#arr)"/>
+
+          <!-- Latency banner -->
+          <rect x="450" y="40" width="450" height="44" rx="10" fill="#0f172a"/>
+          <text x="675" y="62" text-anchor="middle" fill="#fef3c7" font-weight="600" font-size="13">Target ≤ 800ms end-of-utterance → start-of-response</text>
+          <text x="675" y="78" text-anchor="middle" fill="#fef3c7" font-size="11">streaming STT + speculative LLM + streaming TTS</text>
+        </g>
+      </svg>
+      <div class="arch-link"><a href="architecture.html" class="btn btn-ghost">Open the full architecture →</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOL STACK -->
+<section id="stack">
+  <div class="container">
+    <div class="eyebrow">The stack</div>
+    <h2>Indian foundation models, open-source orchestration, government-grade audit.</h2>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <h4>Production path · self-hosted</h4>
+        <div class="pills">
+          <span class="tool-pill">LiveKit Agents</span>
+          <span class="tool-pill">AI4Bharat IndicConformer</span>
+          <span class="tool-pill">Sarvam-1</span>
+          <span class="tool-pill">Llama 3.3 8B Indic</span>
+          <span class="tool-pill">Indic-Parler-TTS</span>
+          <span class="tool-pill">Sarvam Bulbul</span>
+          <span class="tool-pill">FastAPI</span>
+          <span class="tool-pill">Redis Streams</span>
+          <span class="tool-pill">Postgres + pgvector</span>
+          <span class="tool-pill">MinIO</span>
+          <span class="tool-pill">k3s · Docker</span>
+          <span class="tool-pill">React + Tailwind</span>
+        </div>
+        <p class="stack-note">Self-hosted Indian models. No PII to hosted LLMs. Bhashini API wired in as government-blessed fallback path.</p>
+      </div>
+      <div class="stack-card">
+        <h4>Dev-time only · synthetic data</h4>
+        <div class="pills">
+          <span class="tool-pill">Bhashini APIs</span>
+          <span class="tool-pill">Hume EVI</span>
+          <span class="tool-pill">Claude Sonnet 4.6</span>
+          <span class="tool-pill">Gemini 2.5 Pro</span>
+          <span class="tool-pill">Cartesia Sonic</span>
+          <span class="tool-pill">Whisper-large-v3</span>
+        </div>
+        <p class="stack-note">Hosted models are used for synthetic-data prototyping and as documented fallback paths only. Never for production traffic with citizen PII.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY NOW -->
+<section id="why-now">
+  <div class="container">
+    <div class="eyebrow">Why now</div>
+    <h2>Three step-changes that make this possible in 2026, and not before.</h2>
+    <div class="three-col">
+      <div class="card">
+        <div class="badge">01</div>
+        <h3>Indic foundation models matured</h3>
+        <p>AI4Bharat (IIT Madras) and Sarvam AI shipped open, dialect-aware models that didn't exist 18 months ago. The acoustic gap on rural Kannada and Hindi closed from "frustrating" to "usable."</p>
+      </div>
+      <div class="card">
+        <div class="badge">02</div>
+        <h3>Real-time voice infrastructure commoditized</h3>
+        <p>LiveKit Agents, Pipecat, sub-100ms streaming TTS — research-grade in 2024, plumbing in 2026. A 2-person team can plug them together in two weeks.</p>
+      </div>
+      <div class="card">
+        <div class="badge">03</div>
+        <h3>Government readiness</h3>
+        <p>Bhashini is operational and open for integration. GeM is ready to procure AI services that respect Indian sovereign-cloud requirements. Five years ago this would have died at the procurement gate.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="container">
+    <div class="eyebrow">Roadmap</div>
+    <h2>Karnataka first. Then every helpline in Bharat — on the same backbone.</h2>
+    <p class="lede">
+      Setu's pipeline is language-agnostic at the orchestration layer. Adding a new Indian language is a three-step process — confirm acoustic and TTS coverage, curate the cultural KB for that region, collect a small fine-tune set. Estimated ~2 weeks per language to production quality.
+    </p>
+
+    <div class="road">
+      <div class="stop"><div class="when">Aug 2026</div><div class="what">Karnataka 1092 pilot · Kannada + Hindi · 1 → 5 districts</div></div>
+      <div class="stop"><div class="when">Feb 2027</div><div class="what">1098 + 181 in Karnataka · Tamil Nadu pilot · Tamil + Telugu</div></div>
+      <div class="stop"><div class="when">Aug 2027</div><div class="what">National 112 ERSS · first PSU bank contract · 12 langs</div></div>
+      <div class="stop"><div class="when">Aug 2028</div><div class="what">Bhashini-blessed national platform · B2B SaaS</div></div>
+      <div class="stop"><div class="when">Beyond</div><div class="what">Every helpline in Bharat · 22 official languages</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ASK -->
+<section id="ask">
+  <div class="container">
+    <div class="eyebrow">The ask</div>
+    <h2>We are not asking for a prize. We are asking for the chance to start.</h2>
+    <div class="ask-card">
+      <h2 style="font-size:26px;">The 3-month government sandbox plus a Karnataka helpline pilot pathway.</h2>
+      <p>
+        In 90 days from a sandbox handoff, we will show verification accuracy above 92% on a held-out citizen panel,
+        average handle time down 25% on the pilot helpline, and a story that Karnataka will be proud to tell at the next PAN IIT Summit.
+      </p>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a class="btn btn-primary" href="architecture.html">See the architecture →</a>
+        <a class="btn btn-ghost" href="infographic.html">One-page brief</a>
+      </div>
+      <p style="margin-top: 30px; font-size: 14px; color: #94a3b8;">
+        <span class="devanagari">सेतु</span> · <span class="kannada">ಸೇತು</span> · <em>"the bridge"</em><br/>
+        for Karnataka, then for Bharat.
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div>
+      <strong>Setu</strong> · the AI bridge between citizen and agent · for the 1092 helpline of Karnataka.
+    </div>
+    <div>
+      Built for AI for Bharat 2 · PAN IIT Bangalore × Govt. of Karnataka · 16 May 2026
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
