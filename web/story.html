@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Voca — A picture story for everyone</title>
+<meta name="description" content="A simple, picture-first explainer of Voca — the AI bridge that helps every Indian be heard when they call for help. Made so anyone can understand it." />
+<style>
+  :root {
+    --ink: #0f172a;
+    --ink-2: #1e293b;
+    --paper: #fbf8f1;
+    --rule: #e8e4d8;
+    --saffron: #c1440e;
+    --saffron-2: #e76f29;
+    --saffron-light: #fff4ec;
+    --teal: #1f6e8c;
+    --teal-2: #2e9eb6;
+    --teal-light: #ecf6fa;
+    --cream: #f3efe5;
+    --green: #16a34a;
+    --green-bg: #ecfdf5;
+    --red: #dc2626;
+    --red-bg: #fef2f2;
+    --shadow-sm: 0 1px 0 rgba(0,0,0,.04), 0 8px 22px -14px rgba(0,0,0,.18);
+    --shadow: 0 1px 0 rgba(0,0,0,.04), 0 22px 50px -22px rgba(0,0,0,.22);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body {
+    margin: 0; padding: 0; background: var(--paper); color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--teal); text-decoration: none; border-bottom: 1px solid rgba(31,110,140,.25); transition: all .15s; }
+  a:hover { color: var(--saffron); border-bottom-color: var(--saffron); }
+
+  /* Nav */
+  .nav {
+    position: sticky; top: 0; z-index: 30;
+    backdrop-filter: saturate(140%) blur(12px);
+    background: rgba(251, 248, 241, .9);
+    border-bottom: 1px solid var(--rule);
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto; padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; border: 0; }
+  .brand-mark {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--saffron), var(--saffron-2));
+    display: grid; place-items: center;
+    color: white; font-weight: 700; font-size: 18px; letter-spacing: -.5px;
+  }
+  .brand-name { font-weight: 700; color: var(--ink); }
+  .brand-sub { font-size: 11px; color: #64748b; letter-spacing: .12em; text-transform: uppercase; }
+  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-links a { color: var(--ink-2); border: 0; font-size: 14px; }
+  .nav-links a:hover { color: var(--saffron); }
+
+  /* Sections */
+  section { padding: 80px 24px; }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* Hero */
+  .hero {
+    padding: 80px 24px 60px;
+    background:
+      radial-gradient(800px 360px at 12% 90%, rgba(193,68,14,.10), transparent 60%),
+      radial-gradient(900px 380px at 88% 10%, rgba(31,110,140,.08), transparent 60%),
+      var(--paper);
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 72px); line-height: 1.05;
+    margin: 16px auto 22px; max-width: 920px;
+    letter-spacing: -.02em;
+  }
+  .hero h1 .pop { color: var(--saffron); }
+  .hero .lede {
+    font-size: 20px; line-height: 1.55; color: #334155;
+    max-width: 680px; margin: 0 auto;
+  }
+  .stamp {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: white; border: 1px solid var(--rule); border-radius: 999px;
+    padding: 7px 16px; font-size: 13px; color: #475569;
+    margin-bottom: 8px;
+  }
+  .stamp .emoji { font-size: 16px; }
+
+  .hero-illo { margin: 30px auto 10px; max-width: 680px; }
+  .hero-illo svg { width: 100%; height: auto; display: block; }
+
+  /* Big idea callouts */
+  .idea-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 40px;
+  }
+  @media (max-width: 800px) { .idea-row { grid-template-columns: 1fr; } }
+  .idea {
+    background: white; border: 1px solid var(--rule); border-radius: 18px;
+    padding: 30px 26px; text-align: center; box-shadow: var(--shadow-sm);
+  }
+  .idea .icon-wrap {
+    width: 80px; height: 80px; border-radius: 24px;
+    margin: 0 auto 18px;
+    display: grid; place-items: center;
+    background: var(--saffron-light);
+  }
+  .idea.teal .icon-wrap { background: var(--teal-light); }
+  .idea.green .icon-wrap { background: var(--green-bg); }
+  .idea .icon-wrap svg { width: 48px; height: 48px; }
+  .idea h3 { font-size: 21px; margin: 0 0 10px; letter-spacing: -.01em; }
+  .idea p { color: #475569; margin: 0; font-size: 15px; line-height: 1.55; }
+
+  /* Comic strip */
+  .strip {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 40px;
+  }
+  @media (max-width: 760px) { .strip { grid-template-columns: 1fr; } }
+  .panel {
+    background: white; border: 1px solid var(--rule); border-radius: 18px;
+    padding: 26px; box-shadow: var(--shadow-sm);
+    overflow: hidden; position: relative;
+  }
+  .panel.full { grid-column: 1 / -1; }
+  .panel .panel-num {
+    position: absolute; top: 18px; right: 22px;
+    font-size: 13px; color: #94a3b8; font-weight: 600; letter-spacing: .14em;
+  }
+  .panel .scene { width: 100%; height: 220px; margin-bottom: 18px; }
+  .panel .scene svg { width: 100%; height: 100%; display: block; }
+  .panel h3 { font-size: 22px; margin: 0 0 8px; letter-spacing: -.01em; }
+  .panel p { color: #334155; margin: 0; font-size: 16px; line-height: 1.55; }
+  .panel .tag {
+    display: inline-block;
+    font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+    color: #94a3b8; font-weight: 600; margin-bottom: 10px;
+  }
+  .panel.warm { background: linear-gradient(180deg, #fff4ec, white); }
+  .panel.cool { background: linear-gradient(180deg, #ecf6fa, white); }
+  .panel.good { background: linear-gradient(180deg, #ecfdf5, white); }
+  .panel.bad  { background: linear-gradient(180deg, #fef2f2, white); }
+
+  /* Big numbers */
+  .big-stats {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 40px;
+  }
+  @media (max-width: 760px) { .big-stats { grid-template-columns: 1fr; } }
+  .stat-big {
+    background: white; border: 1px solid var(--rule); border-radius: 18px;
+    padding: 30px; text-align: center; box-shadow: var(--shadow-sm);
+  }
+  .stat-big .label { font-size: 14px; color: #64748b; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
+  .stat-big .num { font-size: 80px; font-weight: 700; letter-spacing: -.04em; line-height: 1; margin: 16px 0 8px; }
+  .stat-big.before .num { color: var(--red); }
+  .stat-big.after .num { color: var(--green); }
+  .stat-big .sub { font-size: 16px; color: #475569; }
+  .stat-big .stick-row { margin-top: 18px; line-height: 1; font-size: 28px; letter-spacing: 4px; }
+
+  /* Steps */
+  .steps {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 40px;
+  }
+  @media (max-width: 800px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .steps { grid-template-columns: 1fr; } }
+  .step {
+    background: white; border: 1px solid var(--rule); border-radius: 18px;
+    padding: 24px; text-align: center; box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .step .num-circle {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--saffron); color: white;
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 20px;
+    margin: 0 auto 14px;
+  }
+  .step h4 { font-size: 17px; margin: 0 0 8px; letter-spacing: -.01em; }
+  .step p { font-size: 14px; color: #475569; margin: 0; line-height: 1.5; }
+  .step .step-icon { font-size: 38px; margin-bottom: 10px; line-height: 1; }
+
+  /* Timeline */
+  .roadmap-row {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-top: 40px;
+  }
+  @media (max-width: 800px) { .roadmap-row { grid-template-columns: 1fr; } }
+  .stop {
+    background: white; border: 1px solid var(--rule); border-radius: 18px;
+    padding: 22px 18px; text-align: center; box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .stop .dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--saffron); margin: 0 auto 12px;
+    box-shadow: 0 0 0 5px rgba(193,68,14,.15);
+  }
+  .stop .when {
+    font-size: 11px; color: var(--saffron); letter-spacing: .14em; text-transform: uppercase;
+    font-weight: 700; margin-bottom: 6px;
+  }
+  .stop .what { font-size: 14px; color: var(--ink); line-height: 1.4; font-weight: 500; }
+
+  /* CTA bottom */
+  .bottom-cta {
+    background: linear-gradient(135deg, var(--ink), #1e293b);
+    color: white; border-radius: 24px; padding: 48px;
+    text-align: center; margin-top: 40px; box-shadow: var(--shadow);
+  }
+  .bottom-cta h2 { color: white; margin: 0 auto 16px; font-size: 32px; max-width: 720px; line-height: 1.2; }
+  .bottom-cta p { color: #cbd5e1; margin: 0 auto 24px; max-width: 640px; font-size: 17px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 24px; border-radius: 12px; font-weight: 600; font-size: 15px;
+    transition: transform .12s; border: 0;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--saffron); color: white; border: 0 !important; }
+  .btn-primary:hover { background: var(--saffron-2); }
+  .btn-ghost { background: transparent; color: white !important; border: 1px solid rgba(255,255,255,.25) !important; }
+  .btn-ghost:hover { border-color: white !important; }
+
+  /* Footer */
+  footer {
+    padding: 40px 24px; background: var(--paper); border-top: 1px solid var(--rule);
+  }
+  .foot-inner {
+    max-width: 1200px; margin: 0 auto; font-size: 13px; color: #64748b;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  }
+  .foot-inner strong { color: var(--ink); }
+
+  h2.section-title {
+    font-size: 38px; margin: 0 auto 18px; max-width: 800px;
+    text-align: center; letter-spacing: -.02em; line-height: 1.15;
+  }
+  p.section-lede {
+    font-size: 18px; color: #475569; max-width: 680px;
+    margin: 0 auto; text-align: center; line-height: 1.55;
+  }
+
+  .devanagari { font-family: "Noto Sans Devanagari", system-ui, sans-serif; }
+  .kannada { font-family: "Noto Sans Kannada", system-ui, sans-serif; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <div class="brand-mark">V</div>
+      <div>
+        <div class="brand-name">Voca</div>
+        <div class="brand-sub">A picture story for everyone</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="scenarios.html">Stories</a>
+      <a href="architecture.html">Tech</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="stamp"><span class="emoji">📞</span> A simple story · made for everyone to understand</div>
+    <h1>When someone calls for help,<br/><span class="pop">they should be heard.</span></h1>
+    <p class="lede">This is the story of Voca — a friendly bridge that helps every person in India be understood when they call a helpline. Even if they speak a different language. Even if they're upset. Even if they're scared.</p>
+
+    <div class="hero-illo">
+      <svg viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background warmth -->
+        <defs>
+          <linearGradient id="bridgeGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#c1440e"/>
+            <stop offset="50%" stop-color="#e76f29"/>
+            <stop offset="100%" stop-color="#1f6e8c"/>
+          </linearGradient>
+          <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="6"/>
+          </filter>
+        </defs>
+
+        <!-- Soft glow under bridge -->
+        <ellipse cx="340" cy="240" rx="280" ry="20" fill="#fff4ec" filter="url(#soft)" opacity="0.8"/>
+
+        <!-- Grandmother (left) -->
+        <g transform="translate(80, 80)">
+          <!-- Body / sari draping -->
+          <path d="M 50 140 Q 30 90 40 60 Q 50 30 80 30 Q 110 30 110 60 Q 110 90 90 140 Z" fill="#c1440e"/>
+          <!-- Head -->
+          <circle cx="75" cy="40" r="22" fill="#e8b896"/>
+          <!-- Hair (white bun) -->
+          <ellipse cx="75" cy="22" rx="16" ry="8" fill="#f8fafc"/>
+          <!-- Bindi -->
+          <circle cx="75" cy="34" r="2" fill="#c1440e"/>
+          <!-- Eyes (smiling closed) -->
+          <path d="M 67 40 Q 70 38 73 40" stroke="#1e293b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M 77 40 Q 80 38 83 40" stroke="#1e293b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <!-- Phone in hand -->
+          <rect x="32" y="60" width="14" height="22" rx="3" fill="#1e293b"/>
+          <rect x="34" y="63" width="10" height="14" rx="1" fill="#475569"/>
+          <!-- Hand -->
+          <circle cx="39" cy="58" r="6" fill="#e8b896"/>
+          <!-- Label -->
+          <text x="75" y="180" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#0f172a">Lakshmi</text>
+          <text x="75" y="198" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="12" fill="#64748b">62 · Mandya</text>
+        </g>
+
+        <!-- The bridge in the middle -->
+        <g transform="translate(180, 140)">
+          <!-- Bridge arc -->
+          <path d="M 0 80 Q 160 -20 320 80" stroke="url(#bridgeGrad)" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <!-- Bridge dots (signal) -->
+          <circle cx="50" cy="60" r="5" fill="#c1440e"/>
+          <circle cx="120" cy="35" r="5" fill="#e76f29"/>
+          <circle cx="200" cy="35" r="5" fill="#3a8aa6"/>
+          <circle cx="270" cy="60" r="5" fill="#1f6e8c"/>
+          <!-- Voca label -->
+          <g transform="translate(160, 12)">
+            <rect x="-44" y="-22" width="88" height="32" rx="16" fill="white" stroke="#c1440e" stroke-width="2"/>
+            <text x="0" y="0" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="14" font-weight="700" fill="#c1440e">Voca</text>
+          </g>
+        </g>
+
+        <!-- Helper / agent (right) -->
+        <g transform="translate(530, 80)">
+          <!-- Body shirt -->
+          <path d="M 50 140 Q 30 90 40 60 Q 50 30 80 30 Q 110 30 110 60 Q 110 90 90 140 Z" fill="#1f6e8c"/>
+          <!-- Head -->
+          <circle cx="75" cy="40" r="22" fill="#e8b896"/>
+          <!-- Hair -->
+          <path d="M 53 28 Q 75 14 97 28 Q 95 38 75 36 Q 55 38 53 28 Z" fill="#1e293b"/>
+          <!-- Headset -->
+          <path d="M 53 38 Q 53 24 75 22 Q 97 24 97 38" stroke="#0f172a" stroke-width="2.5" fill="none"/>
+          <circle cx="53" cy="40" r="4" fill="#0f172a"/>
+          <!-- Mic boom -->
+          <path d="M 52 42 Q 48 50 56 56" stroke="#0f172a" stroke-width="2" fill="none"/>
+          <circle cx="56" cy="56" r="3" fill="#c1440e"/>
+          <!-- Eyes -->
+          <circle cx="68" cy="42" r="1.7" fill="#1e293b"/>
+          <circle cx="82" cy="42" r="1.7" fill="#1e293b"/>
+          <!-- Smile -->
+          <path d="M 68 50 Q 75 56 82 50" stroke="#1e293b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <!-- Label -->
+          <text x="75" y="180" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="14" font-weight="600" fill="#0f172a">The agent</text>
+          <text x="75" y="198" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="12" fill="#64748b">at the helpline</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- THREE BIG IDEAS -->
+<section style="background: white;">
+  <div class="container">
+    <h2 class="section-title">Voca does three simple things.</h2>
+    <p class="section-lede">No fancy words. Here is the whole product, in three pictures.</p>
+
+    <div class="idea-row">
+      <div class="idea">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 14 22 Q 14 12 24 12 Q 34 12 34 22 L 34 30 Q 34 34 30 34 Q 28 34 28 30 L 28 24 M 20 30 Q 20 34 16 34 Q 14 34 14 30 L 14 22"
+                  fill="none" stroke="#c1440e" stroke-width="3" stroke-linecap="round"/>
+            <path d="M 24 38 Q 24 42 28 42" stroke="#c1440e" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>It listens carefully</h3>
+        <p>Even if you speak in a special way — your village's Kannada, your dialect, your mix of languages. Voca can hear you.</p>
+      </div>
+      <div class="idea teal">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 12 14 Q 12 10 16 10 L 32 10 Q 36 10 36 14 L 36 26 Q 36 30 32 30 L 22 30 L 16 36 L 16 30 Q 12 30 12 26 Z"
+                  fill="none" stroke="#1f6e8c" stroke-width="3" stroke-linejoin="round"/>
+            <circle cx="20" cy="20" r="1.6" fill="#1f6e8c"/>
+            <circle cx="24" cy="20" r="1.6" fill="#1f6e8c"/>
+            <circle cx="28" cy="20" r="1.6" fill="#1f6e8c"/>
+          </svg>
+        </div>
+        <h3>It checks: "Did I get it?"</h3>
+        <p>Before doing anything, Voca repeats what you said in your own words. You say yes — it acts. You say no — it asks again.</p>
+      </div>
+      <div class="idea green">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 24 8 L 24 28 M 24 28 L 16 20 M 24 28 L 32 20" stroke="#16a34a" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M 10 36 Q 24 42 38 36" stroke="#16a34a" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="24" cy="14" r="2.5" fill="#16a34a"/>
+          </svg>
+        </div>
+        <h3>If you're scared, it acts fast</h3>
+        <p>If you're upset or in danger, Voca doesn't wait. It says "Help is coming" and gets a real person on the line in seconds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE COMIC STRIP -->
+<section style="background: var(--cream);">
+  <div class="container">
+    <h2 class="section-title">A story: Lakshmi calls for help.</h2>
+    <p class="section-lede">Lakshmi is 62. She lives in Mandya. She speaks her own kind of Kannada. Today, she needs help.</p>
+
+    <div class="strip">
+
+      <!-- Panel 1 -->
+      <div class="panel warm">
+        <div class="panel-num">01</div>
+        <div class="scene">
+          <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="220" fill="#fff4ec"/>
+            <!-- House outline -->
+            <path d="M 40 180 L 40 110 L 90 80 L 140 110 L 140 180 Z" fill="white" stroke="#c1440e" stroke-width="2"/>
+            <rect x="80" y="135" width="20" height="45" fill="#c1440e" opacity="0.2"/>
+            <rect x="50" y="120" width="20" height="20" fill="#c1440e" opacity="0.2"/>
+            <rect x="110" y="120" width="20" height="20" fill="#c1440e" opacity="0.2"/>
+            <!-- Lakshmi -->
+            <g transform="translate(180, 80)">
+              <path d="M 30 100 Q 18 70 24 50 Q 30 30 50 30 Q 70 30 70 50 Q 70 70 60 100 Z" fill="#c1440e"/>
+              <circle cx="47" cy="36" r="16" fill="#e8b896"/>
+              <ellipse cx="47" cy="22" rx="12" ry="6" fill="#f8fafc"/>
+              <!-- Sad eyes -->
+              <path d="M 41 36 Q 44 38 47 36" stroke="#1e293b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <path d="M 49 36 Q 52 38 55 36" stroke="#1e293b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <!-- Tear -->
+              <path d="M 44 42 Q 44 48 46 50" stroke="#1f6e8c" stroke-width="1.5" fill="none"/>
+              <!-- Phone -->
+              <rect x="14" y="46" width="14" height="22" rx="3" fill="#1e293b"/>
+              <rect x="16" y="49" width="10" height="14" rx="1" fill="#475569"/>
+              <circle cx="22" cy="44" r="6" fill="#e8b896"/>
+            </g>
+          </svg>
+        </div>
+        <div class="tag">The story begins</div>
+        <h3>Lakshmi picks up the phone.</h3>
+        <p>She is sad. Her husband is shouting at her. She doesn't know where to go. She dials <strong>1092</strong>.</p>
+      </div>
+
+      <!-- Panel 2 -->
+      <div class="panel bad">
+        <div class="panel-num">02</div>
+        <div class="scene">
+          <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="220" fill="#fef2f2"/>
+            <!-- Lakshmi (left) -->
+            <g transform="translate(40, 70)">
+              <path d="M 30 110 Q 18 80 24 60 Q 30 40 50 40 Q 70 40 70 60 Q 70 80 60 110 Z" fill="#c1440e"/>
+              <circle cx="47" cy="46" r="16" fill="#e8b896"/>
+              <ellipse cx="47" cy="32" rx="12" ry="6" fill="#f8fafc"/>
+              <path d="M 41 46 Q 44 48 47 46" stroke="#1e293b" stroke-width="1.5" fill="none"/>
+              <path d="M 49 46 Q 52 48 55 46" stroke="#1e293b" stroke-width="1.5" fill="none"/>
+              <path d="M 41 56 Q 47 52 53 56" stroke="#1e293b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </g>
+            <!-- Speech bubble from Lakshmi -->
+            <g transform="translate(110, 60)">
+              <path d="M 0 30 Q 0 10 20 10 L 80 10 Q 100 10 100 30 L 100 50 Q 100 70 80 70 L 30 70 L 18 80 L 22 70 Q 0 70 0 50 Z" fill="white" stroke="#c1440e" stroke-width="1.5"/>
+              <text x="50" y="36" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#0f172a">Mandya</text>
+              <text x="50" y="50" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#0f172a">Kannada</text>
+            </g>
+            <!-- Agent (right) -->
+            <g transform="translate(220, 70)">
+              <path d="M 30 110 Q 18 80 24 60 Q 30 40 50 40 Q 70 40 70 60 Q 70 80 60 110 Z" fill="#1f6e8c"/>
+              <circle cx="47" cy="46" r="16" fill="#e8b896"/>
+              <path d="M 33 36 Q 47 26 61 36 Q 60 44 47 42 Q 34 44 33 36 Z" fill="#1e293b"/>
+              <!-- Headset -->
+              <path d="M 33 44 Q 33 32 47 30 Q 61 32 61 44" stroke="#0f172a" stroke-width="2" fill="none"/>
+              <!-- Confused face -->
+              <text x="47" y="50" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#1e293b">?</text>
+            </g>
+          </svg>
+        </div>
+        <div class="tag">Today, without Voca</div>
+        <h3>The helper doesn't speak her dialect.</h3>
+        <p>The agent asks her to repeat. Lakshmi has to calm down and try again. <strong>Two precious minutes</strong> are lost — at the hardest moment of her week.</p>
+      </div>
+
+      <!-- Panel 3 -->
+      <div class="panel cool">
+        <div class="panel-num">03</div>
+        <div class="scene">
+          <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="220" fill="#ecf6fa"/>
+            <!-- Sound waves into a listening symbol -->
+            <g transform="translate(160, 110)">
+              <!-- Waves -->
+              <path d="M -100 0 Q -80 -20 -60 0 Q -40 20 -20 0" stroke="#c1440e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <path d="M -90 -20 Q -70 -40 -50 -20" stroke="#e76f29" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+              <path d="M -90 20 Q -70 40 -50 20" stroke="#e76f29" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7"/>
+
+              <!-- Voca mark / center -->
+              <circle cx="0" cy="0" r="50" fill="white" stroke="#c1440e" stroke-width="3"/>
+              <text x="0" y="-2" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="700" fill="#c1440e">V</text>
+              <text x="0" y="14" text-anchor="middle" font-family="sans-serif" font-size="9" letter-spacing="2" font-weight="600" fill="#1f6e8c">LISTENS</text>
+
+              <!-- Right side: ear -->
+              <path d="M 70 -30 Q 90 -30 90 -10 Q 90 20 70 30 Q 60 30 60 20 Q 60 10 65 5 Q 70 0 65 -10 Q 60 -20 70 -30 Z"
+                    fill="none" stroke="#1f6e8c" stroke-width="2.5"/>
+            </g>
+          </svg>
+        </div>
+        <div class="tag">Now imagine Voca</div>
+        <h3>Voca listens — in Lakshmi's exact way of speaking.</h3>
+        <p>It doesn't matter that her Kannada is from Mandya. Voca has been taught to hear how people in different parts of Karnataka actually talk.</p>
+      </div>
+
+      <!-- Panel 4 -->
+      <div class="panel warm">
+        <div class="panel-num">04</div>
+        <div class="scene">
+          <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="220" fill="#fff4ec"/>
+            <!-- Voice prosody waveform with hearts -->
+            <g transform="translate(50, 110)">
+              <path d="M 0 0 L 220 0" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
+              <!-- Wave with spikes -->
+              <path d="M 0 0 L 20 -8 L 30 6 L 40 -3 L 50 -25 L 60 -10 L 70 -35 L 80 -8 L 90 0 L 110 -22 L 130 6 L 150 -28 L 170 -5 L 190 -8 L 210 0 L 220 0"
+                    stroke="#c1440e" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+              <!-- Heart marker on biggest spike -->
+              <g transform="translate(70, -45)">
+                <path d="M 0 0 Q -8 -8 -8 -14 Q -8 -20 0 -20 Q 8 -20 8 -14 Q 8 -8 0 0 Q -8 -8 -8 -14 M 0 0 Q 8 -8 8 -14"
+                      fill="#dc2626" stroke="#dc2626"/>
+              </g>
+              <!-- Label below -->
+              <text x="110" y="40" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#475569">"distress detected"</text>
+            </g>
+          </svg>
+        </div>
+        <div class="tag">It feels too</div>
+        <h3>Voca hears the worry in Lakshmi's voice.</h3>
+        <p>It can tell when someone is scared, in danger, or in pain — by listening to <strong>how</strong> they speak, not just <strong>what</strong> they say.</p>
+      </div>
+
+      <!-- Panel 5 -->
+      <div class="panel cool">
+        <div class="panel-num">05</div>
+        <div class="scene">
+          <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="220" fill="#ecf6fa"/>
+            <!-- Speech bubble back to Lakshmi -->
+            <g transform="translate(40, 50)">
+              <path d="M 0 30 Q 0 10 20 10 L 220 10 Q 240 10 240 30 L 240 90 Q 240 110 220 110 L 50 110 L 30 130 L 38 110 Q 0 110 0 90 Z"
+                    fill="white" stroke="#1f6e8c" stroke-width="2"/>
+              <text x="120" y="50" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="600" fill="#0f172a">"I hear you.</text>
+              <text x="120" y="70" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="600" fill="#0f172a">I'm with you.</text>
+              <text x="120" y="90" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="600" fill="#c1440e">Help is coming."</text>
+            </g>
+          </svg>
+        </div>
+        <div class="tag">It speaks back gently</div>
+        <h3>Voca speaks to Lakshmi, in her own dialect.</h3>
+        <p>It doesn't say a long script. It says the right thing, in the right tone, in the right language — <em>"I hear you. I'm with you. Help is coming."</em></p>
+      </div>
+
+      <!-- Panel 6 -->
+      <div class="panel good">
+        <div class="panel-num">06</div>
+        <div class="scene">
+          <svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg">
+            <rect width="320" height="220" fill="#ecfdf5"/>
+            <!-- Stopwatch -->
+            <g transform="translate(160, 110)">
+              <circle cx="0" cy="0" r="60" fill="white" stroke="#16a34a" stroke-width="3"/>
+              <line x1="0" y1="-50" x2="0" y2="-58" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+              <line x1="50" y1="0" x2="58" y2="0" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+              <line x1="0" y1="50" x2="0" y2="58" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+              <line x1="-50" y1="0" x2="-58" y2="0" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+              <line x1="0" y1="0" x2="22" y2="-32" stroke="#c1440e" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="0" cy="0" r="5" fill="#c1440e"/>
+              <text x="0" y="80" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="700" fill="#16a34a">2.5 sec</text>
+              <text x="0" y="-66" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="600" letter-spacing="1" fill="#0f172a">FROM CALL TO HUMAN</text>
+            </g>
+          </svg>
+        </div>
+        <div class="tag">A real person joins — fast</div>
+        <h3>In about 3 seconds, an agent is on the line.</h3>
+        <p>The agent already knows what's wrong, in Lakshmi's own words. The agent already sees that Lakshmi is in distress. The first words spoken are exactly the right ones.</p>
+      </div>
+
+      <!-- Panel 7: Full width happy ending -->
+      <div class="panel good full">
+        <div class="panel-num">07</div>
+        <div class="scene" style="height: 200px;">
+          <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="600" height="200" fill="#ecfdf5"/>
+            <!-- Lakshmi -->
+            <g transform="translate(70, 50)">
+              <path d="M 30 100 Q 18 70 24 50 Q 30 30 50 30 Q 70 30 70 50 Q 70 70 60 100 Z" fill="#c1440e"/>
+              <circle cx="47" cy="36" r="16" fill="#e8b896"/>
+              <ellipse cx="47" cy="22" rx="12" ry="6" fill="#f8fafc"/>
+              <path d="M 41 36 Q 44 34 47 36" stroke="#1e293b" stroke-width="1.5" fill="none"/>
+              <path d="M 49 36 Q 52 34 55 36" stroke="#1e293b" stroke-width="1.5" fill="none"/>
+              <path d="M 41 46 Q 47 52 53 46" stroke="#16a34a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            </g>
+            <!-- Heart bridge -->
+            <g transform="translate(160, 80)">
+              <path d="M 0 0 L 280 0" stroke="#16a34a" stroke-width="3" stroke-dasharray="6 6"/>
+              <g transform="translate(140, 0)">
+                <path d="M 0 0 Q -10 -10 -10 -18 Q -10 -26 0 -26 Q 10 -26 10 -18 Q 10 -10 0 0 Q -10 -10 -10 -18"
+                      fill="#16a34a" stroke="#16a34a"/>
+                <path d="M 0 0 Q 10 -10 10 -18" stroke="#16a34a" fill="none"/>
+              </g>
+            </g>
+            <!-- Agent -->
+            <g transform="translate(450, 50)">
+              <path d="M 30 100 Q 18 70 24 50 Q 30 30 50 30 Q 70 30 70 50 Q 70 70 60 100 Z" fill="#1f6e8c"/>
+              <circle cx="47" cy="36" r="16" fill="#e8b896"/>
+              <path d="M 33 26 Q 47 16 61 26 Q 60 34 47 32 Q 34 34 33 26 Z" fill="#1e293b"/>
+              <path d="M 33 34 Q 33 22 47 20 Q 61 22 61 34" stroke="#0f172a" stroke-width="2" fill="none"/>
+              <path d="M 41 46 Q 47 52 53 46" stroke="#16a34a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            </g>
+            <!-- Sparkles -->
+            <text x="300" y="40" text-anchor="middle" font-size="20" fill="#16a34a">✦</text>
+            <text x="240" y="160" text-anchor="middle" font-size="14" fill="#16a34a">✦</text>
+            <text x="360" y="160" text-anchor="middle" font-size="14" fill="#16a34a">✦</text>
+          </svg>
+        </div>
+        <div class="tag">Happy ending</div>
+        <h3>Lakshmi gets help. Without having to repeat herself.</h3>
+        <p>That is what Voca does — every minute, every shift, in every language and every dialect of India.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- BIG NUMBERS -->
+<section style="background: white;">
+  <div class="container">
+    <h2 class="section-title">Out of every 10 people who call for help today...</h2>
+    <p class="section-lede">…only about 3 say they were really heard. With Voca, almost 9 out of 10 do. Same callers, same shift.</p>
+
+    <div class="big-stats">
+      <div class="stat-big before">
+        <div class="label">Today</div>
+        <div class="num">3 / 10</div>
+        <div class="sub">people feel they were heard</div>
+        <div class="stick-row">😞 😞 😞 😐 😐 😐 😐 🙂 🙂 🙂</div>
+      </div>
+      <div class="stat-big after">
+        <div class="label">With Voca</div>
+        <div class="num">9 / 10</div>
+        <div class="sub">people feel they were heard</div>
+        <div class="stick-row">🙂 🙂 🙂 🙂 🙂 🙂 🙂 🙂 🙂 😐</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS - 4 STEPS -->
+<section style="background: var(--cream);">
+  <div class="container">
+    <h2 class="section-title">How does Voca work? Just four steps.</h2>
+    <p class="section-lede">No big technical words. This is the whole product.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">👂</div>
+        <div class="num-circle">1</div>
+        <h4>Listen</h4>
+        <p>Voca hears what you say, in your own way of speaking.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">🤔</div>
+        <div class="num-circle">2</div>
+        <h4>Understand</h4>
+        <p>It figures out what you mean — and how you feel.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">🪞</div>
+        <div class="num-circle">3</div>
+        <h4>Check</h4>
+        <p>It says back what it heard, and asks: "Is this right?"</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">🤝</div>
+        <div class="num-circle">4</div>
+        <h4>Help</h4>
+        <p>If yes — it acts. If you're upset — it brings a real person.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section style="background: white;">
+  <div class="container">
+    <h2 class="section-title">Where Voca is going.</h2>
+    <p class="section-lede">From one helpline in Karnataka — to every helpline in India.</p>
+
+    <div class="roadmap-row">
+      <div class="stop">
+        <div class="dot"></div>
+        <div class="when">Aug 2026</div>
+        <div class="what">First pilot — 1092 helpline, Karnataka</div>
+      </div>
+      <div class="stop">
+        <div class="dot"></div>
+        <div class="when">Feb 2027</div>
+        <div class="what">More helplines — children, women, Tamil Nadu</div>
+      </div>
+      <div class="stop">
+        <div class="dot"></div>
+        <div class="when">Aug 2027</div>
+        <div class="what">National 112 emergency line · 12 languages</div>
+      </div>
+      <div class="stop">
+        <div class="dot"></div>
+        <div class="when">Aug 2028</div>
+        <div class="what">A national platform on Bhashini</div>
+      </div>
+      <div class="stop">
+        <div class="dot"></div>
+        <div class="when">Beyond</div>
+        <div class="what">Every helpline in India · all 22 languages</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<section style="background: var(--paper);">
+  <div class="container">
+    <div class="bottom-cta">
+      <h2>The biggest failure on a helpline is not <em>"no answer."</em><br/>It is the <em>wrong answer</em>, because the right person was never understood.</h2>
+      <p>Voca is built so that being understood comes before being answered. For Karnataka first. Then for every Indian who picks up a phone for help.</p>
+      <div style="display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+        <a href="scenarios.html" class="btn btn-primary">See real-life stories →</a>
+        <a href="architecture.html" class="btn btn-ghost">For the technical reader</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div><strong>Voca</strong> · the AI bridge between citizen and agent · made in Bharat</div>
+    <div>AI for Bharat 2 · PAN IIT Bangalore × Govt. of Karnataka · Theme 12</div>
+  </div>
+</footer>
+
+</body>
+</html>

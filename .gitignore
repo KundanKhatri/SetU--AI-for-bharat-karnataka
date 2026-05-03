@@ -1,0 +1,76 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node / npm (for any future build tooling)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+
+# Python (for any future model serving / scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+ENV/
+.python-version
+.pytest_cache/
+
+# Models, data, secrets — NEVER commit
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.onnx
+*.ggml
+*.gguf
+models/
+data/
+checkpoints/
+fine-tunes/
+*.wav
+*.mp3
+*.m4a
+*.flac
+audio_samples/
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Build output
+dist/
+build/
+.next/
+out/
+
+# Logs
+logs/
+*.log
+
+# OS / system
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Vercel local
+.vercel/
