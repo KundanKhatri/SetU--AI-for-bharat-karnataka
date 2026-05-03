@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Setu — Real-life scenarios & impact</title>
-<meta name="description" content="Four real personas calling 1092 — what happens today vs. with Setu. Before/after data, impact charts, funnel comparison, time-to-help reduction." />
+<title>Voca — Real-life scenarios & impact</title>
+<meta name="description" content="Four real personas calling 1092 — what happens today vs. with Voca. Before/after data, impact charts, funnel comparison, time-to-help reduction." />
 <style>
   :root {
     --ink: #0f172a;
@@ -139,14 +139,14 @@
     color: white; font-weight: 700; font-size: 14px; flex-shrink: 0;
   }
   .turn.citizen .who { background: var(--saffron); }
-  .turn.setu .who    { background: var(--teal); }
+  .turn.voca .who    { background: var(--teal); }
   .turn.agent .who   { background: var(--green-2); }
   .bubble {
     background: var(--cream); border: 1px solid var(--rule);
     border-radius: 14px; padding: 14px 16px; max-width: 70%;
     font-size: 14.5px; line-height: 1.55;
   }
-  .turn.setu .bubble { background: #f0f9ff; border-color: #bae6fd; }
+  .turn.voca .bubble { background: #f0f9ff; border-color: #bae6fd; }
   .turn.agent .bubble { background: var(--green-bg); border-color: #a7f3d0; }
   .turn.right .bubble {
     border-radius: 14px 14px 4px 14px;
@@ -281,9 +281,9 @@
 <nav class="nav">
   <div class="nav-inner">
     <a class="brand" href="index.html">
-      <div class="brand-mark">सेतु</div>
+      <div class="brand-mark">V</div>
       <div>
-        <div class="brand-name">Setu</div>
+        <div class="brand-name">Voca</div>
         <div class="brand-sub">Real-life scenarios & impact</div>
       </div>
     </a>
@@ -299,12 +299,12 @@
 <section class="hero">
   <div class="container">
     <h1>Four people. Four calls.<br/>
-      <span class="pop">Two stories per call</span> — one for today, one for tomorrow with Setu.
+      <span class="pop">Two stories per call</span> — one for today, one for tomorrow with Voca.
     </h1>
     <p class="lede">
       The 1092 helpline is not an abstraction. Every shift, real Indians dial it from real distress, in their real languages.
       This page walks through four representative callers — drawn from the actual demographics, dialects, and grievance patterns the helpline serves —
-      and shows what happens to each of them today, and what happens with Setu.
+      and shows what happens to each of them today, and what happens with Voca.
     </p>
   </div>
 </section>
@@ -337,8 +337,8 @@
             Agent speaks standard Kannada. Mandya verb-form "<em>ಬಯ್ತಿದಾನ್</em>" sounds unfamiliar — agent asks her to repeat. She has to compose herself, repeat the sentence in standard Kannada. <strong>2 minutes lost</strong> at the start of a domestic-violence call.
           </div>
           <div class="ba-card after">
-            <div class="lbl">With Setu</div>
-            Mandya-dialect verb-form is in the acoustic eval set. Sentiment fires <em>distress 0.81</em> + lexical risk = HIGH. Setu skips the verification turn, says <em>"I hear you. Help is coming."</em> in her dialect, parallel-routes to a women's-cell-trained agent. <strong>Agent on the line in 2.5 seconds</strong> with full context.
+            <div class="lbl">With Voca</div>
+            Mandya-dialect verb-form is in the acoustic eval set. Sentiment fires <em>distress 0.81</em> + lexical risk = HIGH. Voca skips the verification turn, says <em>"I hear you. Help is coming."</em> in her dialect, parallel-routes to a women's-cell-trained agent. <strong>Agent on the line in 2.5 seconds</strong> with full context.
           </div>
         </div>
       </div>
@@ -362,8 +362,8 @@
             Code-mixed Kannada+English. Agent isn't sure if "renew" means renewal or replacement. Misroutes to grievance-resolution. Resolution takes <strong>11 days</strong> for a 2-day issue.
           </div>
           <div class="ba-card after">
-            <div class="lbl">With Setu</div>
-            Setu interpretation: <em>intent=ration_card_renewal</em>, <em>entities={portal:online}</em>, conf 0.88. Verifies in his dialect: <em>"ನಿಮ್ ರೇಶನ್ ಕಾರ್ಡ್ ರಿನ್ಯೂ ಮಾಡೋಕೆ ಆನ್‌ಲೈನ್ ಸಹಾಯ ಬೇಕಾ?"</em> He confirms. Routed correctly first time. <strong>Resolved in 2 days.</strong>
+            <div class="lbl">With Voca</div>
+            Voca interpretation: <em>intent=ration_card_renewal</em>, <em>entities={portal:online}</em>, conf 0.88. Verifies in his dialect: <em>"ನಿಮ್ ರೇಶನ್ ಕಾರ್ಡ್ ರಿನ್ಯೂ ಮಾಡೋಕೆ ಆನ್‌ಲೈನ್ ಸಹಾಯ ಬೇಕಾ?"</em> He confirms. Routed correctly first time. <strong>Resolved in 2 days.</strong>
           </div>
         </div>
       </div>
@@ -387,8 +387,8 @@
             Agent speaks fluent Kannada but limited English; English/Hindi fluency varies. Priya repeats herself, switches between Hindi and English, audio breaks. <strong>Sentiment escalates</strong> as she feels unheard.
           </div>
           <div class="ba-card after">
-            <div class="lbl">With Setu</div>
-            Code-mixing detected; LLM handles Hinglish natively. Sentiment = fear + sustained anger. Setu paraphrases empathetically, soft-handover to agent fluent in Hindi+English, <strong>full transcript + sentiment timeline</strong> on the agent's screen.
+            <div class="lbl">With Voca</div>
+            Code-mixing detected; LLM handles Hinglish natively. Sentiment = fear + sustained anger. Voca paraphrases empathetically, soft-handover to agent fluent in Hindi+English, <strong>full transcript + sentiment timeline</strong> on the agent's screen.
           </div>
         </div>
       </div>
@@ -412,7 +412,7 @@
             Coastal Karnataka dialect + emergency English. Agent repeats key terms to confirm. <strong>~90 seconds</strong> until ambulance is dispatched. Every second matters in pediatric respiratory emergencies.
           </div>
           <div class="ba-card after">
-            <div class="lbl">With Setu</div>
+            <div class="lbl">With Voca</div>
             Acoustic+lexical risk_signal = HIGH ("<em>ಶ್ವಾಸಕೋಶ ಸಮಸ್ಯೆ</em>" + age 8 + ambulance request). Bypass-verification rule fires. Rapid-ack in his dialect, <strong>parallel ambulance dispatch through the 108 integration in under 6 seconds.</strong>
           </div>
         </div>
@@ -428,7 +428,7 @@
     <div class="eyebrow">A call, in detail</div>
     <h2>Lakshmi's call — annotated turn by turn.</h2>
     <p class="lede">
-      Watch the Setu lifecycle in real time. The orange bubbles are Lakshmi, the teal bubbles are Setu, the green bubble is the agent. Time stamps are real wall-clock targets — production SLO is P95 ≤ 900ms per turn.
+      Watch the Voca lifecycle in real time. The orange bubbles are Lakshmi, the teal bubbles are Voca, the green bubble is the agent. Time stamps are real wall-clock targets — production SLO is P95 ≤ 900ms per turn.
     </p>
 
     <div class="dialogue">
@@ -445,7 +445,7 @@
       </div>
 
       <!-- Turn 1: STT -->
-      <div class="turn setu">
+      <div class="turn voca">
         <div class="who">S</div>
         <div class="bubble">
           <div class="ts">t = 0.2 s · STT</div>
@@ -460,7 +460,7 @@
       </div>
 
       <!-- Turn 2: Sentiment -->
-      <div class="turn setu">
+      <div class="turn voca">
         <div class="who">S</div>
         <div class="bubble">
           <div class="ts">t = 0.4 s · sentiment</div>
@@ -475,7 +475,7 @@
       </div>
 
       <!-- Turn 3: LLM interpret -->
-      <div class="turn setu">
+      <div class="turn voca">
         <div class="who">S</div>
         <div class="bubble">
           <div class="ts">t = 0.6 s · interpret</div>
@@ -491,7 +491,7 @@
       </div>
 
       <!-- Turn 4: FSM bypass -->
-      <div class="turn setu">
+      <div class="turn voca">
         <div class="who">S</div>
         <div class="bubble">
           <div class="ts">t = 0.6 s · FSM decision</div>
@@ -506,7 +506,7 @@
       </div>
 
       <!-- Turn 5: TTS rapid ack -->
-      <div class="turn setu right">
+      <div class="turn voca right">
         <div class="who">S</div>
         <div class="bubble">
           <div class="ts">t = 0.7 s · TTS out</div>
@@ -522,7 +522,7 @@
         <div class="bubble">
           <div class="ts">t = 2.5 s · agent on the line</div>
           <div class="meta">Agent #4 · women's-cell-trained · Kannada-fluent</div>
-          Setu briefs the agent: <em>"Caller in Mandya, distress 0.81, intent: active domestic violence (conf 0.71). Suggested opener: 'Are you somewhere safe right now?'"</em>
+          Voca briefs the agent: <em>"Caller in Mandya, distress 0.81, intent: active domestic violence (conf 0.71). Suggested opener: 'Are you somewhere safe right now?'"</em>
           <strong>Agent picks up with full context, sentiment timeline visible, 30-second audio replay queued.</strong>
         </div>
       </div>
@@ -547,7 +547,7 @@
     <div class="funnel">
 
       <div class="funnel-card before">
-        <h3 style="color: var(--red);">Today (without Setu)</h3>
+        <h3 style="color: var(--red);">Today (without Voca)</h3>
         <div class="total">100 callers in a typical 1092 shift</div>
 
         <div class="funnel-bar">
@@ -573,11 +573,11 @@
       </div>
 
       <div class="funnel-card after">
-        <h3 style="color: var(--green-2);">With Setu</h3>
+        <h3 style="color: var(--green-2);">With Voca</h3>
         <div class="total">Same 100 callers, same shift</div>
 
         <div class="funnel-bar">
-          <div class="row"><span class="label">Reach an agent or Setu instantly</span><span class="num">100 / 100</span></div>
+          <div class="row"><span class="label">Reach an agent or Voca instantly</span><span class="num">100 / 100</span></div>
           <div class="track"><div class="fill" style="width: 100%">100</div></div>
         </div>
         <div class="funnel-bar">
@@ -608,7 +608,7 @@
     <div class="eyebrow">The dashboard</div>
     <h2>What the State sees, every day.</h2>
     <p class="lede">
-      Live operational dashboard a Karnataka IAS officer and a Setu CTO would look at together. Every number maps to an SLO with a named owner.
+      Live operational dashboard a Karnataka IAS officer and a Voca CTO would look at together. Every number maps to an SLO with a named owner.
       Targets shown; live numbers are illustrative.
     </p>
 
@@ -691,7 +691,7 @@
     </p>
 
     <div class="timing">
-      <h3 style="color: var(--red); margin-bottom: 4px;">Today (without Setu)</h3>
+      <h3 style="color: var(--red); margin-bottom: 4px;">Today (without Voca)</h3>
       <div style="font-size: 12.5px; color: #64748b; margin-bottom: 10px;">Time-to-action by call type, baseline measured against Karnataka 1092 patterns.</div>
       <div class="row-bar">
         <div class="name">Routine grievance<span class="sub">eg. ration card portal</span></div>
@@ -709,8 +709,8 @@
         <div class="num">95s</div>
       </div>
 
-      <h3 style="color: var(--green-2); margin: 30px 0 4px;">With Setu</h3>
-      <div style="font-size: 12.5px; color: #64748b; margin-bottom: 10px;">Same call types. The bypass-verification rule fires for distress; Setu rapid-acks then parallel-routes.</div>
+      <h3 style="color: var(--green-2); margin: 30px 0 4px;">With Voca</h3>
+      <div style="font-size: 12.5px; color: #64748b; margin-bottom: 10px;">Same call types. The bypass-verification rule fires for distress; Voca rapid-acks then parallel-routes.</div>
       <div class="row-bar">
         <div class="name">Routine grievance</div>
         <div class="track"><div class="fill after" style="width: 24%">~50s · verify in dialect, route correctly</div></div>
@@ -728,7 +728,7 @@
       </div>
 
       <div style="margin-top: 30px; padding: 16px 18px; background: var(--green-bg); border: 1px solid #a7f3d0; border-radius: 10px; font-size: 14px; color: #064e3b;">
-        <strong>For the calls that matter most — distress, emergency — Setu compresses time-to-help from minutes to seconds.</strong>
+        <strong>For the calls that matter most — distress, emergency — Voca compresses time-to-help from minutes to seconds.</strong>
         For routine grievances, it cuts call-handling time by ~75% by routing correctly the first time.
       </div>
     </div>
@@ -742,7 +742,7 @@
     <h2>Karnataka districts by dialect-mismatch risk.</h2>
     <p class="lede">
       Where do callers most often go unheard today? The districts where local dialect diverges most from the standard Kannada that 1092 agents are trained on.
-      Setu's first-90-day priority is the dark-orange districts.
+      Voca's first-90-day priority is the dark-orange districts.
     </p>
 
     <div class="map-card">
@@ -834,7 +834,7 @@
       <h2 style="margin: 0 auto 18px; max-width: 760px;">
         Real people. Real dialects. Real distress.
         <br/>
-        <span style="color: var(--saffron);">Setu is built so they're heard the first time.</span>
+        <span style="color: var(--saffron);">Voca is built so they're heard the first time.</span>
       </h2>
       <div style="display: inline-flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 16px;">
         <a href="index.html" style="background: var(--ink); color: white; padding: 12px 20px; border-radius: 10px; border: 0; font-weight: 500;">← Back to overview</a>
@@ -846,7 +846,7 @@
 
 <footer>
   <div class="foot-inner">
-    <div><strong>Setu</strong> · the AI bridge between citizen and agent</div>
+    <div><strong>Voca</strong> · the AI bridge between citizen and agent</div>
     <div>AI for Bharat 2 · PAN IIT Bangalore × Govt. of Karnataka · Theme 12</div>
   </div>
 </footer>

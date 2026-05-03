@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Setu — Architecture Blueprint</title>
+<title>Voca — Architecture Blueprint</title>
 <style>
   :root {
     --ink: #0f172a;
@@ -73,9 +73,9 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="meta">Setu · Round 1 Architecture Blueprint · AI for Bharat 2 · Theme 12</div>
+  <div class="meta">Voca · Round 1 Architecture Blueprint · AI for Bharat 2 · Theme 12</div>
   <header>
-    <h1>Setu — the AI <span class="accent">verify-before-act</span> bridge for the 1092 helpline</h1>
+    <h1>Voca — the AI <span class="accent">verify-before-act</span> bridge for the 1092 helpline</h1>
   </header>
   <p class="lede">A voice-to-voice assistive layer for Karnataka's citizen helpline. Hears the caller in their dialect, restates back what it understood, only then acts. Hands off gracefully — with full context — when confidence drops or distress spikes.</p>
 
@@ -90,7 +90,7 @@
 
   <h2><span class="num">01</span> System diagram</h2>
   <div class="diagram">
-    <svg viewBox="0 0 1100 660" role="img" aria-label="Setu system architecture">
+    <svg viewBox="0 0 1100 660" role="img" aria-label="Voca system architecture">
       <defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
           <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8" />
@@ -300,7 +300,7 @@
     <div class="step"><div class="n">2</div><div><strong>t=0.6s</strong> &nbsp; LLM interpretation: <span class="kbd">intent=domestic_violence_in_progress</span>, <span class="kbd">risk=HIGH</span>, conf 0.71. Sentiment HIGH. <strong>FSM bypasses verification.</strong></div></div>
     <div class="step"><div class="n">3</div><div><strong>t=0.7s</strong> &nbsp; TTS rapid-ack in Mandya register: <em>"I hear you. I'm with you. Help is coming. Is your location safe?"</em></div></div>
     <div class="step"><div class="n">4</div><div><strong>t=0.7s</strong> &nbsp; Parallel handover: women's-cell-trained agent, full payload + 30s audio replay queued.</div></div>
-    <div class="step"><div class="n">5</div><div><strong>t=2.5s</strong> &nbsp; Agent picks up with full context. Suggested opener: <em>"Are you somewhere safe right now?"</em> Setu continues to transcribe + suggest in background.</div></div>
+    <div class="step"><div class="n">5</div><div><strong>t=2.5s</strong> &nbsp; Agent picks up with full context. Suggested opener: <em>"Are you somewhere safe right now?"</em> Voca continues to transcribe + suggest in background.</div></div>
   </div>
 
   <h2><span class="num">06</span> Tool stack at a glance</h2>
@@ -334,7 +334,7 @@
   <h2><span class="num">07</span> Why this wins on the rubric</h2>
   <div class="card">
     <table>
-      <thead><tr><th>Criterion (weight)</th><th>How Setu wins it</th></tr></thead>
+      <thead><tr><th>Criterion (weight)</th><th>How Voca wins it</th></tr></thead>
       <tbody>
         <tr><td>Voice-to-voice effectiveness (25%)</td><td>Streaming STT + streaming TTS + ≤ 800ms turn-taking; live phone-call demo at finals</td></tr>
         <tr><td>Verification & guardrails (20%)</td><td>Four-state FSM as load-bearing element; three verification patterns; explicit Correct / Partial / Incorrect modeling</td></tr>
@@ -346,7 +346,7 @@
     </table>
   </div>
 
-  <p class="footer">Setu · the AI bridge between citizen and agent · for the 1092 helpline of Karnataka, then for Bharat.</p>
+  <p class="footer">Voca · the AI bridge between citizen and agent · for the 1092 helpline of Karnataka, then for Bharat.</p>
 </div>
 </body>
 </html>

@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Setu — the AI bridge for India's helplines · AI for Bharat 2</title>
-<meta name="description" content="Setu is a verify-before-act voice AI for India's citizen helplines. Built for the AI for Bharat 2 hackathon — Theme 12: AI for the 1092 Helpline. Dialect-aware, sentiment-aware, audit-logged, on-prem-capable." />
-<meta property="og:title" content="Setu — the AI bridge for India's helplines" />
+<title>Voca — the AI bridge for India's helplines · AI for Bharat 2</title>
+<meta name="description" content="Voca is a verify-before-act voice AI for India's citizen helplines. Built for the AI for Bharat 2 hackathon — Theme 12: AI for the 1092 Helpline. Dialect-aware, sentiment-aware, audit-logged, on-prem-capable." />
+<meta property="og:title" content="Voca — the AI bridge for India's helplines" />
 <meta property="og:description" content="Voice-to-voice AI for India's citizen helplines. Verify before act. Hear in dialect, restate, then act. Hand off to a human when distress spikes — with full context." />
 <meta property="og:type" content="website" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23c1440e'/%3E%3Ctext x='50' y='62' font-family='system-ui' font-size='42' font-weight='700' text-anchor='middle' fill='white'%3ES%3C/text%3E%3C/svg%3E" />
@@ -295,9 +295,9 @@
 <nav class="nav">
   <div class="nav-inner">
     <a class="brand" href="#top">
-      <div class="brand-mark">सेतु</div>
+      <div class="brand-mark">V</div>
       <div>
-        <div class="brand-name">Setu</div>
+        <div class="brand-name">Voca</div>
         <div class="brand-sub">AI for Bharat 2 · Theme 12</div>
       </div>
     </a>
@@ -324,7 +324,7 @@
       comes before being answered.
     </h1>
     <p class="lede">
-      Setu is the AI bridge between citizen and agent — built for Theme 12 of the AI for Bharat 2 hackathon.
+      Voca is the AI bridge between citizen and agent — built for Theme 12 of the AI for Bharat 2 hackathon.
       It hears the caller in her dialect, restates back what it understood, only then acts.
       When confidence drops or distress spikes, it hands off to a human agent — with full context, sentiment timeline, and a suggested opening line.
     </p>
@@ -353,7 +353,7 @@
     </div>
     <div>
       <div class="stat-num">0</div>
-      <div class="stat-label">Systems today that ensure the citizen has been understood before action is taken. That is what Setu fixes.</div>
+      <div class="stat-label">Systems today that ensure the citizen has been understood before action is taken. That is what Voca fixes.</div>
     </div>
   </div>
 </section>
@@ -364,7 +364,7 @@
     <div class="eyebrow">The thesis</div>
     <h2>Verify before act. The four-state lifecycle is the load-bearing rule of the system.</h2>
     <p class="lede">
-      Most voice AI products optimize for hear → respond. Setu inverts this: hear → restate → verify → only then act.
+      Most voice AI products optimize for hear → respond. Voca inverts this: hear → restate → verify → only then act.
       The verification turn is not a usability afterthought. It is the structural element on which the whole product rests.
     </p>
 
@@ -381,7 +381,7 @@
       <div class="lc-rule">
         <strong>The one rule we will not break:</strong>
         no interpretation, however confident, is acted upon without explicit citizen confirmation —
-        <em>except</em> when distress and risk_signal both exceed threshold, in which case Setu rapid-acks and hands off to a human in parallel.
+        <em>except</em> when distress and risk_signal both exceed threshold, in which case Voca rapid-acks and hands off to a human in parallel.
       </div>
     </div>
   </div>
@@ -394,7 +394,7 @@
     <h2>Three engineered layers for dialect — not a bigger model and a hope.</h2>
     <p class="lede">
       Generic LLMs handle written Hindi and written Kannada. They struggle with spoken Mandya Kannada, code-mixed Hinglish,
-      and cultural shorthand that depends on local context. Setu addresses each layer deliberately.
+      and cultural shorthand that depends on local context. Voca addresses each layer deliberately.
     </p>
 
     <div class="three-col">
@@ -430,7 +430,7 @@
     <h2>Sentiment is a routing signal, not a UI badge.</h2>
     <p class="lede">
       Most voice products treat emotion as a colored dot on a dashboard. For 1092, it must change the system's behavior.
-      Setu detects six states from acoustic and lexical signals, continuously, at 500ms granularity.
+      Voca detects six states from acoustic and lexical signals, continuously, at 500ms granularity.
     </p>
 
     <div class="table-wrap">
@@ -474,11 +474,11 @@
     <div class="eyebrow">Architecture</div>
     <h2>One stack. On-prem-capable. No PII to hosted LLMs.</h2>
     <p class="lede">
-      Setu's production path is self-hosted Indian foundation models — Sarvam-1 for interpretation, AI4Bharat IndicConformer for STT, IndicTTS for voice. Bhashini is wired in as a government-blessed fallback. Hosted LLMs are used only at development time on synthetic data.
+      Voca's production path is self-hosted Indian foundation models — Sarvam-1 for interpretation, AI4Bharat IndicConformer for STT, IndicTTS for voice. Bhashini is wired in as a government-blessed fallback. Hosted LLMs are used only at development time on synthetic data.
     </p>
 
     <div class="arch-card">
-      <svg viewBox="0 0 1100 560" role="img" aria-label="Setu architecture">
+      <svg viewBox="0 0 1100 560" role="img" aria-label="Voca architecture">
         <defs>
           <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
             <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8" />
@@ -672,7 +672,7 @@
     <div class="eyebrow">Roadmap</div>
     <h2>Karnataka first. Then every helpline in Bharat — on the same backbone.</h2>
     <p class="lede">
-      Setu's pipeline is language-agnostic at the orchestration layer. Adding a new Indian language is a three-step process — confirm acoustic and TTS coverage, curate the cultural KB for that region, collect a small fine-tune set. Estimated ~2 weeks per language to production quality.
+      Voca's pipeline is language-agnostic at the orchestration layer. Adding a new Indian language is a three-step process — confirm acoustic and TTS coverage, curate the cultural KB for that region, collect a small fine-tune set. Estimated ~2 weeks per language to production quality.
     </p>
 
     <div class="road">
@@ -701,7 +701,7 @@
         <a class="btn btn-ghost" href="infographic.html">One-page brief</a>
       </div>
       <p style="margin-top: 30px; font-size: 14px; color: #94a3b8;">
-        <span class="devanagari">सेतु</span> · <span class="kannada">ಸೇತು</span> · <em>"the bridge"</em><br/>
+        <span class="devanagari">V</span> · <span class="kannada">V</span> · <em>"the bridge"</em><br/>
         for Karnataka, then for Bharat.
       </p>
     </div>
@@ -711,7 +711,7 @@
 <footer>
   <div class="foot-inner">
     <div>
-      <strong>Setu</strong> · the AI bridge between citizen and agent · for the 1092 helpline of Karnataka.
+      <strong>Voca</strong> · the AI bridge between citizen and agent · for the 1092 helpline of Karnataka.
     </div>
     <div>
       Built for AI for Bharat 2 · PAN IIT Bangalore × Govt. of Karnataka · 16 May 2026
