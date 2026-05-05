@@ -2,15 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#fbf8f1" />
 <title>Voca — voice AI for India's helplines · so the citizens hardest to hear are heard first</title>
 <meta name="description" content="Voca is a verify-before-act voice AI for India's citizen helplines. Built on Indian foundation models. Audit-logged. On-prem capable. Starting with Karnataka 1092 — then for every helpline in Bharat." />
 <meta property="og:title" content="Voca — voice AI for India's helplines" />
 <meta property="og:description" content="So the citizens hardest to hear are heard first. Verify-before-act. Built on Indian foundation models. Karnataka first, then Bharat." />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://kundankhatri.github.io/voca/" />
+<meta property="og:url" content="https://kundankhatri.github.io/voca-public/" />
 <meta name="twitter:card" content="summary_large_image" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23c1440e'/%3E%3Ctext x='50' y='66' font-family='system-ui' font-size='52' font-weight='700' text-anchor='middle' fill='white'%3EV%3C/text%3E%3C/svg%3E" />
+<!-- Favicon: artistic V-as-voice-bridge with ascending signal dots -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c1440e'/%3E%3Cstop offset='100%25' stop-color='%23e76f29'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Cpath d='M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='50' cy='56' r='2.2' fill='white'/%3E%3Ccircle cx='50' cy='46' r='1.8' fill='white' fill-opacity='0.7'/%3E%3Ccircle cx='50' cy='36' r='1.4' fill='white' fill-opacity='0.5'/%3E%3C/svg%3E" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c1440e'/%3E%3Cstop offset='100%25' stop-color='%23e76f29'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Cpath d='M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='50' cy='56' r='2.2' fill='white'/%3E%3Ccircle cx='50' cy='46' r='1.8' fill='white' fill-opacity='0.7'/%3E%3Ccircle cx='50' cy='36' r='1.4' fill='white' fill-opacity='0.5'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -38,7 +41,24 @@
     --shadow: 0 1px 0 rgba(0,0,0,.04), 0 22px 60px -28px rgba(0,0,0,.28);
     --serif: "Fraunces", ui-serif, Georgia, serif;
     --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+    /* Responsive padding scale */
+    --pad-section: 140px;
+    --pad-x: 24px;
   }
+  @media (max-width: 800px) {
+    :root {
+      --pad-section: 90px;
+      --pad-x: 20px;
+    }
+  }
+  @media (max-width: 480px) {
+    :root {
+      --pad-section: 64px;
+      --pad-x: 18px;
+    }
+  }
+
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   html, body {
@@ -46,13 +66,37 @@
     font: 17px/1.6 var(--sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  @media (max-width: 480px) {
+    html, body { font-size: 16px; }
   }
   a { color: var(--teal); text-decoration: none; border-bottom: 1px solid rgba(31,110,140,.25); transition: all .15s; }
   a:hover { color: var(--saffron); border-bottom-color: var(--saffron); }
   ::selection { background: var(--saffron); color: white; }
-  img { max-width: 100%; display: block; }
+  img, svg { max-width: 100%; display: block; }
 
-  /* Nav */
+  /* === LOGO COMPONENT === */
+  .logo-svg { display: block; }
+  .logo-svg path, .logo-svg circle, .logo-svg rect { transition: all .3s ease; }
+
+  /* Animated logo (used in hero) */
+  @keyframes ringPulse {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50%      { opacity: 0.95; transform: scale(1.05); }
+  }
+  @keyframes dotPulse {
+    0%, 100% { opacity: 0.4; }
+    50%      { opacity: 1; }
+  }
+  .logo-hero .pulse-1 { animation: dotPulse 2.4s ease-in-out infinite; }
+  .logo-hero .pulse-2 { animation: dotPulse 2.4s ease-in-out infinite .8s; }
+  .logo-hero .pulse-3 { animation: dotPulse 2.4s ease-in-out infinite 1.6s; }
+  @media (prefers-reduced-motion: reduce) {
+    .logo-hero .pulse-1, .logo-hero .pulse-2, .logo-hero .pulse-3 { animation: none; opacity: 0.85; }
+  }
+
+  /* === NAV === */
   .nav {
     position: sticky; top: 0; z-index: 30;
     backdrop-filter: saturate(140%) blur(12px); -webkit-backdrop-filter: saturate(140%) blur(12px);
@@ -60,19 +104,14 @@
     border-bottom: 1px solid var(--rule);
   }
   .nav-inner {
-    max-width: 1200px; margin: 0 auto; padding: 14px 24px;
+    max-width: 1200px; margin: 0 auto; padding: 14px var(--pad-x);
     display: flex; align-items: center; justify-content: space-between; gap: 16px;
   }
   .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; border: 0; }
-  .brand-mark {
-    width: 36px; height: 36px; border-radius: 9px;
-    background: linear-gradient(135deg, var(--saffron), var(--saffron-2));
-    display: grid; place-items: center;
-    color: white; font-weight: 700; font-size: 16px; letter-spacing: .05em;
-    box-shadow: inset 0 -2px 0 rgba(0,0,0,.15);
-  }
-  .brand-name { font-weight: 700; color: var(--ink); letter-spacing: -.02em; }
+  .brand-logo { width: 38px; height: 38px; flex-shrink: 0; }
+  .brand-name { font-weight: 700; color: var(--ink); letter-spacing: -.02em; line-height: 1.1; }
   .brand-sub { font-size: 11px; color: #64748b; letter-spacing: .14em; text-transform: uppercase; }
+  @media (max-width: 480px) { .brand-sub { display: none; } }
   .nav-links { display: flex; gap: 22px; align-items: center; }
   .nav-links a { color: var(--ink-2); border: 0; font-size: 14px; font-weight: 500; }
   .nav-links a:hover { color: var(--saffron); }
@@ -82,16 +121,14 @@
     transition: background .15s;
   }
   .nav-cta:hover { background: var(--saffron); }
-  @media (max-width: 800px) {
+  @media (max-width: 900px) {
     .nav-links a:not(.nav-cta) { display: none; }
   }
 
-  /* Section base */
-  section { padding: 120px 24px; position: relative; }
-  section.tight { padding: 80px 24px; }
+  /* === SECTION BASE === */
+  section { padding: var(--pad-section) var(--pad-x); position: relative; }
   .container { max-width: 1100px; margin: 0 auto; }
 
-  /* Eyebrow */
   .eyebrow {
     font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
     color: var(--teal); font-weight: 600; margin-bottom: 18px;
@@ -101,17 +138,18 @@
 
   h1, h2, h3 { font-family: var(--serif); letter-spacing: -.025em; }
   .display-2 {
-    font-size: clamp(34px, 5vw, 60px); line-height: 1.05;
+    font-size: clamp(28px, 5vw, 60px); line-height: 1.05;
     font-weight: 600; font-family: var(--serif); letter-spacing: -.03em;
+    margin: 0 0 22px;
   }
   .display-2 em { color: var(--saffron); font-style: italic; }
   .lede {
-    font-size: 20px; line-height: 1.55; color: var(--ink-3); max-width: 720px;
+    font-size: clamp(16px, 2vw, 20px); line-height: 1.6; color: var(--ink-3); max-width: 720px;
   }
 
-  /* HERO */
+  /* === HERO === */
   .hero {
-    padding: 110px 24px 130px;
+    padding: clamp(70px, 10vw, 110px) var(--pad-x) clamp(80px, 12vw, 130px);
     background:
       radial-gradient(900px 380px at 12% 90%, rgba(193,68,14,.10), transparent 60%),
       radial-gradient(900px 380px at 88% 10%, rgba(31,110,140,.07), transparent 60%),
@@ -123,10 +161,14 @@
     background: white; border: 1px solid var(--rule); border-radius: 999px;
     padding: 7px 16px; font-size: 12px; color: #475569; letter-spacing: .04em;
     margin-bottom: 28px;
+    max-width: 100%; flex-wrap: wrap;
   }
-  .hero-stamp .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--saffron); }
+  .hero-stamp .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--saffron); flex-shrink: 0; }
+  @media (max-width: 480px) {
+    .hero-stamp { font-size: 11px; padding: 6px 12px; }
+  }
   .hero h1 {
-    font-size: clamp(40px, 6.4vw, 88px); line-height: 1.02;
+    font-size: clamp(30px, 6.4vw, 80px); line-height: 1.04;
     margin: 0 0 28px; max-width: 1000px;
     letter-spacing: -.035em; font-weight: 600;
   }
@@ -141,12 +183,10 @@
     padding: 14px 20px;
     background: rgba(255,255,255,.5);
     border-radius: 0 12px 12px 0;
-    font-size: 16px; color: var(--ink-2);
-    font-family: var(--serif);
-    font-style: italic;
+    font-size: clamp(14px, 1.6vw, 16px); color: var(--ink-2);
+    font-family: var(--serif); font-style: italic;
   }
   .hero-quote em { color: #64748b; display: block; margin-top: 8px; font-size: 12px; font-style: normal; letter-spacing: .04em; font-family: var(--sans); }
-
   .hero-cta { margin-top: 44px; display: flex; flex-wrap: wrap; gap: 12px; }
   .btn {
     display: inline-flex; align-items: center; gap: 8px;
@@ -160,14 +200,16 @@
   .btn-primary:hover { background: var(--saffron); }
   .btn-ghost { background: transparent; color: var(--ink) !important; border: 1px solid var(--rule) !important; }
   .btn-ghost:hover { border-color: var(--saffron) !important; color: var(--saffron) !important; }
+  @media (max-width: 480px) {
+    .btn { padding: 12px 18px; font-size: 13px; }
+    .hero-cta .btn { flex: 1 1 auto; justify-content: center; }
+  }
 
-  /* PAIN STATS — big serif numbers on dark */
+  /* === PAIN STATS (dark) === */
   .pain {
-    padding: 130px 24px;
-    background: var(--ink);
-    color: white;
-    position: relative;
-    overflow: hidden;
+    padding: var(--pad-section) var(--pad-x);
+    background: var(--ink); color: white;
+    position: relative; overflow: hidden;
   }
   .pain::before {
     content: ""; position: absolute; inset: 0;
@@ -180,7 +222,7 @@
   .pain .eyebrow { color: #fb923c; }
   .pain .eyebrow::before { background: #fb923c; }
   .pain h2 {
-    font-size: clamp(34px, 5vw, 64px); line-height: 1.05; max-width: 940px;
+    font-size: clamp(28px, 5vw, 60px); line-height: 1.08; max-width: 940px;
     margin: 0 0 50px; letter-spacing: -.03em; font-weight: 600;
     color: white;
   }
@@ -189,31 +231,37 @@
   .stats-row {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 50px; margin-top: 70px;
   }
-  @media (max-width: 800px) { .stats-row { grid-template-columns: 1fr; gap: 32px; } }
+  @media (max-width: 800px) { .stats-row { grid-template-columns: 1fr; gap: 40px; } }
   .stat-num {
     font-family: var(--serif);
-    font-size: clamp(80px, 11vw, 150px); line-height: 1; font-weight: 600;
+    font-size: clamp(64px, 11vw, 140px); line-height: 1; font-weight: 600;
     letter-spacing: -.05em; color: var(--saffron-2);
     margin-bottom: 8px;
   }
   .stat-num small { font-size: .42em; vertical-align: top; opacity: .8; margin-left: .15em; letter-spacing: 0; }
   .stat-label { font-size: 15px; color: #cbd5e1; max-width: 280px; line-height: 1.5; }
 
-  /* IN 90 SECONDS — a real call narrated */
+  /* === REAL CALL TIMELINE === */
   .real-call {
-    padding: 130px 24px;
+    padding: var(--pad-section) var(--pad-x);
     background: var(--paper-2);
     border-bottom: 1px solid var(--rule);
   }
   .timeline-frame {
     margin-top: 60px; background: white; border: 1px solid var(--rule);
-    border-radius: 24px; padding: 50px 36px; box-shadow: var(--shadow);
+    border-radius: 24px; padding: clamp(28px, 5vw, 50px) clamp(20px, 3.6vw, 36px);
+    box-shadow: var(--shadow);
   }
   .step-row { display: grid; grid-template-columns: 100px 1fr; gap: 24px; padding: 22px 0; border-top: 1px dashed var(--rule); }
   .step-row:first-child { border-top: 0; padding-top: 0; }
   .step-row:last-child { padding-bottom: 0; }
-  .step-when { font-family: var(--serif); font-size: 28px; font-weight: 600; color: var(--ink); letter-spacing: -.02em; }
-  .step-content { padding-top: 4px; }
+  @media (max-width: 600px) {
+    .step-row { grid-template-columns: 70px 1fr; gap: 14px; }
+  }
+  @media (max-width: 480px) {
+    .step-row { grid-template-columns: 1fr; gap: 8px; }
+  }
+  .step-when { font-family: var(--serif); font-size: clamp(22px, 3vw, 28px); font-weight: 600; color: var(--ink); letter-spacing: -.02em; }
   .step-text { font-size: 16px; color: var(--ink-2); line-height: 1.6; }
   .step-text strong { color: var(--ink); }
   .pill-line { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
@@ -232,28 +280,24 @@
   }
   .real-call .footnote strong { color: #052e16; }
 
-  /* THE FLIP — verify-before-act reveal */
-  .flip {
-    padding: 140px 24px;
-    background: var(--paper);
-  }
+  /* === FLIP === */
+  .flip { padding: var(--pad-section) var(--pad-x); background: var(--paper); }
   .flip h2 {
-    font-size: clamp(38px, 5.6vw, 76px); line-height: 1.0; letter-spacing: -.035em;
+    font-size: clamp(30px, 5.6vw, 70px); line-height: 1.05; letter-spacing: -.035em;
     font-weight: 600; max-width: 1000px; margin: 0 0 28px;
   }
   .flip h2 .strike { text-decoration: line-through; text-decoration-color: rgba(185,28,28,.6); text-decoration-thickness: 4px; color: #94a3b8; }
   .flip h2 em { color: var(--saffron); font-style: italic; }
-
   .lifecycle {
     margin-top: 60px; background: white; border: 1px solid var(--rule);
-    border-radius: 24px; padding: 50px; box-shadow: var(--shadow);
+    border-radius: 24px; padding: clamp(28px, 5vw, 50px); box-shadow: var(--shadow);
   }
   .lc-row {
     display: grid; grid-template-columns: repeat(7, auto); align-items: center; justify-content: center; gap: 12px;
   }
   .chip {
     background: var(--cream); border: 1px solid var(--rule); border-radius: 14px;
-    padding: 16px 22px; text-align: center; min-width: 140px;
+    padding: 16px 22px; text-align: center; min-width: 130px;
     transition: transform .15s;
   }
   .chip:hover { transform: translateY(-2px); }
@@ -265,6 +309,7 @@
   @media (max-width: 800px) {
     .lc-row { display: flex; flex-direction: column; }
     .arr { transform: rotate(90deg); }
+    .chip { min-width: 200px; }
   }
   .lc-rule {
     margin-top: 32px; padding: 22px 24px; background: var(--cream); border-radius: 14px; border: 1px solid var(--rule);
@@ -273,21 +318,93 @@
   .lc-rule strong { color: var(--saffron); font-weight: 700; }
   .lc-rule em { color: var(--ink); font-weight: 600; font-style: italic; }
 
-  /* WHAT IT SOUNDS LIKE — sample exchange */
-  .sounds {
-    padding: 140px 24px;
-    background: var(--ink);
-    color: white;
+  /* === LIVE VOICE DEMO (sarvam-style) === */
+  .voice-demo {
+    padding: var(--pad-section) var(--pad-x);
+    background: linear-gradient(180deg, var(--paper) 0%, var(--cream) 100%);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
   }
+  .voice-stage {
+    margin-top: 60px;
+    background: white; border: 1px solid var(--rule); border-radius: 24px;
+    padding: clamp(36px, 6vw, 60px); box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .wave-vis {
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    height: 80px; margin: 0 auto 30px;
+  }
+  .wave-vis span {
+    display: block; width: 4px; border-radius: 2px;
+    background: linear-gradient(180deg, var(--saffron), var(--saffron-2));
+    height: 8px; transition: height .15s ease;
+  }
+  .wave-vis.playing span {
+    animation: waveBars 0.9s ease-in-out infinite;
+  }
+  .wave-vis.playing span:nth-child(1) { animation-delay: 0.0s; }
+  .wave-vis.playing span:nth-child(2) { animation-delay: 0.1s; }
+  .wave-vis.playing span:nth-child(3) { animation-delay: 0.2s; }
+  .wave-vis.playing span:nth-child(4) { animation-delay: 0.3s; }
+  .wave-vis.playing span:nth-child(5) { animation-delay: 0.4s; }
+  .wave-vis.playing span:nth-child(6) { animation-delay: 0.5s; }
+  .wave-vis.playing span:nth-child(7) { animation-delay: 0.4s; }
+  .wave-vis.playing span:nth-child(8) { animation-delay: 0.3s; }
+  .wave-vis.playing span:nth-child(9) { animation-delay: 0.2s; }
+  .wave-vis.playing span:nth-child(10) { animation-delay: 0.1s; }
+  .wave-vis.playing span:nth-child(11) { animation-delay: 0.0s; }
+  .wave-vis.playing span:nth-child(12) { animation-delay: 0.1s; }
+  .wave-vis.playing span:nth-child(13) { animation-delay: 0.2s; }
+  @keyframes waveBars {
+    0%, 100% { height: 8px; }
+    50%      { height: 70px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .wave-vis.playing span { animation: none; height: 30px; }
+  }
+
+  .voice-currently {
+    font-family: var(--serif); font-size: clamp(18px, 2.4vw, 26px);
+    color: var(--ink); line-height: 1.4; min-height: 60px;
+    max-width: 700px; margin: 0 auto 14px;
+  }
+  .voice-currently .tag { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #64748b; font-weight: 600; font-family: var(--sans); display: block; margin-bottom: 8px; }
+  .voice-currently .gloss { display: block; font-family: var(--sans); font-size: 14px; color: #64748b; font-style: italic; margin-top: 8px; }
+
+  .voice-buttons {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    margin-top: 20px;
+  }
+  .voice-btn {
+    background: var(--paper-2); border: 1px solid var(--rule); border-radius: 14px;
+    padding: 14px 18px; cursor: pointer; transition: all .15s;
+    display: inline-flex; align-items: center; gap: 10px;
+    font: inherit; color: var(--ink); font-size: 14px; font-weight: 500;
+  }
+  .voice-btn:hover { border-color: var(--saffron); transform: translateY(-1px); background: white; }
+  .voice-btn:disabled { opacity: 0.4; cursor: wait; }
+  .voice-btn .lang { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #64748b; font-weight: 600; }
+  .voice-btn .play-icon {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--saffron); color: white; display: grid; place-items: center; flex-shrink: 0;
+    font-size: 10px;
+  }
+  .voice-btn.active .play-icon { background: var(--green-2); }
+  .voice-note {
+    margin-top: 28px; font-size: 13px; color: #64748b; max-width: 640px; margin-left: auto; margin-right: auto;
+    line-height: 1.6;
+  }
+
+  /* === SOUNDS — same call with Voca === */
+  .sounds { padding: var(--pad-section) var(--pad-x); background: var(--ink); color: white; }
   .sounds h2 { color: white; }
   .sounds .lede { color: #cbd5e1; }
   .convo {
     margin-top: 60px; background: white; color: var(--ink);
-    border-radius: 24px; padding: 44px; box-shadow: var(--shadow);
+    border-radius: 24px; padding: clamp(24px, 4vw, 44px); box-shadow: var(--shadow);
   }
-  .turn {
-    display: flex; gap: 14px; margin-bottom: 18px;
-  }
+  .turn { display: flex; gap: 14px; margin-bottom: 18px; }
   .turn.right { flex-direction: row-reverse; }
   .turn .who {
     width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
@@ -300,6 +417,9 @@
     background: var(--cream); border: 1px solid var(--rule);
     border-radius: 14px; padding: 14px 18px; max-width: 78%;
     font-size: 15px; line-height: 1.6;
+  }
+  @media (max-width: 600px) {
+    .bubble { max-width: 86%; padding: 12px 14px; font-size: 14px; }
   }
   .turn.voca .bubble { background: var(--teal-soft); border-color: #bae6fd; }
   .turn.agent .bubble { background: var(--green-soft); border-color: #a7f3d0; }
@@ -321,21 +441,14 @@
   }
   .convo-banner strong { color: var(--saffron-2); }
 
-  /* FOR GOVERNMENTS */
-  .gov {
-    padding: 140px 24px;
-    background: var(--paper);
-    border-top: 1px solid var(--rule);
-    border-bottom: 1px solid var(--rule);
-  }
-  .pillars {
-    margin-top: 70px;
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
-  }
+  /* === GOV === */
+  .gov { padding: var(--pad-section) var(--pad-x); background: var(--paper);
+    border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .pillars { margin-top: 70px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
   @media (max-width: 800px) { .pillars { grid-template-columns: 1fr; } }
   .pillar {
     background: white; border: 1px solid var(--rule); border-radius: 18px;
-    padding: 32px 28px; box-shadow: var(--shadow-sm);
+    padding: clamp(24px, 3vw, 32px) clamp(22px, 3vw, 28px); box-shadow: var(--shadow-sm);
   }
   .pillar .num {
     font-family: var(--serif); font-size: 56px; line-height: 1;
@@ -345,16 +458,17 @@
   .pillar h3 { font-size: 22px; line-height: 1.2; margin: 0 0 12px; letter-spacing: -.015em; font-weight: 600; }
   .pillar p { color: var(--ink-3); font-size: 15px; line-height: 1.6; margin: 0; }
   .pillar p strong { color: var(--ink); }
+
   .gov-checklist {
     margin-top: 60px; background: white; border: 1px solid var(--rule);
-    border-radius: 18px; padding: 40px; box-shadow: var(--shadow-sm);
+    border-radius: 18px; padding: clamp(28px, 4vw, 40px); box-shadow: var(--shadow-sm);
   }
   .gov-checklist h3 { font-size: 20px; margin: 0 0 22px; font-family: var(--serif); font-weight: 600; }
   .gov-checklist ul {
     list-style: none; padding: 0; margin: 0;
     display: grid; grid-template-columns: 1fr 1fr; gap: 14px 36px;
   }
-  @media (max-width: 800px) { .gov-checklist ul { grid-template-columns: 1fr; } }
+  @media (max-width: 800px) { .gov-checklist ul { grid-template-columns: 1fr; gap: 12px; } }
   .gov-checklist li {
     display: flex; gap: 10px; align-items: baseline;
     font-size: 15px; color: var(--ink-2); line-height: 1.55;
@@ -365,116 +479,83 @@
   }
   .gov-checklist li strong { color: var(--ink); }
 
-  /* INVESTORS / MARKET */
-  .market {
-    padding: 140px 24px;
-    background: var(--ink);
-    color: white;
-  }
+  /* === MARKET === */
+  .market { padding: var(--pad-section) var(--pad-x); background: var(--ink); color: white; }
   .market h2 { color: white; }
   .market .lede { color: #cbd5e1; }
   .moats { margin-top: 70px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
   @media (max-width: 800px) { .moats { grid-template-columns: 1fr; } }
   .moat {
     background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.10); border-radius: 18px;
-    padding: 32px 28px;
+    padding: clamp(24px, 3vw, 32px) clamp(22px, 3vw, 28px);
   }
   .moat .num { font-family: var(--serif); font-size: 56px; line-height: 1; color: var(--saffron-2); letter-spacing: -.03em; font-weight: 600; margin-bottom: 16px; }
   .moat h3 { font-size: 22px; line-height: 1.2; margin: 0 0 12px; letter-spacing: -.015em; color: white; font-weight: 600; }
   .moat p { color: #cbd5e1; font-size: 14.5px; line-height: 1.6; margin: 0; }
 
-  .market-grid {
-    margin-top: 60px;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
-  }
-  @media (max-width: 800px) { .market-grid { grid-template-columns: 1fr; } }
+  .market-grid { margin-top: 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 600px) { .market-grid { grid-template-columns: 1fr; } }
   .market-card {
     background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.10);
-    border-radius: 18px; padding: 32px 28px;
+    border-radius: 18px; padding: clamp(24px, 3vw, 32px) clamp(22px, 3vw, 28px);
   }
   .market-card .label { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #fb923c; font-weight: 600; }
-  .market-card .big-num { font-family: var(--serif); font-size: 56px; line-height: 1.05; font-weight: 600; letter-spacing: -.03em; color: white; margin: 14px 0 8px; }
+  .market-card .big-num { font-family: var(--serif); font-size: clamp(38px, 5.6vw, 56px); line-height: 1.05; font-weight: 600; letter-spacing: -.03em; color: white; margin: 14px 0 8px; }
   .market-card .desc { color: #cbd5e1; font-size: 14.5px; line-height: 1.55; }
 
-  /* ROADMAP */
-  .roadmap-section {
-    padding: 140px 24px;
-    background: var(--paper);
-  }
-  .roadmap-grid {
-    margin-top: 60px;
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px;
-  }
-  @media (max-width: 800px) { .roadmap-grid { grid-template-columns: 1fr; } }
+  /* === ROADMAP === */
+  .roadmap-section { padding: var(--pad-section) var(--pad-x); background: var(--paper); }
+  .roadmap-grid { margin-top: 60px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .roadmap-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .roadmap-grid { grid-template-columns: 1fr; } }
   .stop {
     background: white; border: 1px solid var(--rule); border-radius: 16px;
     padding: 24px 20px; box-shadow: var(--shadow-sm); position: relative;
   }
-  .stop::after {
-    content: ""; position: absolute; right: -10px; top: 28px;
-    width: 18px; height: 2px; background: var(--rule);
-  }
-  .stop:last-child::after { display: none; }
-  @media (max-width: 800px) { .stop::after { display: none; } }
-  .stop .when {
-    font-size: 11px; color: var(--saffron); letter-spacing: .14em; text-transform: uppercase; font-weight: 700;
-  }
+  .stop .when { font-size: 11px; color: var(--saffron); letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
   .stop .what { font-size: 15px; color: var(--ink); margin-top: 8px; line-height: 1.4; font-weight: 500; }
 
-  /* SUMMIT block */
-  .summit {
-    padding: 140px 24px;
-    background: linear-gradient(180deg, var(--cream), var(--paper));
-  }
+  /* === SUMMIT === */
+  .summit { padding: var(--pad-section) var(--pad-x); background: linear-gradient(180deg, var(--cream), var(--paper)); }
   .summit-card {
     margin-top: 50px; background: white; border: 1px solid var(--rule);
-    border-radius: 24px; padding: 50px; box-shadow: var(--shadow);
+    border-radius: 24px; padding: clamp(32px, 5vw, 50px); box-shadow: var(--shadow);
     display: grid; grid-template-columns: 2fr 1fr; gap: 40px;
   }
-  @media (max-width: 800px) { .summit-card { grid-template-columns: 1fr; } }
-  .summit-card h3 { font-family: var(--serif); font-size: 28px; line-height: 1.15; margin: 0 0 14px; letter-spacing: -.02em; font-weight: 600; }
+  @media (max-width: 800px) { .summit-card { grid-template-columns: 1fr; gap: 28px; } }
+  .summit-card h3 { font-family: var(--serif); font-size: clamp(22px, 3vw, 28px); line-height: 1.15; margin: 0 0 14px; letter-spacing: -.02em; font-weight: 600; }
   .summit-card p { color: var(--ink-3); font-size: 15.5px; line-height: 1.65; margin: 0 0 16px; }
   .summit-meta { background: var(--paper-2); border: 1px solid var(--rule); border-radius: 14px; padding: 22px; }
   .summit-meta .label { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #64748b; font-weight: 600; margin-bottom: 8px; }
   .summit-meta .value { font-size: 14.5px; color: var(--ink); margin-bottom: 14px; line-height: 1.5; }
   .summit-meta .value:last-child { margin-bottom: 0; }
 
-  /* ASK */
-  .ask {
-    padding: 140px 24px;
-    background: var(--ink);
-    color: white;
-  }
+  /* === ASK === */
+  .ask { padding: var(--pad-section) var(--pad-x); background: var(--ink); color: white; }
   .ask h2 { color: white; }
   .ask-card {
     margin-top: 50px; background: white; color: var(--ink);
-    border-radius: 24px; padding: 56px 48px; box-shadow: var(--shadow);
+    border-radius: 24px; padding: clamp(32px, 5vw, 56px) clamp(28px, 5vw, 48px); box-shadow: var(--shadow);
   }
-  .ask-card h3 { font-family: var(--serif); font-size: clamp(28px, 4vw, 42px); line-height: 1.1; letter-spacing: -.02em; margin: 0 0 18px; font-weight: 600; }
+  .ask-card h3 { font-family: var(--serif); font-size: clamp(24px, 4vw, 42px); line-height: 1.1; letter-spacing: -.02em; margin: 0 0 18px; font-weight: 600; }
   .ask-card h3 em { color: var(--saffron); font-style: italic; }
   .ask-card p { font-size: 16px; color: var(--ink-3); margin: 0 0 24px; max-width: 720px; line-height: 1.6; }
   .ask-card p strong { color: var(--ink); }
   .ask-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
-  /* FOOTER */
-  footer {
-    padding: 64px 24px;
-    background: var(--paper-2); border-top: 1px solid var(--rule);
-  }
+  /* === FOOTER === */
+  footer { padding: 64px var(--pad-x); background: var(--paper-2); border-top: 1px solid var(--rule); }
   .foot-inner {
     max-width: 1100px; margin: 0 auto;
     display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 28px;
   }
-  @media (max-width: 800px) { .foot-inner { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 800px) { .foot-inner { grid-template-columns: 1fr 1fr; gap: 24px; } }
+  @media (max-width: 480px) { .foot-inner { grid-template-columns: 1fr; gap: 20px; } }
   .foot-col h4 { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #64748b; font-weight: 600; margin: 0 0 14px; }
   .foot-col a { display: block; color: var(--ink-2); border: 0; font-size: 14px; padding: 4px 0; }
   .foot-col a:hover { color: var(--saffron); }
   .foot-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-  .foot-brand-mark {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--saffron), var(--saffron-2));
-    display: grid; place-items: center; color: white; font-weight: 700; font-size: 14px;
-  }
+  .foot-brand-logo { width: 32px; height: 32px; }
   .foot-brand-name { font-weight: 700; }
   .foot-tagline { color: var(--ink-3); font-size: 14px; line-height: 1.6; max-width: 380px; margin-bottom: 16px; }
   .foot-meta { font-size: 12px; color: #64748b; margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--rule); max-width: 1100px; margin-left: auto; margin-right: auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
@@ -485,10 +566,30 @@
 </head>
 <body>
 
+<!-- ======== REUSABLE LOGO TEMPLATE (inline, used everywhere) ======== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- Gradient definitions used by multiple logo instances -->
+    <linearGradient id="vocaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c1440e"/>
+      <stop offset="100%" stop-color="#e76f29"/>
+    </linearGradient>
+  </defs>
+</svg>
+
 <nav class="nav">
   <div class="nav-inner">
     <a class="brand" href="#top">
-      <div class="brand-mark">V</div>
+      <!-- Logo: artistic V with ascending voice signal dots -->
+      <svg class="brand-logo logo-svg" viewBox="0 0 100 100" aria-label="Voca">
+        <rect width="100" height="100" rx="22" fill="url(#vocaGrad)"/>
+        <path d="M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28"
+              stroke="white" stroke-width="7" fill="none"
+              stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="50" cy="56" r="2.2" fill="white"/>
+        <circle cx="50" cy="46" r="1.8" fill="white" fill-opacity="0.7"/>
+        <circle cx="50" cy="36" r="1.4" fill="white" fill-opacity="0.5"/>
+      </svg>
       <div>
         <div class="brand-name">Voca</div>
         <div class="brand-sub">voice AI for India's helplines</div>
@@ -497,6 +598,7 @@
     <div class="nav-links">
       <a href="#problem">Problem</a>
       <a href="#how">How</a>
+      <a href="#hear">Hear it</a>
       <a href="#governments">For governments</a>
       <a href="#summit">Summit</a>
       <a href="#ask" class="nav-cta">Talk to us</a>
@@ -520,7 +622,7 @@
       Voca is the voice AI for India's helplines, built so being understood comes before being answered. It hears the caller in their dialect, restates back what it understood, only then acts. When distress spikes, it hands off to a human in seconds — with full context.
     </p>
     <div class="hero-cta">
-      <a class="btn btn-primary" href="#how">See how it works →</a>
+      <a class="btn btn-primary" href="#hear">Hear Voca speak →</a>
       <a class="btn btn-ghost" href="#governments">For governments</a>
       <a class="btn btn-ghost" href="story.html">For everyone</a>
     </div>
@@ -537,7 +639,6 @@
     <div class="eyebrow">The gap</div>
     <h2>India isn't one language.<br/>Indian helplines act as if it is.</h2>
     <p class="lede" style="color:#cbd5e1;max-width:760px;">India runs roughly 4.5 billion helpline calls a year — government, banks, insurance, telcos, healthcare. Every single one is a multilingual problem. The agent on the other side speaks one or two languages. The citizen calls in any of hundreds.</p>
-
     <div class="stats-row">
       <div>
         <div class="stat-num">22</div>
@@ -555,36 +656,34 @@
   </div>
 </section>
 
-<!-- IN 90 SECONDS — A REAL CALL -->
+<!-- IN 90 SECONDS -->
 <section class="real-call">
   <div class="container">
     <div class="eyebrow">A real call · today</div>
     <h2 class="display-2">An <em>elderly woman in Mandya</em><br/>picks up the phone.</h2>
     <p class="lede">She is 62. She speaks her dialect. She is in distress. She dials 1092.</p>
-
     <div class="timeline-frame">
       <div class="step-row">
         <div class="step-when">0:00</div>
-        <div class="step-content">
+        <div>
           <div class="step-text"><strong>She speaks in Mandya-Kannada.</strong> The agent on the other side speaks standard Kannada, fluent but not in her register. He doesn't catch her meaning the first time, asks her to repeat.</div>
           <div class="pill-line"><span class="pill bad">distress 0.81</span><span class="pill warn">fear 0.67</span><span class="pill bad">caller losing composure</span></div>
         </div>
       </div>
       <div class="step-row">
         <div class="step-when">0:45</div>
-        <div class="step-content">
+        <div>
           <div class="step-text">She has had to compose herself, repeat the sentence in standard Kannada. Two minutes have passed at the worst moment of her week. The agent now understands.</div>
           <div class="pill-line"><span class="pill warn">2 minutes lost on understanding alone</span></div>
         </div>
       </div>
       <div class="step-row">
         <div class="step-when">2:00</div>
-        <div class="step-content">
+        <div>
           <div class="step-text">The agent dispatches help. <strong>The system worked. The citizen did not feel served.</strong></div>
         </div>
       </div>
     </div>
-
     <div class="footnote">
       <strong>This is the daily reality of citizen helplines in a 22-language country.</strong> Multiplied by 100,000 calls per day, across 1,200 helplines. Voca is the layer that closes that gap.
     </div>
@@ -600,7 +699,6 @@
       Voca: <em>hear → restate → verify → only then act</em>.
     </h2>
     <p class="lede">The verification turn is not a usability feature. It is the structural rule of the system. No interpretation, however confident, is acted upon without explicit citizen confirmation. There is one exception, and it is the most important rule of the product.</p>
-
     <div class="lifecycle">
       <div class="lc-row">
         <div class="chip"><div class="n">State 1</div><div class="name">Heard</div></div>
@@ -618,15 +716,67 @@
   </div>
 </section>
 
-<!-- WHAT IT SOUNDS LIKE -->
+<!-- =============== HEAR VOCA SPEAK (live demo) =============== -->
+<section class="voice-demo" id="hear">
+  <div class="container">
+    <div class="eyebrow">Hear Voca speak</div>
+    <h2 class="display-2">Press play.<br/>This is the <em>voice on the line</em>.</h2>
+    <p class="lede">Three of Voca's actual lines, spoken in three Indian languages. The browser plays them live. Best heard on a laptop or phone with the volume up — the warmth is in the prosody.</p>
+
+    <div class="voice-stage">
+      <div class="wave-vis" id="waveVis" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="voice-currently" id="voiceCurrently">
+        <span class="tag">Press a button below</span>
+        <span id="voiceText">Voca speaks back to the citizen — in her language, in her register.</span>
+      </div>
+
+      <div class="voice-buttons" id="voiceButtons">
+        <button class="voice-btn" data-lang="en-IN" data-text="I hear you. I am with you. Help is coming. Are you somewhere safe right now?" data-tag="English · rapid-ack">
+          <span class="play-icon">▶</span>
+          <span>
+            <span class="lang">English</span><br/>
+            "I hear you. Help is coming."
+          </span>
+        </button>
+        <button class="voice-btn" data-lang="hi-IN" data-text="मैं सुन रही हूँ। मैं आपके साथ हूँ। मदद आ रही है। आप अभी सुरक्षित जगह पर हैं?" data-tag="Hindi · rapid-ack">
+          <span class="play-icon">▶</span>
+          <span>
+            <span class="lang">हिन्दी</span><br/>
+            "मैं सुन रही हूँ। मदद आ रही है।"
+          </span>
+        </button>
+        <button class="voice-btn" data-lang="kn-IN" data-text="ನಾನು ಕೇಳ್ತಿದೀನಿ. ಜೊತೆಗಿರ್ತೀನಿ. ಸಹಾಯ ಬರ್ತಾ ಇದೆ. ನಿಮ್ಮ ಜಾಗ ಸುರಕ್ಷಿತಾನ?" data-tag="Kannada · rapid-ack">
+          <span class="play-icon">▶</span>
+          <span>
+            <span class="lang">ಕನ್ನಡ</span><br/>
+            "ನಾನು ಕೇಳ್ತಿದೀನಿ. ಸಹಾಯ ಬರ್ತಾ ಇದೆ."
+          </span>
+        </button>
+        <button class="voice-btn" data-lang="en-IN" data-text="Just to confirm — you need help renewing your ration card on the online portal. Is that right?" data-tag="English · verification">
+          <span class="play-icon">▶</span>
+          <span>
+            <span class="lang">English · verify</span><br/>
+            "Just to confirm — is that right?"
+          </span>
+        </button>
+      </div>
+
+      <p class="voice-note">
+        <strong>What you're hearing now:</strong> your browser's built-in voice (Web Speech API). It uses your operating system's installed Indic voices when available — quality varies by device. <strong>In production</strong>, Voca speaks through ElevenLabs Multilingual v2 with a tuned warm-female voice (Bella) for elderly callers, swappable to Sarvam Bulbul for native Kannada / Hindi prosody. The desktop demo at <a href="https://github.com/KundanKhatri/voca-public">github.com/KundanKhatri/voca-public</a> uses the production voice end-to-end.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT IT SOUNDS LIKE — same call with Voca -->
 <section class="sounds">
   <div class="container">
-    <div class="eyebrow" style="color:#fb923c;">What it sounds like</div>
+    <div class="eyebrow" style="color:#fb923c;">What the call looks like</div>
     <h2 class="display-2">The same call.<br/>Two and a half seconds.</h2>
     <p class="lede">The Mandya call again, but with Voca on the line. Times measured against production targets — sub-second turn-taking, sub-three-second handover.</p>
-
     <div class="convo">
-
       <div class="turn citizen">
         <div class="who">C</div>
         <div class="bubble">
@@ -636,7 +786,6 @@
           <span class="gloss">"My husband is shouting at me at home... where do I go?"</span>
         </div>
       </div>
-
       <div class="turn voca">
         <div class="who">V</div>
         <div class="bubble">
@@ -646,7 +795,6 @@
           <div class="pill-line" style="margin-top:8px;"><span class="pill bad">distress 0.81 · risk HIGH</span><span class="pill act">VERIFICATION BYPASSED</span></div>
         </div>
       </div>
-
       <div class="turn voca right">
         <div class="who">V</div>
         <div class="bubble">
@@ -656,7 +804,6 @@
           <span class="gloss">"I hear you. I'm with you. Help is coming."</span>
         </div>
       </div>
-
       <div class="turn agent">
         <div class="who">A</div>
         <div class="bubble">
@@ -665,9 +812,7 @@
           <strong>On screen:</strong> full transcript · sentiment timeline · suggested opener: <em>"Are you somewhere safe right now?"</em> · 30-second audio replay queued.
         </div>
       </div>
-
     </div>
-
     <div class="convo-banner">
       <strong>From end-of-utterance to a trained human on the line: 2.5 seconds.</strong> The same call today takes ~90 seconds just to understand the grievance. Voca compresses time-to-help by 30× on the calls that matter most.
     </div>
@@ -680,7 +825,6 @@
     <div class="eyebrow">For governments</div>
     <h2 class="display-2"><em>Built for the bar</em><br/>a citizen helpline actually requires.</h2>
     <p class="lede">Voca is engineered, not retrofitted, for the realities of an Indian government deployment: data residency, audit, zero source-system modification, procurement-readiness. The architectural choices are deliberate.</p>
-
     <div class="pillars">
       <div class="pillar">
         <div class="num">01</div>
@@ -698,7 +842,6 @@
         <p>Voca is a parallel assistive layer. The 1092 telephony stack stays untouched. We tap call audio via SIP fork or LiveKit's media bridge and send interpretation events to the agent console. <strong>Existing systems are unmodified.</strong></p>
       </div>
     </div>
-
     <div class="gov-checklist">
       <h3>Procurement-readiness at a glance</h3>
       <ul>
@@ -717,13 +860,12 @@
   </div>
 </section>
 
-<!-- INVESTORS / MARKET -->
+<!-- INVESTORS -->
 <section class="market" id="market">
   <div class="container">
     <div class="eyebrow" style="color:#fb923c;">For investors and builders</div>
     <h2 class="display-2">A horizontal voice<br/>infrastructure for <em>Bharat</em>.</h2>
     <p class="lede">Voca is the application layer for India's voice future — vertical applications on Indian foundation models. The wedge is government helplines. The platform is every helpline in India that needs to understand a citizen in their own language.</p>
-
     <div class="market-grid">
       <div class="market-card">
         <div class="label">Total addressable</div>
@@ -746,9 +888,7 @@
         <div class="desc">At ₹4–6/call pilot pricing, ₹3/call national pricing. Margin improves with volume via caching, quantization, mixed hardware tiers.</div>
       </div>
     </div>
-
     <h2 class="display-2" style="margin-top:90px; max-width:880px;">Three moats. <em>Compounding.</em></h2>
-
     <div class="moats">
       <div class="moat">
         <div class="num">01</div>
@@ -775,7 +915,6 @@
     <div class="eyebrow">Roadmap</div>
     <h2 class="display-2">Karnataka first.<br/>Then every helpline in <em>Bharat</em>.</h2>
     <p class="lede">Voca's pipeline is language-agnostic at the orchestration layer. Adding a new Indian language: confirm acoustic and TTS coverage, curate the cultural KB for that region, collect a small fine-tune set. Approximately two weeks per language to production quality.</p>
-
     <div class="roadmap-grid">
       <div class="stop"><div class="when">Aug 2026</div><div class="what">Karnataka 1092 pilot · Kannada + Hindi · 1 → 5 districts</div></div>
       <div class="stop"><div class="when">Feb 2027</div><div class="what">1098 + 181 in Karnataka · Tamil Nadu pilot · Tamil + Telugu</div></div>
@@ -786,13 +925,12 @@
   </div>
 </section>
 
-<!-- SUMMIT block -->
+<!-- SUMMIT -->
 <section class="summit" id="summit">
   <div class="container">
     <div class="eyebrow">If we met at the PanIIT Bangalore Summit</div>
     <h2 class="display-2">May 16, 2026 · Taj Yeshwantpur.<br/><em>Yes — this is the Voca</em> we showed you.</h2>
     <p class="lede">If you found this site after meeting at the summit, this is the one-page reference. The desktop demo on the laptop is at the GitHub link below — installable on Mac and Windows. Pilot or partnership conversation: 5-minute reply away.</p>
-
     <div class="summit-card">
       <div>
         <h3>The wedge: Karnataka 1092</h3>
@@ -822,7 +960,6 @@
   <div class="container">
     <div class="eyebrow" style="color:#fb923c;">Talk to us</div>
     <h2 class="display-2">We are not asking for a prize.<br/><em>We are asking for the chance to start.</em></h2>
-
     <div class="ask-card">
       <h3>The 3-month government sandbox <em>plus</em> a Karnataka helpline pilot pathway.</h3>
       <p>In 90 days from a sandbox handoff, we will show verification accuracy above 92% on a held-out citizen panel, average handle time down 25% on the pilot helpline, and a story Karnataka will be proud to tell at the next PanIIT Summit. <strong>If Karnataka isn't the right path, the same architecture applies to every BFSI / telco / healthcare helpline in India.</strong> Either way, a 30-minute conversation is the next step.</p>
@@ -844,7 +981,15 @@
   <div class="foot-inner">
     <div class="foot-col">
       <div class="foot-brand">
-        <div class="foot-brand-mark">V</div>
+        <svg class="foot-brand-logo logo-svg" viewBox="0 0 100 100" aria-label="Voca">
+          <rect width="100" height="100" rx="22" fill="url(#vocaGrad)"/>
+          <path d="M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28"
+                stroke="white" stroke-width="7" fill="none"
+                stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="50" cy="56" r="2.2" fill="white"/>
+          <circle cx="50" cy="46" r="1.8" fill="white" fill-opacity="0.7"/>
+          <circle cx="50" cy="36" r="1.4" fill="white" fill-opacity="0.5"/>
+        </svg>
         <div class="foot-brand-name">Voca</div>
       </div>
       <p class="foot-tagline">Voice AI for India's helplines. Built so being understood comes before being answered.</p>
@@ -853,6 +998,7 @@
       <h4>Read</h4>
       <a href="#problem">The problem</a>
       <a href="#how">How it works</a>
+      <a href="#hear">Hear it</a>
       <a href="#governments">For governments</a>
       <a href="#market">For investors</a>
       <a href="#summit">If we met at the Summit</a>
@@ -867,7 +1013,7 @@
     <div class="foot-col">
       <h4>Reach</h4>
       <a href="mailto:kundanlm10@gmail.com">kundanlm10@gmail.com</a>
-      <a href="https://github.com/KundanKhatri/voca">GitHub</a>
+      <a href="https://github.com/KundanKhatri/voca-public">GitHub</a>
       <a href="https://www.linkedin.com/in/kundankhatri">LinkedIn</a>
     </div>
   </div>
@@ -876,6 +1022,97 @@
     <span>© 2026 · Built for AI for Bharat 2 · Theme 12</span>
   </div>
 </footer>
+
+<!-- =================== HEAR VOCA SPEAK · Web Speech API =================== -->
+<script>
+(function () {
+  const buttons = document.querySelectorAll('.voice-btn');
+  const wave = document.getElementById('waveVis');
+  const currentlyEl = document.getElementById('voiceCurrently');
+  const textEl = document.getElementById('voiceText');
+  const synth = window.speechSynthesis;
+
+  if (!synth) {
+    // No speechSynthesis — disable buttons, show note
+    buttons.forEach(b => { b.disabled = true; });
+    if (currentlyEl) {
+      currentlyEl.innerHTML = '<span class="tag">Voice synthesis unavailable</span><span>Your browser doesn\'t support speech synthesis. Try Safari, Chrome, or Edge — or open the desktop demo at github.com/KundanKhatri/voca-public.</span>';
+    }
+    return;
+  }
+
+  let activeButton = null;
+
+  function stopAll() {
+    synth.cancel();
+    if (activeButton) {
+      activeButton.classList.remove('active');
+      activeButton.querySelector('.play-icon').textContent = '▶';
+    }
+    activeButton = null;
+    if (wave) wave.classList.remove('playing');
+  }
+
+  function pickVoice(lang) {
+    const voices = synth.getVoices();
+    if (!voices || !voices.length) return null;
+    // Try exact match (e.g. en-IN), then language match (e.g. en), then fall through
+    return voices.find(v => v.lang === lang)
+        || voices.find(v => v.lang.toLowerCase().startsWith(lang.split('-')[0].toLowerCase()))
+        || voices.find(v => v.default)
+        || voices[0];
+  }
+
+  function speak(text, lang, tag, btn) {
+    stopAll();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    u.rate = 0.9;
+    u.pitch = 1.0;
+    u.volume = 1.0;
+    const voice = pickVoice(lang);
+    if (voice) u.voice = voice;
+    u.onstart = () => {
+      activeButton = btn;
+      btn.classList.add('active');
+      btn.querySelector('.play-icon').textContent = '■';
+      if (wave) wave.classList.add('playing');
+      if (textEl) textEl.textContent = '"' + text + '"';
+      const tagEl = currentlyEl ? currentlyEl.querySelector('.tag') : null;
+      if (tagEl) tagEl.textContent = tag + ' · speaking…';
+    };
+    u.onend = u.onerror = () => {
+      stopAll();
+      const tagEl = currentlyEl ? currentlyEl.querySelector('.tag') : null;
+      if (tagEl) tagEl.textContent = 'Press another button below';
+    };
+    synth.speak(u);
+  }
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn === activeButton) {
+        stopAll();
+        return;
+      }
+      const text = btn.dataset.text;
+      const lang = btn.dataset.lang;
+      const tag  = btn.dataset.tag;
+      // Some browsers need a tick to load voices
+      if (!synth.getVoices().length) {
+        synth.addEventListener('voiceschanged', () => speak(text, lang, tag, btn), { once: true });
+        // poke
+        synth.getVoices();
+      } else {
+        speak(text, lang, tag, btn);
+      }
+    });
+  });
+
+  // Stop speaking when leaving page
+  window.addEventListener('beforeunload', stopAll);
+})();
+</script>
 
 </body>
 </html>
