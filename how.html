@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#fbf8f1" />
+<title>How Voca works · verify-before-act voice AI</title>
+<meta name="description" content="The four-state lifecycle. The verification turn as load-bearing rule. The bypass exception when distress spikes. How Voca actually decides what to do." />
+<meta property="og:title" content="How Voca works · verify-before-act" />
+<meta property="og:description" content="Hear → restate → verify → only then act. The structural rule of the system." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c1440e'/%3E%3Cstop offset='100%25' stop-color='%23e76f29'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Cpath d='M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='50' cy='56' r='2.2' fill='white'/%3E%3Ccircle cx='50' cy='46' r='1.8' fill='white' fill-opacity='0.7'/%3E%3Ccircle cx='50' cy='36' r='1.4' fill='white' fill-opacity='0.5'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="voca.css" />
+<style>
+  /* Massive flip headline */
+  .flip-h2 {
+    font-family: var(--serif);
+    font-size: clamp(34px, 6vw, 76px); line-height: 1.0;
+    letter-spacing: -.035em; font-weight: 600;
+    max-width: 1000px; margin: 0 0 28px;
+  }
+  .flip-h2 .strike {
+    text-decoration: line-through;
+    text-decoration-color: rgba(185,28,28,.6);
+    text-decoration-thickness: 4px;
+    color: #94a3b8;
+  }
+  .flip-h2 em { color: var(--saffron); font-style: italic; }
+
+  /* Lifecycle */
+  .lifecycle {
+    margin-top: 60px; background: white; border: 1px solid var(--rule);
+    border-radius: 24px; padding: clamp(28px, 5vw, 50px); box-shadow: var(--shadow);
+  }
+  .lc-row {
+    display: grid; grid-template-columns: repeat(7, auto);
+    align-items: center; justify-content: center; gap: 12px;
+  }
+  .chip {
+    background: var(--cream); border: 1px solid var(--rule); border-radius: 14px;
+    padding: 16px 22px; text-align: center; min-width: 130px;
+    transition: transform .15s;
+  }
+  .chip:hover { transform: translateY(-2px); }
+  .chip .n { font-size: 11px; color: #64748b; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; }
+  .chip .name { font-size: 18px; font-weight: 700; color: var(--ink); margin-top: 4px; letter-spacing: -.01em; font-family: var(--serif); }
+  .chip.green { background: var(--green-soft); border-color: #a7f3d0; }
+  .chip.green .name { color: var(--green); }
+  .arr { color: #94a3b8; font-size: 26px; font-weight: 300; }
+  @media (max-width: 800px) {
+    .lc-row { display: flex; flex-direction: column; }
+    .arr { transform: rotate(90deg); }
+    .chip { min-width: 200px; }
+  }
+  .lc-rule {
+    margin-top: 32px; padding: 22px 24px;
+    background: var(--cream); border-radius: 14px; border: 1px solid var(--rule);
+    font-size: 16px; color: var(--ink-2); line-height: 1.6;
+  }
+  .lc-rule strong { color: var(--saffron); font-weight: 700; }
+  .lc-rule em { color: var(--ink); font-weight: 600; font-style: italic; }
+
+  /* Detail rows — each state explained */
+  .state-detail {
+    background: white; border: 1px solid var(--rule); border-radius: 18px;
+    padding: 32px; margin-top: 22px; box-shadow: var(--shadow-sm);
+    display: grid; grid-template-columns: 200px 1fr; gap: 30px;
+  }
+  @media (max-width: 700px) { .state-detail { grid-template-columns: 1fr; gap: 14px; } }
+  .state-detail h3 {
+    font-family: var(--serif); font-size: 28px; font-weight: 600;
+    margin: 0; line-height: 1.1; letter-spacing: -.02em;
+  }
+  .state-detail .num {
+    font-family: var(--serif); font-size: 12px; letter-spacing: .14em;
+    text-transform: uppercase; color: #64748b; font-weight: 600;
+    margin-bottom: 6px; font-style: normal;
+  }
+  .state-detail p { margin: 0 0 12px; color: var(--ink-3); font-size: 15.5px; line-height: 1.65; }
+  .state-detail p:last-child { margin-bottom: 0; }
+  .state-detail strong { color: var(--ink); }
+  .state-detail.bypass { background: linear-gradient(180deg, #fef2f2, white); border-color: #fecaca; }
+  .state-detail.bypass h3 { color: var(--saffron); }
+
+  /* Bypass call-out */
+  .bypass-rule {
+    margin-top: 50px;
+    background: var(--ink); color: white; border-radius: 24px;
+    padding: clamp(32px, 5vw, 50px); position: relative; overflow: hidden;
+  }
+  .bypass-rule::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(700px 300px at 90% 20%, rgba(193,68,14,.20), transparent 60%);
+  }
+  .bypass-rule .container2 { position: relative; }
+  .bypass-rule h3 {
+    font-family: var(--serif);
+    font-size: clamp(24px, 3.6vw, 40px); line-height: 1.1; letter-spacing: -.02em;
+    color: white; margin: 0 0 16px; font-weight: 600;
+  }
+  .bypass-rule h3 em { color: #fb923c; font-style: italic; }
+  .bypass-rule p { color: #cbd5e1; font-size: 16px; line-height: 1.65; margin: 0 0 12px; max-width: 720px; }
+  .bypass-rule code {
+    background: rgba(193,68,14,.20); border: 1px solid rgba(193,68,14,.40);
+    color: #fb923c; padding: 3px 9px; border-radius: 6px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+  }
+
+  /* CTA cards */
+  .next-row { margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 700px) { .next-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="vocaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c1440e"/>
+      <stop offset="100%" stop-color="#e76f29"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <svg class="brand-logo" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#vocaGrad)"/><path d="M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="56" r="2.2" fill="white"/><circle cx="50" cy="46" r="1.8" fill="white" fill-opacity="0.7"/><circle cx="50" cy="36" r="1.4" fill="white" fill-opacity="0.5"/></svg>
+      <div><div class="brand-name">Voca</div><div class="brand-sub">voice AI for India's helplines</div></div>
+    </a>
+    <div class="nav-links">
+      <a href="how.html" class="current">How</a>
+      <a href="voice.html">Voice</a>
+      <a href="governments.html">For governments</a>
+      <a href="investors.html">For investors</a>
+      <a href="story.html">Story</a>
+      <a href="mailto:kundanlm10@gmail.com" class="nav-cta">Talk to us</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">How Voca works</div>
+    <h1 class="display">
+      Most voice AI: <span class="strike" style="text-decoration:line-through;text-decoration-color:rgba(185,28,28,.6);text-decoration-thickness:4px;color:#94a3b8;">hear → respond</span>.<br/>
+      Voca: <em>hear → restate → verify → only then act</em>.
+    </h1>
+    <p class="lede">The verification turn is not a usability feature. It is the structural rule of the system. No interpretation, however confident, is acted upon without explicit citizen confirmation. There is one exception, and it is the most important rule of the product.</p>
+  </div>
+</section>
+
+<!-- LIFECYCLE OVERVIEW -->
+<section>
+  <div class="container">
+    <div class="eyebrow">The lifecycle</div>
+    <div class="display-2">Four states.<br/>Only <em>one is actionable</em>.</div>
+
+    <div class="lifecycle">
+      <div class="lc-row">
+        <div class="chip"><div class="n">State 1</div><div class="name">Heard</div></div>
+        <div class="arr">→</div>
+        <div class="chip"><div class="n">State 2</div><div class="name">Interpreted</div></div>
+        <div class="arr">→</div>
+        <div class="chip green"><div class="n">State 3</div><div class="name">Verified</div></div>
+        <div class="arr">→</div>
+        <div class="chip"><div class="n">State 4</div><div class="name">Acted</div></div>
+      </div>
+      <div class="lc-rule">
+        Voca moves through these four states for every utterance. <strong>Only the Verified state ever triggers a real-world action.</strong> The other states are auditable, reversible, and discardable.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EACH STATE EXPLAINED -->
+<section style="background:var(--paper-2);">
+  <div class="container">
+    <div class="eyebrow">Each state, in words</div>
+    <div class="display-2">What happens, what doesn't.</div>
+
+    <div class="state-detail">
+      <div>
+        <div class="num">State 01</div>
+        <h3>Heard</h3>
+      </div>
+      <div>
+        <p>The citizen has spoken. Their audio has been captured by the SIP gateway, passed through streaming STT, and converted into text with an n-best list and per-token confidence.</p>
+        <p><strong>What this state cannot do:</strong> nothing actionable. Heard is just a buffer. We do not call any service, route any request, or commit any state change off Heard alone.</p>
+      </div>
+    </div>
+
+    <div class="state-detail">
+      <div>
+        <div class="num">State 02</div>
+        <h3>Interpreted</h3>
+      </div>
+      <div>
+        <p>The interpretation LLM has produced a structured grievance record from the transcript: <code>{intent, entities, risk_signal, sentiment, confidence, language, paraphrase, agent_suggestion}</code>.</p>
+        <p><strong>What this state cannot do:</strong> still nothing actionable. A 0.99-confidence interpretation has the same actionability as a 0.30 one — zero. The point of Interpreted is to <em>prepare</em> a verification turn, not to commit to a decision.</p>
+      </div>
+    </div>
+
+    <div class="state-detail">
+      <div>
+        <div class="num">State 03</div>
+        <h3>Verified</h3>
+      </div>
+      <div>
+        <p>Voca has spoken the paraphrase back to the citizen, in their language. The citizen has explicitly confirmed: <em>"yes, that's right."</em> The classifier has parsed their response as <strong>correct</strong> (vs. partial or incorrect).</p>
+        <p><strong>What this state can do:</strong> everything. Verified is the gate. Routing, dispatching, ticketing, escalation, audit-log commits — all of it begins here.</p>
+      </div>
+    </div>
+
+    <div class="state-detail">
+      <div>
+        <div class="num">State 04</div>
+        <h3>Acted</h3>
+      </div>
+      <div>
+        <p>The action has been taken. The grievance has been routed to the right department. The ambulance has been dispatched. The agent has been briefed. An immutable audit log entry now exists, retrievable per call ID in ≤ 5 seconds.</p>
+        <p><strong>What this state means for review:</strong> every action in the system can be traced back through Verified → Interpreted → Heard with full timestamps, model versions, and payload hashes. <strong>An IAS officer auditing the call sees exactly what happened, in order.</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE BYPASS EXCEPTION -->
+<section>
+  <div class="container">
+    <div class="eyebrow dark" style="color:var(--saffron);">The exception</div>
+    <div class="display-2">When seconds matter <em>more than verification</em>.</div>
+    <p class="lede">There is one situation where the verify-before-act rule is consciously suspended. It is the most important rule of the product.</p>
+
+    <div class="bypass-rule">
+      <div class="container2">
+        <h3>If <em>distress</em> and <em>risk-signal</em> both exceed threshold —<br/>Voca bypasses verification.</h3>
+        <p>Specifically: when the sentiment engine reports distress greater than 0.65 <strong>and</strong> the interpretation LLM marks the risk_signal as <strong>HIGH</strong>, the FSM commits to one rule:</p>
+        <p style="font-family:var(--serif);font-size:18px;line-height:1.5;color:white;border-left:3px solid var(--saffron-2);padding-left:18px;margin:18px 0;">
+          Skip verification. Speak rapid-acknowledgement in the citizen's dialect — <em>"I hear you. Help is coming."</em> — and route to a human agent <em>in parallel</em>.
+        </p>
+        <p>The agent picks up at <code>t = 2.5 s</code>. The citizen never holds an unanswered line. The audit log captures the bypass with the threshold values and the trigger phrase. The system's own behavior, recorded.</p>
+        <p style="margin-top:24px;color:#94a3b8;font-size:14px;">
+          See it in action — Lakshmi from Mandya, on the <a href="scenarios.html" style="color:#fb923c;border-color:rgba(251,146,60,.4);">scenarios page</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEXT ACTIONS -->
+<section style="background:var(--paper-2);">
+  <div class="container">
+    <div class="eyebrow">See it in action</div>
+    <div class="display-2">Three ways to <em>verify</em> the verify-before-act story.</div>
+
+    <div class="next-row">
+      <a class="tile" href="voice.html">
+        <span class="tag">Hear it</span>
+        <span class="arrow">→</span>
+        <h3>The actual production voice</h3>
+        <p>Voca speaking back the verification turn, in 8 Indian languages × 3 scenarios. Press play to hear the rapid-acknowledgement phrase in the dialect.</p>
+      </a>
+      <a class="tile" href="scenarios.html">
+        <span class="tag">Read it</span>
+        <span class="arrow">→</span>
+        <h3>Four real callers, two paths each</h3>
+        <p>Lakshmi, Ravi, Priya, Imran. What happens to each on 1092 today (without Voca) versus tomorrow (with Voca on the line).</p>
+      </a>
+      <a class="tile" href="architecture.html">
+        <span class="tag">Map it</span>
+        <span class="arrow">→</span>
+        <h3>The full system blueprint</h3>
+        <p>From SIP ingress through STT → interpretation → FSM → TTS → agent console. The verification FSM is a 48-line Python module — small on purpose, exhaustive on rule coverage.</p>
+      </a>
+      <a class="tile" href="governments.html">
+        <span class="tag">Audit it</span>
+        <span class="arrow">→</span>
+        <h3>For an IAS officer</h3>
+        <p>Audit-grade event log, per call ID, retrievable in ≤ 5 seconds. The compliance posture of a system designed for government deployment from day one.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-col">
+      <div class="foot-brand">
+        <svg class="foot-brand-logo" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#vocaGrad)"/><path d="M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="56" r="2.2" fill="white"/><circle cx="50" cy="46" r="1.8" fill="white" fill-opacity="0.7"/><circle cx="50" cy="36" r="1.4" fill="white" fill-opacity="0.5"/></svg>
+        <div class="foot-brand-name">Voca</div>
+      </div>
+      <p class="foot-tagline">Voice AI for India's helplines. Built so being understood comes before being answered.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Pages</h4>
+      <a href="index.html">Home</a>
+      <a href="voice.html">Hear Voca</a>
+      <a href="governments.html">For governments</a>
+      <a href="investors.html">For investors</a>
+    </div>
+    <div class="foot-col">
+      <h4>Stories</h4>
+      <a href="story.html">Picture story</a>
+      <a href="scenarios.html">Real scenarios</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="infographic.html">One-page brief</a>
+    </div>
+    <div class="foot-col">
+      <h4>Reach</h4>
+      <a href="mailto:kundanlm10@gmail.com">kundanlm10@gmail.com</a>
+      <a href="https://github.com/KundanKhatri/voca-public">GitHub</a>
+      <a href="https://www.linkedin.com/in/kundankhatri">LinkedIn</a>
+    </div>
+  </div>
+  <div class="foot-meta">
+    <span><strong>Voca</strong> — voice AI for India's helplines · Bengaluru, India</span>
+    <span>© 2026 · Built for AI for Bharat 2 · Theme 12</span>
+  </div>
+</footer>
+
+</body>
+</html>

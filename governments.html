@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#fbf8f1" />
+<title>Voca for governments · audit-grade voice AI for citizen helplines</title>
+<meta name="description" content="On-prem deployable. Audit-logged end-to-end. No PII to hosted LLMs. Bhashini-blessed fallback. Built for Indian government deployment from day one." />
+<meta property="og:title" content="Voca for governments" />
+<meta property="og:description" content="Audit-grade voice AI built for Indian government deployment. On-prem · Bhashini-fallback · GeM-ready." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c1440e'/%3E%3Cstop offset='100%25' stop-color='%23e76f29'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Cpath d='M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='50' cy='56' r='2.2' fill='white'/%3E%3Ccircle cx='50' cy='46' r='1.8' fill='white' fill-opacity='0.7'/%3E%3Ccircle cx='50' cy='36' r='1.8' fill='white' fill-opacity='0.5'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="voca.css" />
+<style>
+  .pillars { margin-top: 50px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  @media (max-width: 800px) { .pillars { grid-template-columns: 1fr; } }
+  .pillar {
+    background: white; border: 1px solid var(--rule); border-radius: 18px;
+    padding: clamp(24px, 3vw, 32px); box-shadow: var(--shadow-sm);
+  }
+  .pillar .num {
+    font-family: var(--serif); font-size: 56px; line-height: 1;
+    color: var(--saffron); letter-spacing: -.03em; font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .pillar h3 { font-size: 22px; line-height: 1.2; margin: 0 0 12px; letter-spacing: -.015em; font-weight: 600; }
+  .pillar p { color: var(--ink-3); font-size: 15px; line-height: 1.6; margin: 0; }
+  .pillar p strong { color: var(--ink); }
+
+  .checklist {
+    margin-top: 50px; background: white; border: 1px solid var(--rule);
+    border-radius: 18px; padding: clamp(28px, 4vw, 44px); box-shadow: var(--shadow-sm);
+  }
+  .checklist h3 { font-size: 22px; margin: 0 0 22px; font-family: var(--serif); font-weight: 600; }
+  .checklist ul {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px 36px;
+  }
+  @media (max-width: 800px) { .checklist ul { grid-template-columns: 1fr; gap: 12px; } }
+  .checklist li {
+    display: flex; gap: 10px; align-items: baseline;
+    font-size: 15px; color: var(--ink-2); line-height: 1.55;
+  }
+  .checklist li::before {
+    content: "✓"; color: var(--green-2); font-weight: 700; font-size: 16px; flex-shrink: 0;
+  }
+  .checklist li strong { color: var(--ink); }
+
+  .audit-callout {
+    margin-top: 50px; background: var(--ink); color: white;
+    border-radius: 24px; padding: clamp(36px, 5vw, 56px);
+    position: relative; overflow: hidden;
+  }
+  .audit-callout::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(700px 300px at 90% 20%, rgba(31,110,140,.20), transparent 60%);
+  }
+  .audit-callout > * { position: relative; }
+  .audit-callout h3 {
+    font-family: var(--serif); color: white;
+    font-size: clamp(24px, 3.6vw, 38px); line-height: 1.15; margin: 0 0 18px;
+    letter-spacing: -.02em; font-weight: 600;
+  }
+  .audit-callout h3 em { color: #fb923c; font-style: italic; }
+  .audit-callout p { color: #cbd5e1; font-size: 16px; line-height: 1.65; margin: 0 0 14px; max-width: 760px; }
+  .audit-callout code {
+    background: rgba(31,110,140,.20); border: 1px solid rgba(31,110,140,.40);
+    color: #38bdf8; padding: 3px 9px; border-radius: 6px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px;
+  }
+
+  .quote-block {
+    margin-top: 50px; background: var(--paper-2); border-left: 4px solid var(--saffron);
+    padding: clamp(28px, 4vw, 36px); border-radius: 0 14px 14px 0;
+  }
+  .quote-block p {
+    font-family: var(--serif); font-size: clamp(18px, 2.6vw, 24px); line-height: 1.4;
+    color: var(--ink); font-style: italic; margin: 0 0 16px; letter-spacing: -.01em;
+  }
+  .quote-block .attribution {
+    font-size: 13px; color: #64748b; letter-spacing: .04em; font-style: normal;
+  }
+
+  .next-row { margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 700px) { .next-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="vocaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c1440e"/>
+      <stop offset="100%" stop-color="#e76f29"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <svg class="brand-logo" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#vocaGrad)"/><path d="M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="56" r="2.2" fill="white"/><circle cx="50" cy="46" r="1.8" fill="white" fill-opacity="0.7"/><circle cx="50" cy="36" r="1.4" fill="white" fill-opacity="0.5"/></svg>
+      <div><div class="brand-name">Voca</div><div class="brand-sub">voice AI for India's helplines</div></div>
+    </a>
+    <div class="nav-links">
+      <a href="how.html">How</a>
+      <a href="voice.html">Voice</a>
+      <a href="governments.html" class="current">For governments</a>
+      <a href="investors.html">For investors</a>
+      <a href="story.html">Story</a>
+      <a href="mailto:kundanlm10@gmail.com" class="nav-cta">Talk to us</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">For governments</div>
+    <h1 class="display"><em>Built for the bar</em><br/>a citizen helpline actually requires.</h1>
+    <p class="lede">Voca is engineered, not retrofitted, for the realities of an Indian government deployment: data residency, audit, zero source-system modification, procurement-readiness. The architectural choices below are deliberate.</p>
+
+    <div class="quote-card">
+      "The biggest failure on a citizen helpline is not lack of response — it is the wrong response, born of the wrong understanding."
+      <em>— Karnataka Department of Personnel & Administrative Reforms · Theme 12 problem brief, AI for Bharat 2 (1092 helpline)</em>
+    </div>
+  </div>
+</section>
+
+<!-- THREE PILLARS -->
+<section>
+  <div class="container">
+    <div class="eyebrow">The three architectural commitments</div>
+    <div class="display-2"><em>What it means</em><br/>to be government-grade.</div>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="num">01</div>
+        <h3>On Indian foundation models</h3>
+        <p>STT on AI4Bharat IndicConformer (IIT Madras). LLM interpretation on Sarvam-1. TTS on Indic-Parler-TTS (production swap to Sarvam Bulbul for native Kannada). Self-hosted. <strong>No PII to hosted LLMs, ever.</strong> Bhashini wired in as the government-blessed fallback path.</p>
+      </div>
+      <div class="pillar">
+        <div class="num">02</div>
+        <h3>Audit-logged, end to end</h3>
+        <p>Every state transition — Heard → Interpreted → Verified → Acted → Escalated — writes an immutable event with timestamps, model versions, payload hashes, audio chunk references. <strong>Officer-retrievable per call ID in ≤ 5 seconds.</strong> WORM storage. 7-year retention configurable per tenant.</p>
+      </div>
+      <div class="pillar">
+        <div class="num">03</div>
+        <h3>No source-system modification</h3>
+        <p>Voca is a parallel assistive layer. The 1092 telephony stack stays untouched. We tap call audio via SIP fork or LiveKit's media bridge and send interpretation events to the agent console. <strong>Existing systems are unmodified.</strong> Procurement is a vendor add, not a re-platform.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIT CALLOUT -->
+<section style="background:var(--paper);">
+  <div class="container">
+    <div class="eyebrow">For an auditor</div>
+    <div class="display-2">Every decision <em>retrievable</em>.</div>
+    <p class="lede">An IAS officer reviewing a specific call should not need our help to find the trail. Voca's audit posture is designed so the entire decision chain — the input audio, the STT confidence, the interpretation, the verification turn, the citizen's response, the action taken — is a single query away.</p>
+
+    <div class="audit-callout">
+      <h3>The audit query is one line.<br/>The result is the <em>full call timeline</em>.</h3>
+      <p>Given any call ID, a government auditor (with appropriate role) sees the complete sequence of state transitions:</p>
+      <p style="font-family:ui-monospace, 'SF Mono', Menlo, monospace; font-size:13.5px; line-height:1.7; color:#fef3c7; padding:16px; background:rgba(0,0,0,.3); border-radius:10px; margin:18px 0;">
+$ voca audit show CALL_2026_05_06_AB47CF<br/>
+&nbsp;&nbsp;<span style="color:#94a3b8;">t=0.000s</span> &nbsp;HEARD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#fb923c;">stt:indicconformer-v3.2</span> &nbsp;conf=0.78<br/>
+&nbsp;&nbsp;<span style="color:#94a3b8;">t=0.612s</span> &nbsp;INTERPRETED&nbsp;<span style="color:#fb923c;">llm:sarvam-1-grievance-ft-2026q2</span> &nbsp;risk=HIGH&nbsp;conf=0.71<br/>
+&nbsp;&nbsp;<span style="color:#94a3b8;">t=0.640s</span> &nbsp;BYPASSED&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#fb923c;">rule:distress&gt;0.65 AND risk=HIGH</span><br/>
+&nbsp;&nbsp;<span style="color:#94a3b8;">t=0.701s</span> &nbsp;ACK&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#fb923c;">tts:bulbul-kn-IN</span> &nbsp;dialect=Mandya&nbsp;register=informal<br/>
+&nbsp;&nbsp;<span style="color:#94a3b8;">t=0.701s</span> &nbsp;ESCALATED&nbsp;&nbsp;&nbsp;agent_id=4&nbsp;women_cell=true<br/>
+&nbsp;&nbsp;<span style="color:#94a3b8;">t=2.487s</span> &nbsp;ACTED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;agent_pickup=true&nbsp;context_loaded=true</p>
+      <p>Audio chunks are referenced by hash, fetchable from WORM storage. Model versions are pinned per row, so a re-run of the interpretation against historic audio is reproducible.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROCUREMENT CHECKLIST -->
+<section style="background:var(--paper-2);">
+  <div class="container">
+    <div class="eyebrow">Procurement-readiness</div>
+    <div class="display-2">Ten things that matter <em>at procurement</em>.</div>
+    <p class="lede">A vendor evaluation in an Indian government context lives or dies on these ten boxes. Voca's architecture makes every one of them a default, not a custom build.</p>
+
+    <div class="checklist">
+      <h3>Compliance posture, at a glance</h3>
+      <ul>
+        <li><strong>On-prem deployable</strong> — Karnataka State Data Center compatible</li>
+        <li><strong>Sovereign cloud option</strong> — runs inside Indian-only regions</li>
+        <li><strong>Data residency</strong> — citizen audio never leaves India</li>
+        <li><strong>WORM audit storage</strong> — immutable, 7-year retention configurable</li>
+        <li><strong>Bhashini integration</strong> — government's blessed fallback path</li>
+        <li><strong>GeM-ready architecture</strong> — designed for Government e-Marketplace</li>
+        <li><strong>22 official languages</strong> — language-agnostic orchestration</li>
+        <li><strong>Graceful degradation</strong> — never silent failure; always hand to a human</li>
+        <li><strong>SLO-bounded</strong> — P95 turn ≤ 900 ms, 99.95% voice path availability</li>
+        <li><strong>Indian-vendor preference compliant</strong> — Indian foundation models throughout</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- THE ASK -->
+<section class="dark">
+  <div class="container">
+    <div class="eyebrow dark">The ask, for governments specifically</div>
+    <div class="display-2" style="color:white;">A 90-day sandbox.<br/>One Karnataka helpline.<br/><em>Measurable outcomes</em>.</div>
+    <p class="lede" style="color:#cbd5e1;">In 90 days from a sandbox handoff, Voca commits to demonstrating verification accuracy above 92% on a held-out citizen panel, average handle time down 25% on the pilot helpline, and a complete audit trail any officer can inspect on any call.</p>
+
+    <div style="margin-top:40px;display:flex;gap:12px;flex-wrap:wrap;">
+      <a class="btn btn-primary" href="mailto:kundanlm10@gmail.com?subject=Voca%20%E2%80%94%20Karnataka%20pilot%20conversation">Email Kundan to start →</a>
+      <a class="btn btn-on-dark" href="architecture.html">Open the architecture</a>
+      <a class="btn btn-on-dark" href="voice.html">Hear the voice</a>
+    </div>
+  </div>
+</section>
+
+<!-- NEXT -->
+<section>
+  <div class="container">
+    <div class="eyebrow">Read on</div>
+    <div class="display-2">More for the <em>government reader</em>.</div>
+
+    <div class="next-row">
+      <a class="tile" href="how.html">
+        <span class="tag">The mechanism</span>
+        <span class="arrow">→</span>
+        <h3>The verify-before-act lifecycle</h3>
+        <p>Why the verification turn is structural, not cosmetic. The four-state lifecycle. The bypass exception, with thresholds.</p>
+      </a>
+      <a class="tile" href="scenarios.html">
+        <span class="tag">In practice</span>
+        <span class="arrow">→</span>
+        <h3>Four real callers</h3>
+        <p>What happens to Lakshmi from Mandya, Ravi from Belagavi, Priya from Bengaluru, Imran from Mangaluru — on 1092 today vs. with Voca.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-col">
+      <div class="foot-brand">
+        <svg class="foot-brand-logo" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#vocaGrad)"/><path d="M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="56" r="2.2" fill="white"/><circle cx="50" cy="46" r="1.8" fill="white" fill-opacity="0.7"/><circle cx="50" cy="36" r="1.4" fill="white" fill-opacity="0.5"/></svg>
+        <div class="foot-brand-name">Voca</div>
+      </div>
+      <p class="foot-tagline">Voice AI for India's helplines. Built so being understood comes before being answered.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Pages</h4>
+      <a href="index.html">Home</a>
+      <a href="how.html">How it works</a>
+      <a href="voice.html">Hear Voca</a>
+      <a href="investors.html">For investors</a>
+    </div>
+    <div class="foot-col">
+      <h4>Stories</h4>
+      <a href="story.html">Picture story</a>
+      <a href="scenarios.html">Real scenarios</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="infographic.html">One-page brief</a>
+    </div>
+    <div class="foot-col">
+      <h4>Reach</h4>
+      <a href="mailto:kundanlm10@gmail.com">kundanlm10@gmail.com</a>
+      <a href="https://github.com/KundanKhatri/voca-public">GitHub</a>
+      <a href="https://www.linkedin.com/in/kundankhatri">LinkedIn</a>
+    </div>
+  </div>
+  <div class="foot-meta">
+    <span><strong>Voca</strong> — voice AI for India's helplines · Bengaluru, India</span>
+    <span>© 2026 · Built for AI for Bharat 2 · Theme 12</span>
+  </div>
+</footer>
+
+</body>
+</html>

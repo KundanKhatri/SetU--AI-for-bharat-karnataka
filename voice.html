@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#fbf8f1" />
+<title>Hear Voca speak · production voice in 8 Indian languages</title>
+<meta name="description" content="The actual voice on the line. ElevenLabs Multilingual v2. Bella voice. Eight Indian languages. Three scenarios. Press play." />
+<meta property="og:title" content="Hear Voca speak" />
+<meta property="og:description" content="Production voice. Eight Indian languages. Three scenarios." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c1440e'/%3E%3Cstop offset='100%25' stop-color='%23e76f29'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Cpath d='M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='50' cy='56' r='2.2' fill='white'/%3E%3Ccircle cx='50' cy='46' r='1.8' fill='white' fill-opacity='0.7'/%3E%3Ccircle cx='50' cy='36' r='1.4' fill='white' fill-opacity='0.5'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="voca.css" />
+<style>
+  /* ── Voice stage ── */
+  .stage {
+    margin-top: 50px;
+    background: white; border: 1px solid var(--rule); border-radius: 24px;
+    padding: clamp(28px, 5vw, 56px); box-shadow: var(--shadow);
+  }
+
+  /* Source / model lockup */
+  .source {
+    background: var(--paper-2); border: 1px solid var(--rule); border-radius: 14px;
+    padding: 16px 22px; margin-bottom: 32px;
+  }
+  .source-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+  }
+  @media (max-width: 600px) { .source-row { grid-template-columns: 1fr 1fr; } }
+  .source-label {
+    font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
+    color: #64748b; font-weight: 600; margin-bottom: 4px;
+  }
+  .source-value {
+    font-size: 14px; color: var(--ink); font-weight: 500;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  /* Pickers */
+  .picker-label {
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: #64748b; font-weight: 600; margin-bottom: 10px;
+  }
+  .lang-row, .scen-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+  .lang-pill, .scen-pill {
+    background: white; border: 1px solid var(--rule); border-radius: 999px;
+    padding: 8px 14px; font: inherit; font-size: 14px; font-weight: 500; color: var(--ink-2);
+    cursor: pointer; transition: all .15s;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .lang-pill:hover, .scen-pill:hover { border-color: var(--saffron); color: var(--saffron); }
+  .lang-pill.active, .scen-pill.active {
+    background: var(--ink); border-color: var(--ink); color: white;
+  }
+  .lang-pill .native { font-size: 13px; opacity: .85; margin-left: 2px; }
+  .lang-pill .latin { font-weight: 600; }
+  .scen-pill .scen-tag { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #94a3b8; font-weight: 600; }
+  .scen-pill.active .scen-tag { color: rgba(255,255,255,.6); }
+
+  /* Voice text display */
+  .display-card {
+    background: var(--paper-2); border: 1px solid var(--rule); border-radius: 14px;
+    padding: clamp(20px, 3vw, 30px); margin-bottom: 24px; min-height: 130px;
+  }
+  .display-text {
+    font-family: var(--serif); font-size: clamp(20px, 3vw, 28px); line-height: 1.4;
+    color: var(--ink); font-weight: 500; letter-spacing: -.01em; margin-bottom: 12px;
+  }
+  .display-gloss {
+    font-size: 14px; color: #64748b; font-style: italic;
+    border-top: 1px dashed var(--rule); padding-top: 12px;
+  }
+
+  /* Big play */
+  .controls {
+    display: flex; align-items: center; justify-content: center;
+    gap: 24px; flex-wrap: wrap; margin-bottom: 24px;
+  }
+  .play-big {
+    background: var(--ink); color: white; border: 0;
+    border-radius: 999px; padding: 18px 28px; cursor: pointer;
+    transition: all .15s;
+    display: inline-flex; align-items: center; gap: 14px;
+    font: inherit; font-size: 15px; font-weight: 600;
+    min-width: 280px; justify-content: center;
+  }
+  .play-big:hover { background: var(--saffron); transform: translateY(-1px); }
+  .play-big:disabled { opacity: 0.5; cursor: wait; }
+  .play-big.playing { background: var(--saffron); }
+  .play-icon-big {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    display: grid; place-items: center; color: white; flex-shrink: 0;
+  }
+
+  .wave {
+    display: flex; align-items: center; gap: 3px; height: 56px; min-width: 220px;
+  }
+  .wave span {
+    display: block; width: 3px; border-radius: 2px;
+    background: linear-gradient(180deg, var(--saffron), var(--saffron-2));
+    height: 8px;
+  }
+  .wave.playing span { animation: waveBars 0.9s ease-in-out infinite; }
+  .wave.playing span:nth-child(1) { animation-delay: .00s }
+  .wave.playing span:nth-child(2) { animation-delay: .05s }
+  .wave.playing span:nth-child(3) { animation-delay: .10s }
+  .wave.playing span:nth-child(4) { animation-delay: .15s }
+  .wave.playing span:nth-child(5) { animation-delay: .20s }
+  .wave.playing span:nth-child(6) { animation-delay: .25s }
+  .wave.playing span:nth-child(7) { animation-delay: .30s }
+  .wave.playing span:nth-child(8) { animation-delay: .35s }
+  .wave.playing span:nth-child(9) { animation-delay: .40s }
+  .wave.playing span:nth-child(10) { animation-delay: .45s }
+  .wave.playing span:nth-child(11) { animation-delay: .40s }
+  .wave.playing span:nth-child(12) { animation-delay: .35s }
+  .wave.playing span:nth-child(13) { animation-delay: .30s }
+  .wave.playing span:nth-child(14) { animation-delay: .25s }
+  .wave.playing span:nth-child(15) { animation-delay: .20s }
+  .wave.playing span:nth-child(16) { animation-delay: .15s }
+  .wave.playing span:nth-child(17) { animation-delay: .10s }
+  .wave.playing span:nth-child(18) { animation-delay: .05s }
+  .wave.playing span:nth-child(19) { animation-delay: .00s }
+  @keyframes waveBars { 0%,100%{height:6px} 50%{height:48px} }
+  @media (prefers-reduced-motion: reduce) { .wave.playing span { animation: none; height: 24px; } }
+  @media (max-width: 600px) {
+    .controls { flex-direction: column; gap: 16px; }
+    .play-big { min-width: auto; width: 100%; }
+    .wave { width: 100%; min-width: 0; justify-content: center; }
+  }
+
+  .stage-note {
+    margin-top: 20px; font-size: 13px; color: #64748b; line-height: 1.65;
+    max-width: 720px;
+  }
+  .stage-note code {
+    background: var(--paper-2); border: 1px solid var(--rule);
+    padding: 1px 6px; border-radius: 4px; font-size: 12px;
+  }
+
+  /* Settings detail */
+  .settings-grid {
+    margin-top: 30px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  }
+  @media (max-width: 700px) { .settings-grid { grid-template-columns: repeat(2, 1fr); } }
+  .setting {
+    background: white; border: 1px solid var(--rule); border-radius: 14px;
+    padding: 18px 20px;
+  }
+  .setting .k { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #64748b; font-weight: 600; margin-bottom: 6px; }
+  .setting .v { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 18px; font-weight: 600; color: var(--ink); letter-spacing: -.01em; }
+
+  /* Next-up tiles */
+  .next-row { margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 700px) { .next-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="vocaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c1440e"/>
+      <stop offset="100%" stop-color="#e76f29"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <svg class="brand-logo" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#vocaGrad)"/><path d="M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="56" r="2.2" fill="white"/><circle cx="50" cy="46" r="1.8" fill="white" fill-opacity="0.7"/><circle cx="50" cy="36" r="1.4" fill="white" fill-opacity="0.5"/></svg>
+      <div><div class="brand-name">Voca</div><div class="brand-sub">voice AI for India's helplines</div></div>
+    </a>
+    <div class="nav-links">
+      <a href="how.html">How</a>
+      <a href="voice.html" class="current">Voice</a>
+      <a href="governments.html">For governments</a>
+      <a href="investors.html">For investors</a>
+      <a href="story.html">Story</a>
+      <a href="mailto:kundanlm10@gmail.com" class="nav-cta">Talk to us</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">Hear Voca speak</div>
+    <h1 class="display">The actual voice<br/>that's on <em>the line</em>.</h1>
+    <p class="lede">ElevenLabs Multilingual v2 · "Bella" voice · production voice settings. Pick a language. Pick a moment in the call. Press play. This is Voca, exactly as a citizen would hear it.</p>
+  </div>
+</section>
+
+<!-- VOICE STAGE -->
+<section style="background:var(--paper);">
+  <div class="container">
+
+    <div class="stage">
+
+      <div class="source">
+        <div class="source-row">
+          <div>
+            <div class="source-label">Voice</div>
+            <div class="source-value">Bella · warm female</div>
+          </div>
+          <div>
+            <div class="source-label">Model</div>
+            <div class="source-value">eleven_multilingual_v2</div>
+          </div>
+          <div>
+            <div class="source-label">Status</div>
+            <div class="source-value" id="voiceStatus">Ready</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="picker-label">Language</div>
+      <div class="lang-row" id="langRow" role="tablist" aria-label="Language"></div>
+
+      <div class="picker-label">Scenario</div>
+      <div class="scen-row" id="scenRow" role="tablist" aria-label="Scenario"></div>
+
+      <div class="display-card">
+        <div class="display-text" id="voiceText">Choose a language and a scenario, then press play.</div>
+        <div class="display-gloss" id="voiceGloss">English translation appears here.</div>
+      </div>
+
+      <div class="controls">
+        <button class="play-big" id="playBig" aria-label="Play">
+          <span class="play-icon-big" id="playIconBig">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M7 5v14l12-7L7 5z"/></svg>
+          </span>
+          <span id="playLabel">Press to hear Voca</span>
+        </button>
+        <div class="wave" id="waveVis" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <audio id="vocaAudio" preload="auto" style="display:none;"></audio>
+
+      <p class="stage-note" id="voiceNote">
+        <strong>You're hearing real ElevenLabs audio</strong> — generated using the production voice settings Voca ships with. If a sample is missing, the player falls back to the browser's built-in voice for that language. To regenerate or extend the library, run <code>bash scripts/build-voice.sh</code> with your ElevenLabs key from the project root.
+      </p>
+
+    </div>
+
+    <!-- Voice settings detail (technical readers) -->
+    <div style="margin-top:60px;">
+      <div class="eyebrow">Production settings</div>
+      <div class="display-2">The exact knobs <em>Voca ships with</em>.</div>
+      <p class="lede" style="margin-bottom:20px;">Tuned for warmth without theatrics. The same settings apply across all eight languages — only the voice line changes.</p>
+
+      <div class="settings-grid">
+        <div class="setting">
+          <div class="k">Stability</div>
+          <div class="v">0.55</div>
+        </div>
+        <div class="setting">
+          <div class="k">Similarity</div>
+          <div class="v">0.75</div>
+        </div>
+        <div class="setting">
+          <div class="k">Style</div>
+          <div class="v">0.40</div>
+        </div>
+        <div class="setting">
+          <div class="k">Speaker boost</div>
+          <div class="v">on</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHY THESE LANGUAGES -->
+<section style="background:var(--paper-2);">
+  <div class="container">
+    <div class="eyebrow">Language coverage</div>
+    <div class="display-2">Eight languages.<br/>Four <em>more in pilot quarter</em>.</div>
+    <p class="lede">The eight here are the launch set: the languages a Karnataka 1092 deployment plus the Tamil Nadu / Andhra / Maharashtra / West Bengal expansion phases require. The full 22 official languages are in the production roadmap, ~2 weeks per language to add at production quality.</p>
+
+    <div class="settings-grid" style="margin-top:30px;">
+      <div class="setting"><div class="k">English</div><div class="v">en-IN</div></div>
+      <div class="setting"><div class="k">Hindi</div><div class="v">hi-IN</div></div>
+      <div class="setting"><div class="k">Kannada</div><div class="v">kn-IN</div></div>
+      <div class="setting"><div class="k">Tamil</div><div class="v">ta-IN</div></div>
+      <div class="setting"><div class="k">Telugu</div><div class="v">te-IN</div></div>
+      <div class="setting"><div class="k">Marathi</div><div class="v">mr-IN</div></div>
+      <div class="setting"><div class="k">Bengali</div><div class="v">bn-IN</div></div>
+      <div class="setting"><div class="k">Gujarati</div><div class="v">gu-IN</div></div>
+    </div>
+
+    <div style="margin-top: 28px; padding: 22px; background: var(--saffron-soft); border: 1px solid #fed7aa; border-radius: 14px; font-size: 14.5px; color: var(--ink-2); line-height: 1.6;">
+      <strong>Honest note:</strong> ElevenLabs Multilingual v2 is excellent on English and Hindi, very strong on Bengali / Tamil / Marathi / Gujarati / Telugu. For native-grade Kannada prosody, the production deployment swaps to <strong>Sarvam Bulbul</strong> — a single line change in the TTS service. The browser samples on this page use ElevenLabs throughout for consistency.
+    </div>
+  </div>
+</section>
+
+<!-- NEXT -->
+<section>
+  <div class="container">
+    <div class="eyebrow">Read on</div>
+    <div class="display-2">The voice is the <em>output</em>.<br/>The lifecycle is the input.</div>
+
+    <div class="next-row">
+      <a class="tile" href="how.html">
+        <span class="tag">How it decides what to say</span>
+        <span class="arrow">→</span>
+        <h3>The verify-before-act lifecycle</h3>
+        <p>Hear → restate → verify → only then act. Why the verification turn is structural, not cosmetic.</p>
+      </a>
+      <a class="tile" href="scenarios.html">
+        <span class="tag">Real callers</span>
+        <span class="arrow">→</span>
+        <h3>Four real callers</h3>
+        <p>Lakshmi, Ravi, Priya, Imran. Each on 1092 today vs. with Voca on the line. Real dialects, real outcomes.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-col">
+      <div class="foot-brand">
+        <svg class="foot-brand-logo" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#vocaGrad)"/><path d="M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="56" r="2.2" fill="white"/><circle cx="50" cy="46" r="1.8" fill="white" fill-opacity="0.7"/><circle cx="50" cy="36" r="1.4" fill="white" fill-opacity="0.5"/></svg>
+        <div class="foot-brand-name">Voca</div>
+      </div>
+      <p class="foot-tagline">Voice AI for India's helplines. Built so being understood comes before being answered.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Pages</h4>
+      <a href="index.html">Home</a>
+      <a href="how.html">How it works</a>
+      <a href="governments.html">For governments</a>
+      <a href="investors.html">For investors</a>
+    </div>
+    <div class="foot-col">
+      <h4>Stories</h4>
+      <a href="story.html">Picture story</a>
+      <a href="scenarios.html">Real scenarios</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="infographic.html">One-page brief</a>
+    </div>
+    <div class="foot-col">
+      <h4>Reach</h4>
+      <a href="mailto:kundanlm10@gmail.com">kundanlm10@gmail.com</a>
+      <a href="https://github.com/KundanKhatri/voca-public">GitHub</a>
+      <a href="https://www.linkedin.com/in/kundankhatri">LinkedIn</a>
+    </div>
+  </div>
+  <div class="foot-meta">
+    <span><strong>Voca</strong> — voice AI for India's helplines · Bengaluru, India</span>
+    <span>© 2026 · Built for AI for Bharat 2 · Theme 12</span>
+  </div>
+</footer>
+
+<script>
+(async function () {
+  const FALLBACK = {
+    voice: { name: 'Bella', description: 'warm female' },
+    model: 'eleven_multilingual_v2',
+    scenarios: {
+      'rapid-ack': { label: 'Rapid acknowledgement (distress)' },
+      'verify':    { label: 'Verification turn (calm)' },
+      'handoff':   { label: 'Agent handoff' }
+    },
+    languages: [
+      { code: 'en', label: 'English',  native: 'English',   lang_attr: 'en-IN' },
+      { code: 'hi', label: 'Hindi',    native: 'हिन्दी',     lang_attr: 'hi-IN' },
+      { code: 'kn', label: 'Kannada',  native: 'ಕನ್ನಡ',     lang_attr: 'kn-IN' },
+      { code: 'ta', label: 'Tamil',    native: 'தமிழ்',     lang_attr: 'ta-IN' },
+      { code: 'te', label: 'Telugu',   native: 'తెలుగు',    lang_attr: 'te-IN' },
+      { code: 'mr', label: 'Marathi',  native: 'मराठी',     lang_attr: 'mr-IN' },
+      { code: 'bn', label: 'Bengali',  native: 'বাংলা',     lang_attr: 'bn-IN' },
+      { code: 'gu', label: 'Gujarati', native: 'ગુજરાતી',   lang_attr: 'gu-IN' }
+    ],
+    samples: [
+      { lang: 'en', scenario: 'rapid-ack', text: 'I hear you. I am with you. Help is coming. Are you somewhere safe right now?' },
+      { lang: 'hi', scenario: 'rapid-ack', text: 'मैं सुन रही हूँ। मैं आपके साथ हूँ। मदद आ रही है। आप अभी सुरक्षित जगह पर हैं?' },
+      { lang: 'kn', scenario: 'rapid-ack', text: 'ನಾನು ಕೇಳ್ತಿದೀನಿ. ಜೊತೆಗಿರ್ತೀನಿ. ಸಹಾಯ ಬರ್ತಾ ಇದೆ. ನಿಮ್ಮ ಜಾಗ ಸುರಕ್ಷಿತಾನ?' },
+      { lang: 'ta', scenario: 'rapid-ack', text: 'நான் கேட்கிறேன். உங்களுடன் இருக்கிறேன். உதவி வருகிறது. நீங்கள் பாதுகாப்பான இடத்தில் இருக்கிறீர்களா?' },
+      { lang: 'te', scenario: 'rapid-ack', text: 'నేను వింటున్నాను. మీతో ఉన్నాను. సహాయం వస్తోంది. మీరు ఇప్పుడు సురక్షితంగా ఉన్నారా?' },
+      { lang: 'mr', scenario: 'rapid-ack', text: 'मी ऐकत आहे. तुमच्यासोबत आहे. मदत येत आहे. तुम्ही आता सुरक्षित जागी आहात का?' },
+      { lang: 'bn', scenario: 'rapid-ack', text: 'আমি শুনছি। আমি আপনার সাথে আছি। সাহায্য আসছে। আপনি কি এখন নিরাপদ জায়গায় আছেন?' },
+      { lang: 'gu', scenario: 'rapid-ack', text: 'હું સાંભળું છું. તમારી સાથે છું. મદદ આવી રહી છે. તમે અત્યારે સુરક્ષિત જગ્યાએ છો?' },
+      { lang: 'en', scenario: 'verify',    text: 'Just to confirm — you need help renewing your ration card on the online portal. Is that right?' },
+      { lang: 'hi', scenario: 'verify',    text: 'बस पुष्टि के लिए — आपको ऑनलाइन पोर्टल पर अपना राशन कार्ड नवीनीकरण करने में मदद चाहिए। क्या यह सही है?' },
+      { lang: 'kn', scenario: 'verify',    text: 'ಖಚಿತಪಡಿಸಲು — ನಿಮಗೆ ಆನ್‌ಲೈನ್ ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ರೇಷನ್ ಕಾರ್ಡ್ ನವೀಕರಣಕ್ಕೆ ಸಹಾಯ ಬೇಕು. ಸರಿಯಾ?' },
+      { lang: 'ta', scenario: 'verify',    text: 'உறுதிப்படுத்த — ஆன்லைன் போர்ட்டலில் உங்கள் ரேஷன் கார்டை புதுப்பிக்க உதவி வேண்டும். அது சரியா?' },
+      { lang: 'te', scenario: 'verify',    text: 'ధృవీకరించడానికి — మీకు ఆన్‌లైన్ పోర్టల్‌లో రేషన్ కార్డ్ రెన్యువల్‌కు సహాయం కావాలి. అది సరియేనా?' },
+      { lang: 'mr', scenario: 'verify',    text: 'खात्री करण्यासाठी — तुम्हाला ऑनलाइन पोर्टलवर रेशन कार्ड नूतनीकरणासाठी मदत हवी आहे. ते बरोबर आहे का?' },
+      { lang: 'bn', scenario: 'verify',    text: 'নিশ্চিত করতে — আপনার অনলাইন পোর্টালে রেশন কার্ড নবীকরণে সাহায্য দরকার। ঠিক বলেছি?' },
+      { lang: 'gu', scenario: 'verify',    text: 'પુષ્ટિ માટે — તમારે ઓનલાઇન પોર્ટલ પર રેશન કાર્ડ નવીકરણ માટે મદદ જોઈએ છે. શું તે સાચું છે?' },
+      { lang: 'en', scenario: 'handoff',   text: 'I am connecting you to a person now. Please stay with me. They will know what we have discussed.' },
+      { lang: 'hi', scenario: 'handoff',   text: 'मैं अभी आपको एक व्यक्ति से जोड़ रही हूँ। कृपया मेरे साथ रहिए। उन्हें पता होगा कि हमने क्या बात की।' },
+      { lang: 'kn', scenario: 'handoff',   text: 'ನಾನು ಈಗ ನಿಮ್ಮನ್ನು ಒಬ್ಬ ವ್ಯಕ್ತಿಗೆ ಸಂಪರ್ಕಿಸುತ್ತೇನೆ. ದಯವಿಟ್ಟು ನನ್ನೊಂದಿಗೆ ಇರಿ. ನಾವು ಏನು ಮಾತನಾಡಿದ್ದೇವೆ ಎಂದು ಅವರಿಗೆ ತಿಳಿದಿರುತ್ತದೆ.' },
+      { lang: 'ta', scenario: 'handoff',   text: 'இப்போது உங்களை ஒரு நபருடன் இணைக்கிறேன். தயவு செய்து என்னுடன் இருங்கள். நாம் என்ன பேசினோம் என்று அவர்களுக்குத் தெரியும்.' },
+      { lang: 'te', scenario: 'handoff',   text: 'ఇప్పుడు మిమ్మల్ని ఒక వ్యక్తికి కనెక్ట్ చేస్తున్నాను. దయచేసి నాతో ఉండండి. మనం ఏమి మాట్లాడాము అని వారికి తెలుస్తుంది.' },
+      { lang: 'mr', scenario: 'handoff',   text: 'मी आता तुम्हाला एका व्यक्तीशी जोडत आहे. कृपया माझ्यासोबत राहा. आपण काय बोललो ते त्यांना कळेल.' },
+      { lang: 'bn', scenario: 'handoff',   text: 'আমি এখন আপনাকে একজনের সাথে যোগ করছি। দয়া করে আমার সাথে থাকুন। আমরা কী আলোচনা করেছি তা তিনি জানবেন।' },
+      { lang: 'gu', scenario: 'handoff',   text: 'હું હવે તમને એક વ્યક્તિ સાથે જોડી રહી છું. કૃપા કરીને મારી સાથે રહો. આપણે શું વાત કરી તે તેમને ખબર પડશે.' }
+    ]
+  };
+  const GLOSSES = {
+    'rapid-ack': '"I hear you. I am with you. Help is coming. Are you somewhere safe right now?"',
+    'verify':    '"Just to confirm — you need help renewing your ration card on the online portal. Is that right?"',
+    'handoff':   '"I am connecting you to a person now. Please stay with me. They will know what we have discussed."'
+  };
+
+  let manifest = FALLBACK;
+  let hasRealAudio = false;
+  try {
+    const r = await fetch('audio/manifest.json', { cache: 'no-cache' });
+    if (r.ok) { manifest = await r.json(); hasRealAudio = true; }
+  } catch {}
+
+  const langRow = document.getElementById('langRow');
+  const scenRow = document.getElementById('scenRow');
+  const textEl  = document.getElementById('voiceText');
+  const glossEl = document.getElementById('voiceGloss');
+  const playBtn = document.getElementById('playBig');
+  const playLab = document.getElementById('playLabel');
+  const playIco = document.getElementById('playIconBig');
+  const wave    = document.getElementById('waveVis');
+  const audioEl = document.getElementById('vocaAudio');
+  const statusEl = document.getElementById('voiceStatus');
+  const noteEl   = document.getElementById('voiceNote');
+
+  manifest.languages.forEach((l, i) => {
+    const b = document.createElement('button');
+    b.className = 'lang-pill' + (i === 0 ? ' active' : '');
+    b.dataset.lang = l.code;
+    b.dataset.langAttr = l.lang_attr;
+    b.innerHTML = `<span class="latin">${l.label}</span><span class="native">·&nbsp;${l.native}</span>`;
+    b.addEventListener('click', () => selectLang(l.code));
+    langRow.appendChild(b);
+  });
+  Object.entries(manifest.scenarios).forEach(([code, s], i) => {
+    const b = document.createElement('button');
+    b.className = 'scen-pill' + (i === 0 ? ' active' : '');
+    b.dataset.scenario = code;
+    b.innerHTML = `<span class="scen-tag">${code}</span><span>${s.label}</span>`;
+    b.addEventListener('click', () => selectScen(code));
+    scenRow.appendChild(b);
+  });
+
+  let currentLang = manifest.languages[0].code;
+  let currentScen = Object.keys(manifest.scenarios)[0];
+  let isPlaying = false;
+
+  function findSample() {
+    return manifest.samples.find(s => s.lang === currentLang && s.scenario === currentScen);
+  }
+  function updateDisplay() {
+    const s = findSample(); if (!s) return;
+    textEl.textContent = s.text;
+    glossEl.textContent = GLOSSES[currentScen] || '';
+    const lang = manifest.languages.find(l => l.code === currentLang);
+    if (lang) textEl.setAttribute('lang', lang.lang_attr);
+  }
+  function selectLang(c) {
+    currentLang = c;
+    document.querySelectorAll('.lang-pill').forEach(p => p.classList.toggle('active', p.dataset.lang === c));
+    stop(); updateDisplay();
+  }
+  function selectScen(c) {
+    currentScen = c;
+    document.querySelectorAll('.scen-pill').forEach(p => p.classList.toggle('active', p.dataset.scenario === c));
+    stop(); updateDisplay();
+  }
+  function setPlaying(on) {
+    isPlaying = on;
+    playBtn.classList.toggle('playing', on);
+    if (wave) wave.classList.toggle('playing', on);
+    if (on) {
+      playIco.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>';
+      playLab.textContent = 'Playing… (press to stop)';
+      statusEl.textContent = 'Speaking…';
+    } else {
+      playIco.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M7 5v14l12-7L7 5z"/></svg>';
+      playLab.textContent = 'Press to hear Voca';
+      statusEl.textContent = 'Ready';
+    }
+  }
+  function stop() {
+    try { audioEl.pause(); audioEl.currentTime = 0; } catch {}
+    try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch {}
+    setPlaying(false);
+  }
+  function speakWeb(text, langAttr) {
+    if (!window.speechSynthesis) { alert('Voice playback not supported.'); return; }
+    const synth = window.speechSynthesis; synth.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = langAttr; u.rate = 0.9;
+    const voices = synth.getVoices();
+    const m = voices.find(v => v.lang === langAttr) ||
+              voices.find(v => v.lang.toLowerCase().startsWith(langAttr.split('-')[0].toLowerCase())) ||
+              voices[0];
+    if (m) u.voice = m;
+    u.onstart = () => setPlaying(true);
+    u.onend = u.onerror = () => setPlaying(false);
+    synth.speak(u);
+  }
+  async function play() {
+    if (isPlaying) { stop(); return; }
+    const s = findSample(); if (!s) return;
+    if (hasRealAudio) {
+      const url = s.url || `audio/${s.scenario}-${s.lang}.mp3`;
+      try {
+        const head = await fetch(url, { method: 'HEAD' });
+        if (head.ok) {
+          audioEl.src = url;
+          audioEl.onplaying = () => setPlaying(true);
+          audioEl.onended = audioEl.onerror = () => setPlaying(false);
+          await audioEl.play();
+          return;
+        }
+      } catch {}
+    }
+    const lang = manifest.languages.find(l => l.code === s.lang);
+    speakWeb(s.text, lang ? lang.lang_attr : 'en-IN');
+  }
+  playBtn.addEventListener('click', play);
+
+  if (!hasRealAudio && noteEl) {
+    noteEl.innerHTML = '<strong>Browser fallback active.</strong> The ElevenLabs MP3s have not been generated yet — your browser is using its built-in voice for now (quality varies by device). To populate the real samples: get an ElevenLabs API key, then from the project root run <code>ELEVENLABS_API_KEY=sk_xxx bash scripts/build-voice.sh</code>. The site will auto-upgrade to the production voice on next reload.';
+  }
+
+  updateDisplay();
+  window.addEventListener('beforeunload', stop);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#fbf8f1" />
+<title>Voca for investors · horizontal voice infrastructure for Bharat</title>
+<meta name="description" content="TAM ₹23,400 Cr · SAM ₹5,800 Cr · marginal cost ₹0.90/call at scale · three compounding moats. The application layer for India's voice future." />
+<meta property="og:title" content="Voca for investors" />
+<meta property="og:description" content="TAM, SAM, unit economics, three compounding moats." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c1440e'/%3E%3Cstop offset='100%25' stop-color='%23e76f29'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Cpath d='M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='50' cy='56' r='2.2' fill='white'/%3E%3Ccircle cx='50' cy='46' r='1.8' fill='white' fill-opacity='0.7'/%3E%3Ccircle cx='50' cy='36' r='1.4' fill='white' fill-opacity='0.5'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="voca.css" />
+<style>
+  /* Market grid */
+  .market-grid { margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 600px) { .market-grid { grid-template-columns: 1fr; } }
+  .market-card.dark-card {
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.10);
+    border-radius: 18px; padding: clamp(24px, 3vw, 32px);
+  }
+  .market-card .label { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #fb923c; font-weight: 600; }
+  .market-card .big-num {
+    font-family: var(--serif);
+    font-size: clamp(38px, 5.6vw, 60px); line-height: 1.05;
+    font-weight: 600; letter-spacing: -.03em; color: white;
+    margin: 14px 0 8px;
+  }
+  .market-card .desc { color: #cbd5e1; font-size: 14.5px; line-height: 1.55; }
+
+  /* Moats */
+  .moats { margin-top: 50px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  @media (max-width: 800px) { .moats { grid-template-columns: 1fr; } }
+  .moat {
+    background: white; border: 1px solid var(--rule); border-radius: 18px;
+    padding: clamp(24px, 3vw, 32px); box-shadow: var(--shadow-sm);
+  }
+  .moat .num {
+    font-family: var(--serif); font-size: 56px; line-height: 1;
+    color: var(--saffron); letter-spacing: -.03em; font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .moat h3 { font-size: 22px; line-height: 1.2; margin: 0 0 12px; letter-spacing: -.015em; font-weight: 600; }
+  .moat p { color: var(--ink-3); font-size: 14.5px; line-height: 1.6; margin: 0; }
+  .moat p strong { color: var(--ink); }
+
+  /* Roadmap */
+  .road { margin-top: 50px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .road { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .road { grid-template-columns: 1fr; } }
+  .stop {
+    background: white; border: 1px solid var(--rule); border-radius: 16px;
+    padding: 24px 20px; box-shadow: var(--shadow-sm);
+  }
+  .stop .when { font-size: 11px; color: var(--saffron); letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
+  .stop .what { font-size: 15px; color: var(--ink); margin-top: 8px; line-height: 1.4; font-weight: 500; }
+
+  /* Why now */
+  .why-row { margin-top: 50px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  @media (max-width: 800px) { .why-row { grid-template-columns: 1fr; } }
+  .why-card {
+    background: white; border: 1px solid var(--rule); border-radius: 18px;
+    padding: clamp(24px, 3vw, 32px); box-shadow: var(--shadow-sm);
+  }
+  .why-card .num {
+    font-family: var(--serif); font-size: 18px; color: var(--teal); font-weight: 700;
+    letter-spacing: .04em; margin-bottom: 10px;
+  }
+  .why-card h3 { font-size: 19px; line-height: 1.25; margin: 0 0 10px; font-weight: 600; }
+  .why-card p { color: var(--ink-3); font-size: 14.5px; line-height: 1.6; margin: 0; }
+
+  .next-row { margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 700px) { .next-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="vocaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c1440e"/>
+      <stop offset="100%" stop-color="#e76f29"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <svg class="brand-logo" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#vocaGrad)"/><path d="M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="56" r="2.2" fill="white"/><circle cx="50" cy="46" r="1.8" fill="white" fill-opacity="0.7"/><circle cx="50" cy="36" r="1.4" fill="white" fill-opacity="0.5"/></svg>
+      <div><div class="brand-name">Voca</div><div class="brand-sub">voice AI for India's helplines</div></div>
+    </a>
+    <div class="nav-links">
+      <a href="how.html">How</a>
+      <a href="voice.html">Voice</a>
+      <a href="governments.html">For governments</a>
+      <a href="investors.html" class="current">For investors</a>
+      <a href="story.html">Story</a>
+      <a href="mailto:kundanlm10@gmail.com" class="nav-cta">Talk to us</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">For investors and builders</div>
+    <h1 class="display">A horizontal voice infrastructure<br/>for <em>Bharat</em>.</h1>
+    <p class="lede">Voca is the application layer for India's voice future — vertical applications on Indian foundation models. The wedge is government helplines. The platform is every Indian helpline that needs to understand a citizen in their own language.</p>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section class="dark">
+  <div class="container">
+    <div class="eyebrow dark">The market</div>
+    <div class="display-2" style="color:white;">Big enough to <em>matter</em>,<br/>small enough to <em>be credible</em>.</div>
+    <p class="lede">India runs roughly 4.5 billion helpline calls a year — government, BFSI, telco, healthcare. Every one of them is a multilingual problem. The numbers below are honest and bottom-up.</p>
+
+    <div class="market-grid">
+      <div class="market-card dark-card">
+        <div class="label">Total addressable</div>
+        <div class="big-num">~₹23,400 Cr</div>
+        <div class="desc">India helpline market at SaaS pricing — government, BFSI, telco, healthcare. Every one of them is a multilingual problem.</div>
+      </div>
+      <div class="market-card dark-card">
+        <div class="label">Serviceable in 5 years</div>
+        <div class="big-num">~₹5,800 Cr</div>
+        <div class="desc">Multilingual + voice + AI-augmented helplines that would adopt Voca's architecture within 5 years. Conservative.</div>
+      </div>
+      <div class="market-card dark-card">
+        <div class="label">Marginal cost / call</div>
+        <div class="big-num">~₹0.90</div>
+        <div class="desc">At national scale (5M calls/day), with caching and quantization. Comparator: ₹40–80/call agent-loaded today. We add &lt;5% to total cost.</div>
+      </div>
+      <div class="market-card dark-card">
+        <div class="label">Gross margin</div>
+        <div class="big-num">50–70%</div>
+        <div class="desc">At ₹4–6/call pilot pricing, ₹3/call national pricing. Margin improves with volume via caching, quantization, mixed hardware tiers.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THREE MOATS -->
+<section style="background:var(--paper);">
+  <div class="container">
+    <div class="eyebrow">Defensibility</div>
+    <div class="display-2">Three moats. <em>Compounding</em>.</div>
+    <p class="lede">A horizontal voice play wins or loses on defensibility. Voca's defensibility is not one big moat — it is three smaller moats that reinforce each other over time.</p>
+
+    <div class="moats">
+      <div class="moat">
+        <div class="num">01</div>
+        <h3>Dialect data flywheel</h3>
+        <p>Every verification outcome and agent edit is a labeled data point. After 12 months in production, Voca holds the largest labeled corpus of dialect-tagged Indian citizen speech outside the AI4Bharat lab. <strong>Not replicable</strong> without years of operational data.</p>
+      </div>
+      <div class="moat">
+        <div class="num">02</div>
+        <h3>Government procurement lock-in</h3>
+        <p>Once on GeM with two state deployments, every subsequent state defaults to the existing approved vendor. Classic switching-cost moat plus a regulatory moat. <strong>Indian government procurement velocity favors first movers heavily.</strong></p>
+      </div>
+      <div class="moat">
+        <div class="num">03</div>
+        <h3>Verify-before-act product DNA</h3>
+        <p>The product's design center — verify before act — is a philosophy, not a feature. Competitors copying the surface miss the underlying FSM and audit story. <strong>Hard to replicate</strong> with a different starting frame.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY NOW -->
+<section style="background:var(--paper-2);">
+  <div class="container">
+    <div class="eyebrow">Why now</div>
+    <div class="display-2">Three step-changes <em>made this buildable</em><br/>in the last 18 months.</div>
+
+    <div class="why-row">
+      <div class="why-card">
+        <div class="num">2024–2025</div>
+        <h3>Indic foundation models matured</h3>
+        <p>AI4Bharat (IIT Madras) and Sarvam AI shipped open, dialect-aware models that didn't exist before. The acoustic gap on rural Kannada and Hindi closed from "frustrating" to "usable." Voca's STT and TTS were research-grade in 2024. They are deployable in 2026.</p>
+      </div>
+      <div class="why-card">
+        <div class="num">2024–2026</div>
+        <h3>Real-time voice infra commoditized</h3>
+        <p>LiveKit Agents, Pipecat, sub-100ms streaming TTS — research-grade in 2024, plumbing in 2026. A two-person team can plug them together in two weeks. Latency budgets that required custom engineering are now off-the-shelf.</p>
+      </div>
+      <div class="why-card">
+        <div class="num">2025–2026</div>
+        <h3>Government readiness</h3>
+        <p>Bhashini operational and open for integration. GeM ready to procure AI services that respect Indian sovereign-cloud requirements. Five years ago this would have died at the procurement gate. Now there is a path.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section>
+  <div class="container">
+    <div class="eyebrow">Roadmap</div>
+    <div class="display-2">Karnataka first.<br/>Then every helpline in <em>Bharat</em>.</div>
+    <p class="lede">Voca's pipeline is language-agnostic at the orchestration layer. Adding a new Indian language: confirm acoustic and TTS coverage, curate the cultural KB, collect a small fine-tune set. Approximately two weeks per language to production quality.</p>
+
+    <div class="road">
+      <div class="stop"><div class="when">Aug 2026</div><div class="what">Karnataka 1092 pilot · Kannada + Hindi · 1 → 5 districts</div></div>
+      <div class="stop"><div class="when">Feb 2027</div><div class="what">1098 + 181 in Karnataka · Tamil Nadu pilot · Tamil + Telugu</div></div>
+      <div class="stop"><div class="when">Aug 2027</div><div class="what">National 112 ERSS · first PSU bank contract · 12 languages</div></div>
+      <div class="stop"><div class="when">Aug 2028</div><div class="what">Bhashini-blessed national platform · B2B SaaS public</div></div>
+      <div class="stop"><div class="when">Beyond</div><div class="what">Every helpline in Bharat · 22 official languages · platform plays</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- THE ASK -->
+<section class="dark">
+  <div class="container">
+    <div class="eyebrow dark">The ask</div>
+    <div class="display-2" style="color:white;">A 30-minute call, on the record.<br/><em>Not a pitch deck</em>.</div>
+    <p class="lede" style="color:#cbd5e1;">If you are a deep-tech investor in the India infrastructure thesis — Indic AI, government tech, voice infrastructure — a 30-minute call with the founder is the right next step. The materials below are the substance you need before that call.</p>
+
+    <div style="margin-top:40px;display:flex;gap:12px;flex-wrap:wrap;">
+      <a class="btn btn-primary" href="mailto:kundanlm10@gmail.com?subject=Voca%20%E2%80%94%20investor%20conversation">Email Kundan to schedule →</a>
+      <a class="btn btn-on-dark" href="architecture.html">Open the architecture</a>
+      <a class="btn btn-on-dark" href="voice.html">Hear the voice</a>
+    </div>
+  </div>
+</section>
+
+<!-- NEXT -->
+<section>
+  <div class="container">
+    <div class="eyebrow">Read on</div>
+    <div class="display-2">More for the <em>investor reader</em>.</div>
+
+    <div class="next-row">
+      <a class="tile" href="how.html">
+        <span class="tag">The mechanism</span>
+        <span class="arrow">→</span>
+        <h3>The verify-before-act lifecycle</h3>
+        <p>The product DNA. Why the verification turn is structural, not cosmetic — and why competitors copying the surface lose to copying the philosophy.</p>
+      </a>
+      <a class="tile" href="governments.html">
+        <span class="tag">The buyer</span>
+        <span class="arrow">→</span>
+        <h3>For governments</h3>
+        <p>The compliance posture, the procurement-readiness checklist, and the 90-day pilot ask. Helps you assess time-to-revenue.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-col">
+      <div class="foot-brand">
+        <svg class="foot-brand-logo" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#vocaGrad)"/><path d="M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="56" r="2.2" fill="white"/><circle cx="50" cy="46" r="1.8" fill="white" fill-opacity="0.7"/><circle cx="50" cy="36" r="1.4" fill="white" fill-opacity="0.5"/></svg>
+        <div class="foot-brand-name">Voca</div>
+      </div>
+      <p class="foot-tagline">Voice AI for India's helplines. Built so being understood comes before being answered.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Pages</h4>
+      <a href="index.html">Home</a>
+      <a href="how.html">How it works</a>
+      <a href="voice.html">Hear Voca</a>
+      <a href="governments.html">For governments</a>
+    </div>
+    <div class="foot-col">
+      <h4>Stories</h4>
+      <a href="story.html">Picture story</a>
+      <a href="scenarios.html">Real scenarios</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="infographic.html">One-page brief</a>
+    </div>
+    <div class="foot-col">
+      <h4>Reach</h4>
+      <a href="mailto:kundanlm10@gmail.com">kundanlm10@gmail.com</a>
+      <a href="https://github.com/KundanKhatri/voca-public">GitHub</a>
+      <a href="https://www.linkedin.com/in/kundankhatri">LinkedIn</a>
+    </div>
+  </div>
+  <div class="foot-meta">
+    <span><strong>Voca</strong> — voice AI for India's helplines · Bengaluru, India</span>
+    <span>© 2026 · Built for AI for Bharat 2 · Theme 12</span>
+  </div>
+</footer>
+
+</body>
+</html>
