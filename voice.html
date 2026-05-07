@@ -178,11 +178,11 @@
     </a>
     <div class="nav-links">
       <a href="how.html">How</a>
+      <a href="talk.html">Talk to Voca</a>
       <a href="voice.html" class="current">Voice</a>
       <a href="governments.html">For governments</a>
       <a href="investors.html">For investors</a>
-      <a href="story.html">Story</a>
-      <a href="mailto:kundanlm10@gmail.com" class="nav-cta">Talk to us</a>
+      <a href="mailto:kundanlm10@gmail.com" class="nav-cta">Reach Kundan</a>
     </div>
   </div>
 </nav>
@@ -192,7 +192,7 @@
   <div class="container">
     <div class="eyebrow">Hear Voca speak</div>
     <h1 class="display">The actual voice<br/>that's on <em>the line</em>.</h1>
-    <p class="lede">ElevenLabs Multilingual v2 · "Bella" voice · production voice settings. Pick a language. Pick a moment in the call. Press play. This is Voca, exactly as a citizen would hear it.</p>
+    <p class="lede">Sarvam Bulbul v2 · "Anushka" voice · trained natively on Indian languages, real Indic prosody not Western TTS approximating. Pick a language, pick a moment, press play. This is Voca exactly as a citizen would hear it. <strong>For a live conversation</strong> — where you actually speak to Voca and hear it respond — see <a href="talk.html">/talk</a>.</p>
   </div>
 </section>
 
@@ -206,11 +206,11 @@
         <div class="source-row">
           <div>
             <div class="source-label">Voice</div>
-            <div class="source-value">Bella · warm female</div>
+            <div class="source-value">Anushka · warm female</div>
           </div>
           <div>
             <div class="source-label">Model</div>
-            <div class="source-value">eleven_multilingual_v2</div>
+            <div class="source-value">sarvam · bulbul:v2</div>
           </div>
           <div>
             <div class="source-label">Status</div>
@@ -245,7 +245,7 @@
       <audio id="vocaAudio" preload="auto" style="display:none;"></audio>
 
       <p class="stage-note" id="voiceNote">
-        <strong>You're hearing real ElevenLabs audio</strong> — generated using the production voice settings Voca ships with. If a sample is missing, the player falls back to the browser's built-in voice for that language. To regenerate or extend the library, run <code>bash scripts/build-voice.sh</code> with your ElevenLabs key from the project root.
+        <strong>You're hearing real Sarvam Bulbul audio</strong> — generated using the production voice settings Voca ships with. If a sample is missing, the player falls back to the browser's built-in voice for that language. To regenerate or extend the library, run <code>SARVAM_API_KEY=sk_xxx bash scripts/build-voice.sh</code> from the project root. <strong>Want a live conversation?</strong> See the <a href="talk.html">/talk</a> page.
       </p>
 
     </div>
@@ -258,20 +258,20 @@
 
       <div class="settings-grid">
         <div class="setting">
-          <div class="k">Stability</div>
-          <div class="v">0.55</div>
+          <div class="k">Pitch</div>
+          <div class="v">0</div>
         </div>
         <div class="setting">
-          <div class="k">Similarity</div>
-          <div class="v">0.75</div>
+          <div class="k">Pace</div>
+          <div class="v">1.0</div>
         </div>
         <div class="setting">
-          <div class="k">Style</div>
-          <div class="v">0.40</div>
+          <div class="k">Loudness</div>
+          <div class="v">1.0</div>
         </div>
         <div class="setting">
-          <div class="k">Speaker boost</div>
-          <div class="v">on</div>
+          <div class="k">Sample rate</div>
+          <div class="v">22.05k</div>
         </div>
       </div>
     </div>
@@ -297,8 +297,8 @@
       <div class="setting"><div class="k">Gujarati</div><div class="v">gu-IN</div></div>
     </div>
 
-    <div style="margin-top: 28px; padding: 22px; background: var(--saffron-soft); border: 1px solid #fed7aa; border-radius: 14px; font-size: 14.5px; color: var(--ink-2); line-height: 1.6;">
-      <strong>Honest note:</strong> ElevenLabs Multilingual v2 is excellent on English and Hindi, very strong on Bengali / Tamil / Marathi / Gujarati / Telugu. For native-grade Kannada prosody, the production deployment swaps to <strong>Sarvam Bulbul</strong> — a single line change in the TTS service. The browser samples on this page use ElevenLabs throughout for consistency.
+    <div style="margin-top: 28px; padding: 22px; background: var(--green-soft); border: 1px solid #a7f3d0; border-radius: 14px; font-size: 14.5px; color: #064e3b; line-height: 1.6;">
+      <strong>Why Sarvam:</strong> Bulbul is trained natively on Indic data — prosody on Kannada, Tamil, Telugu, Bengali, Gujarati, Marathi, Malayalam, Punjabi sounds genuinely Indian, not like Western TTS approximating an Indian accent. The samples on this page were generated with the same settings Voca ships with in production.
     </div>
   </div>
 </section>
@@ -513,7 +513,7 @@
     if (isPlaying) { stop(); return; }
     const s = findSample(); if (!s) return;
     if (hasRealAudio) {
-      const url = s.url || `audio/${s.scenario}-${s.lang}.mp3`;
+      const url = s.url || `audio/${s.scenario}-${s.lang}.wav`;
       try {
         const head = await fetch(url, { method: 'HEAD' });
         if (head.ok) {
@@ -531,7 +531,7 @@
   playBtn.addEventListener('click', play);
 
   if (!hasRealAudio && noteEl) {
-    noteEl.innerHTML = '<strong>Browser fallback active.</strong> The ElevenLabs MP3s have not been generated yet — your browser is using its built-in voice for now (quality varies by device). To populate the real samples: get an ElevenLabs API key, then from the project root run <code>ELEVENLABS_API_KEY=sk_xxx bash scripts/build-voice.sh</code>. The site will auto-upgrade to the production voice on next reload.';
+    noteEl.innerHTML = '<strong>Browser fallback active.</strong> The Sarvam Bulbul samples have not been generated yet — your browser is using its built-in voice for now (quality varies by device). To populate the real samples: get a Sarvam API key at <a href="https://dashboard.sarvam.ai">dashboard.sarvam.ai</a>, then from the project root run <code>SARVAM_API_KEY=sk_xxx bash scripts/build-voice.sh</code>. The site will auto-upgrade to the production voice on next reload. <strong>Want live conversation instead?</strong> Use the <a href="talk.html">/talk</a> page — speak to Voca and hear it respond in real time.';
   }
 
   updateDisplay();

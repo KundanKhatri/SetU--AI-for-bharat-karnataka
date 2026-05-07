@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#fbf8f1" />
+<title>Talk to Voca · live conversation, real risk detection, Indian languages</title>
+<meta name="description" content="Speak to Voca live. Real Sarvam STT + LLM + Bulbul TTS pipeline. Talk in any Indian language; Voca interprets, scores risk and stress, and speaks back warmly in your language." />
+<meta property="og:title" content="Talk to Voca" />
+<meta property="og:description" content="Live conversation. Real risk detection. Real Indian languages. Real warmth." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23c1440e'/%3E%3Cstop offset='100%25' stop-color='%23e76f29'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Cpath d='M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='50' cy='56' r='2.2' fill='white'/%3E%3Ccircle cx='50' cy='46' r='1.8' fill='white' fill-opacity='0.7'/%3E%3Ccircle cx='50' cy='36' r='1.4' fill='white' fill-opacity='0.5'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="voca.css" />
+<style>
+  /* Hero compact */
+  .hero { padding: 80px var(--pad-x) 50px; }
+
+  /* Setup panel (shown if no API key) */
+  .setup {
+    margin: 0 auto; max-width: 720px;
+    background: white; border: 1px solid var(--rule); border-radius: 24px;
+    padding: clamp(28px, 5vw, 48px); box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .setup h2 { font-family: var(--serif); font-size: clamp(22px, 3.4vw, 30px); margin: 0 0 14px; letter-spacing: -.02em; font-weight: 600; }
+  .setup p { color: var(--ink-3); font-size: 15px; line-height: 1.6; margin: 0 0 22px; }
+  .setup-input {
+    width: 100%; padding: 14px 18px; font: inherit; font-size: 14px;
+    border: 1px solid var(--rule); border-radius: 12px; outline: none;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    transition: border-color .15s;
+  }
+  .setup-input:focus { border-color: var(--saffron); }
+  .setup .btn { margin-top: 14px; }
+  .setup-fine {
+    margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--rule);
+    font-size: 12.5px; color: #64748b; line-height: 1.6;
+  }
+
+  /* Stage (the conversation arena) */
+  .stage {
+    background: white; border: 1px solid var(--rule); border-radius: 24px;
+    padding: clamp(28px, 5vw, 48px); box-shadow: var(--shadow);
+  }
+
+  /* Top: status + mic */
+  .stage-top {
+    display: flex; align-items: center; gap: 24px; margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 600px) { .stage-top { flex-direction: column; align-items: stretch; gap: 18px; } }
+
+  .status-box {
+    flex: 1 1 auto; background: var(--paper-2); border: 1px solid var(--rule);
+    border-radius: 14px; padding: 16px 20px; min-width: 0;
+  }
+  .status-label {
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: #64748b; font-weight: 600; margin-bottom: 4px;
+  }
+  .status-value {
+    font-family: var(--serif); font-size: 22px; font-weight: 600;
+    color: var(--ink); letter-spacing: -.01em; line-height: 1.2;
+  }
+  .status-value.listening { color: var(--saffron); }
+  .status-value.thinking { color: var(--teal); }
+  .status-value.speaking { color: var(--green-2); }
+  .status-sub { font-size: 13px; color: var(--ink-3); margin-top: 4px; }
+
+  .mic-button {
+    background: var(--ink); color: white; border: 0;
+    border-radius: 999px; padding: 18px 28px;
+    cursor: pointer; transition: all .15s;
+    display: inline-flex; align-items: center; gap: 14px;
+    font: inherit; font-size: 15px; font-weight: 600;
+    flex-shrink: 0; min-width: 240px; justify-content: center;
+  }
+  .mic-button:hover { background: var(--saffron); transform: translateY(-1px); }
+  .mic-button.recording { background: var(--red); }
+  .mic-button.recording .mic-circle {
+    background: rgba(255,255,255,.25);
+    box-shadow: 0 0 0 0 rgba(255,255,255,.5);
+    animation: micPulse 1.4s ease-out infinite;
+  }
+  .mic-button:disabled { opacity: 0.5; cursor: wait; }
+  @keyframes micPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,.5); }
+    50%      { box-shadow: 0 0 0 14px rgba(255,255,255,0); }
+  }
+  .mic-circle {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,.15); display: grid; place-items: center;
+    color: white; flex-shrink: 0;
+  }
+
+  /* Risk meters dashboard */
+  .meters {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 700px) { .meters { grid-template-columns: repeat(2, 1fr); } }
+  .meter {
+    background: var(--paper-2); border: 1px solid var(--rule); border-radius: 14px;
+    padding: 16px; transition: all .25s;
+  }
+  .meter.high { background: #fef2f2; border-color: #fecaca; }
+  .meter.medium { background: #fffbeb; border-color: #fde68a; }
+  .meter.low { background: var(--green-soft); border-color: #a7f3d0; }
+  .meter-label {
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    color: #64748b; font-weight: 600; margin-bottom: 8px;
+  }
+  .meter-value {
+    font-family: var(--serif); font-size: 28px; font-weight: 600;
+    line-height: 1; letter-spacing: -.02em; margin-bottom: 8px;
+  }
+  .meter-track {
+    height: 6px; background: white; border-radius: 3px; overflow: hidden;
+    border: 1px solid var(--rule);
+  }
+  .meter-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--saffron), var(--saffron-2));
+    transition: width .4s ease;
+  }
+  .meter.high .meter-fill { background: linear-gradient(90deg, #b91c1c, #dc2626); }
+  .meter.medium .meter-fill { background: linear-gradient(90deg, #b45309, #f59e0b); }
+  .meter.low .meter-fill { background: linear-gradient(90deg, var(--green), var(--green-2)); }
+  .meter-pill {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 600; letter-spacing: .06em;
+    background: white; border: 1px solid var(--rule);
+  }
+  .meter-pill.high { background: #fef2f2; border-color: #fecaca; color: var(--red); }
+  .meter-pill.medium { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+  .meter-pill.low { background: var(--green-soft); border-color: #a7f3d0; color: var(--green); }
+
+  /* Conversation log */
+  .convo {
+    background: var(--paper-2); border: 1px solid var(--rule); border-radius: 18px;
+    padding: 24px; min-height: 200px; max-height: 480px; overflow-y: auto;
+  }
+  .convo-empty {
+    text-align: center; color: #94a3b8; padding: 40px 20px;
+    font-style: italic; font-family: var(--serif); font-size: 15px;
+  }
+  .turn { display: flex; gap: 14px; margin-bottom: 18px; }
+  .turn:last-child { margin-bottom: 0; }
+  .turn.right { flex-direction: row-reverse; }
+  .turn .who {
+    width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+    color: white; font-weight: 700; font-size: 13px; flex-shrink: 0;
+  }
+  .turn.you .who { background: var(--saffron); }
+  .turn.voca .who { background: var(--teal); }
+  .bubble {
+    background: white; border: 1px solid var(--rule);
+    border-radius: 14px; padding: 12px 16px; max-width: 76%;
+    font-size: 14.5px; line-height: 1.55;
+  }
+  .turn.voca .bubble { background: var(--teal-soft); border-color: #bae6fd; }
+  .turn.right .bubble { border-radius: 14px 4px 14px 14px; }
+  .bubble .who-tag {
+    font-size: 10.5px; color: #64748b; letter-spacing: .12em; text-transform: uppercase;
+    margin-bottom: 4px; font-weight: 600;
+  }
+  .bubble .meta {
+    font-size: 11px; color: #94a3b8; margin-top: 6px;
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .bubble .meta span {
+    background: var(--paper-2); border: 1px solid var(--rule);
+    padding: 1px 7px; border-radius: 4px;
+  }
+  .bubble audio {
+    width: 100%; margin-top: 8px; height: 30px;
+  }
+
+  /* Footer controls */
+  .stage-footer {
+    margin-top: 22px; padding-top: 22px; border-top: 1px dashed var(--rule);
+    display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
+    font-size: 13px; color: #64748b;
+  }
+
+  /* Safety note */
+  .safety {
+    margin-top: 30px; padding: 18px 22px;
+    background: #fffbeb; border: 1px solid #fde68a; border-radius: 14px;
+    font-size: 13.5px; color: #92400e; line-height: 1.65;
+  }
+  .safety strong { color: #78350f; }
+
+  /* Compact section padding for this page */
+  section.tight { padding: 70px var(--pad-x); }
+
+  /* Pre-canned prompts */
+  .quickies { margin-top: 20px; }
+  .quickies-label {
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: #64748b; font-weight: 600; margin-bottom: 10px;
+  }
+  .quickies-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .quickie {
+    background: white; border: 1px solid var(--rule); border-radius: 999px;
+    padding: 7px 14px; font: inherit; font-size: 13px; color: var(--ink-2);
+    cursor: pointer; transition: all .15s;
+  }
+  .quickie:hover { border-color: var(--saffron); color: var(--saffron); }
+
+  .next-row { margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 700px) { .next-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="vocaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c1440e"/>
+      <stop offset="100%" stop-color="#e76f29"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <svg class="brand-logo" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#vocaGrad)"/><path d="M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="56" r="2.2" fill="white"/><circle cx="50" cy="46" r="1.8" fill="white" fill-opacity="0.7"/><circle cx="50" cy="36" r="1.4" fill="white" fill-opacity="0.5"/></svg>
+      <div><div class="brand-name">Voca</div><div class="brand-sub">voice AI for India's helplines</div></div>
+    </a>
+    <div class="nav-links">
+      <a href="how.html">How</a>
+      <a href="voice.html">Voice</a>
+      <a href="talk.html" class="current">Talk to Voca</a>
+      <a href="governments.html">For governments</a>
+      <a href="investors.html">For investors</a>
+      <a href="mailto:kundanlm10@gmail.com" class="nav-cta">Talk to us</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow">Talk to Voca</div>
+    <h1 class="display">Speak. <em>In your language</em>.<br/>Voca will listen, then speak back warmly.</h1>
+    <p class="lede">A live conversation built on Sarvam end-to-end — Saarika STT, Sarvam-M LLM for interpretation, Bulbul TTS for response. Real Indic prosody. Real distress and risk scoring on each turn. Designed to feel like a person, not a robot.</p>
+  </div>
+</section>
+
+<!-- MAIN STAGE -->
+<section class="tight">
+  <div class="container">
+
+    <!-- Setup (shown until API key entered) -->
+    <div id="setupPanel" class="setup" hidden>
+      <h2>One-time setup — paste your Sarvam API key</h2>
+      <p>The key is stored only in your browser (localStorage). It never leaves your device except to call Sarvam directly. You can change or remove it any time.</p>
+      <input id="apiKeyInput" type="password" class="setup-input" placeholder="sk_..." autocomplete="off" spellcheck="false" />
+      <button id="saveKeyBtn" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:14px;">Save key & start talking →</button>
+      <div class="setup-fine">
+        <strong>Don't have a key?</strong> Get one at <a href="https://dashboard.sarvam.ai" target="_blank" rel="noreferrer">dashboard.sarvam.ai</a> — free trial available. The Saarika STT, Sarvam-M, and Bulbul TTS calls used by this page each cost less than ₹0.10 per turn at typical lengths.
+      </div>
+    </div>
+
+    <!-- Conversation stage (shown after key entered) -->
+    <div id="stagePanel" class="stage" hidden>
+
+      <div class="stage-top">
+        <div class="status-box">
+          <div class="status-label">Status</div>
+          <div class="status-value" id="statusValue">Ready</div>
+          <div class="status-sub" id="statusSub">Press the mic and speak in any Indian language. Press again to send.</div>
+        </div>
+        <button id="micBtn" class="mic-button">
+          <span class="mic-circle">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.42 2.72 6.23 6 6.72V21h2v-3.28c3.28-.49 6-3.3 6-6.72h-1.7z"/></svg>
+          </span>
+          <span id="micLabel">Press to talk</span>
+        </button>
+      </div>
+
+      <!-- Risk / sentiment dashboard -->
+      <div class="meters">
+        <div class="meter" id="meterDistress">
+          <div class="meter-label">Distress</div>
+          <div class="meter-value" id="distressValue">—</div>
+          <div class="meter-track"><div class="meter-fill" id="distressFill" style="width:0%"></div></div>
+        </div>
+        <div class="meter" id="meterStress">
+          <div class="meter-label">Stress</div>
+          <div class="meter-value" id="stressValue">—</div>
+          <div class="meter-track"><div class="meter-fill" id="stressFill" style="width:0%"></div></div>
+        </div>
+        <div class="meter" id="meterUrgency">
+          <div class="meter-label">Urgency</div>
+          <div class="meter-value" id="urgencyValue">—</div>
+          <div class="meter-track"><div class="meter-fill" id="urgencyFill" style="width:0%"></div></div>
+        </div>
+        <div class="meter" id="meterRisk">
+          <div class="meter-label">Risk signal</div>
+          <div class="meter-value" id="riskValue">—</div>
+          <div style="margin-top:6px;"><span class="meter-pill" id="riskPill">Awaiting input</span></div>
+        </div>
+      </div>
+
+      <!-- Conversation log -->
+      <div class="convo" id="convo">
+        <div class="convo-empty" id="convoEmpty">No turns yet. Press the mic and speak — try in your most natural language and dialect.</div>
+      </div>
+
+      <!-- Quick prompts -->
+      <div class="quickies">
+        <div class="quickies-label">Or try one of these</div>
+        <div class="quickies-row" id="quickiesRow">
+          <button class="quickie" data-text="मेरे पति घर में बहुत चिल्ला रहे हैं। मैं कहाँ जाऊँ?" data-lang="hi-IN">Hindi · domestic distress</button>
+          <button class="quickie" data-text="ನನ್ ಮಗಳಿಗೆ ಶ್ವಾಸಕೋಶ ಸಮಸ್ಯೆ, ಆಂಬ್ಯುಲೆನ್ಸ್ ಬೇಕು. ಅವಳಿಗೆ 8 ವರ್ಷ" data-lang="kn-IN">Kannada · medical emergency</button>
+          <button class="quickie" data-text="My ration card hasn't been renewed and the online portal isn't working" data-lang="en-IN">English · routine grievance</button>
+          <button class="quickie" data-text="என் வீட்டில் தண்ணீர் வரவில்லை, என்ன செய்வது?" data-lang="ta-IN">Tamil · water complaint</button>
+        </div>
+      </div>
+
+      <div class="stage-footer">
+        <div>
+          Voice: <strong>Anushka</strong> · Model: <strong>Bulbul v2</strong>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-ghost" id="resetBtn" style="font-size:13px;padding:8px 14px;">Reset conversation</button>
+          <button class="btn btn-ghost" id="forgetKeyBtn" style="font-size:13px;padding:8px 14px;">Forget API key</button>
+        </div>
+      </div>
+
+      <div class="safety">
+        <strong>Safety note:</strong> the persona on this page is built so visitors can <em>experience</em> Voca, not so anyone in real distress should rely on it instead of a real helpline. If you're in distress: India's 1098 (children), 1091 (women), 100 (police), 112 (emergency response), 14416 (Tele MANAS for mental health) reach a real human immediately.
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- NEXT -->
+<section style="background:var(--paper-2);">
+  <div class="container">
+    <div class="eyebrow">Read on</div>
+    <div class="display-2">Voca, in <em>more depth</em>.</div>
+
+    <div class="next-row">
+      <a class="tile" href="how.html">
+        <span class="tag">The mechanism</span>
+        <span class="arrow">→</span>
+        <h3>The verify-before-act lifecycle</h3>
+        <p>Why the verification turn is structural, not cosmetic — and the bypass exception when distress + risk both spike.</p>
+      </a>
+      <a class="tile" href="voice.html">
+        <span class="tag">Static demos</span>
+        <span class="arrow">→</span>
+        <h3>Hear scripted samples</h3>
+        <p>Pre-rendered Sarvam Bulbul samples in 10 Indian languages × 3 scenarios — for when you don't want to set up a Sarvam key.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-col">
+      <div class="foot-brand">
+        <svg class="foot-brand-logo" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="url(#vocaGrad)"/><path d="M 22 28 L 46 76 Q 48 80 50 80 Q 52 80 54 76 L 78 28" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="50" cy="56" r="2.2" fill="white"/><circle cx="50" cy="46" r="1.8" fill="white" fill-opacity="0.7"/><circle cx="50" cy="36" r="1.4" fill="white" fill-opacity="0.5"/></svg>
+        <div class="foot-brand-name">Voca</div>
+      </div>
+      <p class="foot-tagline">Voice AI for India's helplines. Built so being understood comes before being answered.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Pages</h4>
+      <a href="index.html">Home</a>
+      <a href="how.html">How it works</a>
+      <a href="voice.html">Hear Voca</a>
+      <a href="governments.html">For governments</a>
+    </div>
+    <div class="foot-col">
+      <h4>Stories</h4>
+      <a href="story.html">Picture story</a>
+      <a href="scenarios.html">Real scenarios</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="infographic.html">One-page brief</a>
+    </div>
+    <div class="foot-col">
+      <h4>Reach</h4>
+      <a href="mailto:kundanlm10@gmail.com">kundanlm10@gmail.com</a>
+      <a href="https://github.com/KundanKhatri/voca-public">GitHub</a>
+      <a href="https://www.linkedin.com/in/kundankhatri">LinkedIn</a>
+    </div>
+  </div>
+  <div class="foot-meta">
+    <span><strong>Voca</strong> — voice AI for India's helplines · Bengaluru, India</span>
+    <span>© 2026 · Built for AI for Bharat 2 · Theme 12</span>
+  </div>
+</footer>
+
+<script>
+/* ===========================================================================
+   VOCA · live conversation engine
+   Uses Sarvam APIs end-to-end:
+     - Saarika v2  (STT)
+     - Sarvam-M    (LLM interpretation + risk scoring)
+     - Bulbul v2   (TTS, speaker: anushka — warm female)
+   API key is stored in localStorage, never leaves the browser.
+   =========================================================================== */
+(function () {
+  const KEY_STORAGE = 'voca:sarvam:key';
+  const SARVAM_BASE = 'https://api.sarvam.ai';
+  const SPEAKER = 'anushka';
+  const TTS_MODEL = 'bulbul:v2';
+  const STT_MODEL = 'saarika:v2';
+  const LLM_MODEL = 'sarvam-m';
+
+  const SYSTEM_PROMPT = `You are Voca — a warm, empathetic, caring voice AI assistant for India's 1092 citizen helpline. You sound like a kind, patient Indian woman in her 30s — someone who actually listens, never robotic, always reassuring. You speak the citizen's own language back to them.
+
+When a citizen speaks to you, your job is to:
+1. Understand what they need — the intent and any entities like place names or services
+2. Detect their emotional state — distress, stress, urgency, fear, anger, calm
+3. Decide whether to verify (default) or rapid-acknowledge (only if risk is HIGH and distress is severe)
+4. Compose a response in their language
+
+Output ONLY a single JSON object with this exact shape (no markdown, no commentary):
+{
+  "intent": "snake_case_intent_id",
+  "intent_label": "Human-readable label (e.g., 'Domestic violence in progress')",
+  "entities": { "key": "value", ... },
+  "risk_signal": "LOW" | "MEDIUM" | "HIGH",
+  "confidence": 0.0-1.0,
+  "language": "en-IN" | "hi-IN" | "kn-IN" | "ta-IN" | "te-IN" | "mr-IN" | "bn-IN" | "gu-IN" | "ml-IN" | "pa-IN",
+  "distress_score": 0.0-1.0,
+  "stress_score": 0.0-1.0,
+  "urgency_score": 0.0-1.0,
+  "decision": "VERIFY" | "BYPASS",
+  "paraphrase": "Warm, caring response in same language as citizen, max 25 words. If decision is VERIFY, restate what you understood and ask 'is that right?'. If BYPASS, rapid-ack: 'I hear you. Help is coming.' in their language."
+}
+
+Risk signals:
+- HIGH: domestic violence in progress, medical emergency requiring ambulance, suicidal ideation, immediate physical threat, child in danger, fire
+- MEDIUM: ongoing distress, urgent service need, vulnerable person concern
+- LOW: routine grievance, information request, scheme query, complaint about non-urgent service
+
+Decision rule:
+- BYPASS when distress_score > 0.65 AND risk_signal == "HIGH"
+- VERIFY otherwise
+
+Paraphrase rules:
+- Always in the citizen's language (match their input language)
+- Warm, never preachy
+- For VERIFY: restate then ask confirmation, e.g. "Just to confirm — you need help with X. Is that right?"
+- For BYPASS: rapid-ack only, e.g. "I hear you. I am with you. Help is coming. Are you somewhere safe?"
+- Never longer than 25 words`;
+
+  // ---------- DOM ----------
+  const setupPanel  = document.getElementById('setupPanel');
+  const stagePanel  = document.getElementById('stagePanel');
+  const apiKeyInput = document.getElementById('apiKeyInput');
+  const saveKeyBtn  = document.getElementById('saveKeyBtn');
+  const forgetKeyBtn = document.getElementById('forgetKeyBtn');
+  const resetBtn    = document.getElementById('resetBtn');
+  const micBtn      = document.getElementById('micBtn');
+  const micLabel    = document.getElementById('micLabel');
+  const statusValue = document.getElementById('statusValue');
+  const statusSub   = document.getElementById('statusSub');
+  const convo       = document.getElementById('convo');
+  const convoEmpty  = document.getElementById('convoEmpty');
+  const quickiesRow = document.getElementById('quickiesRow');
+
+  const meters = {
+    distress: { box: document.getElementById('meterDistress'), val: document.getElementById('distressValue'), fill: document.getElementById('distressFill') },
+    stress:   { box: document.getElementById('meterStress'),   val: document.getElementById('stressValue'),   fill: document.getElementById('stressFill') },
+    urgency:  { box: document.getElementById('meterUrgency'),  val: document.getElementById('urgencyValue'),  fill: document.getElementById('urgencyFill') },
+    risk:     { box: document.getElementById('meterRisk'),     val: document.getElementById('riskValue'),     pill: document.getElementById('riskPill') }
+  };
+
+  // ---------- API key flow ----------
+  function getKey() { return localStorage.getItem(KEY_STORAGE); }
+  function setKey(k) { localStorage.setItem(KEY_STORAGE, k); }
+  function clearKey() { localStorage.removeItem(KEY_STORAGE); }
+
+  function showSetup() {
+    setupPanel.hidden = false;
+    stagePanel.hidden = true;
+    setTimeout(() => apiKeyInput.focus(), 100);
+  }
+  function showStage() {
+    setupPanel.hidden = true;
+    stagePanel.hidden = false;
+  }
+  if (getKey()) showStage(); else showSetup();
+
+  saveKeyBtn.addEventListener('click', () => {
+    const v = apiKeyInput.value.trim();
+    if (!v) { apiKeyInput.focus(); return; }
+    setKey(v); showStage();
+  });
+  apiKeyInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') saveKeyBtn.click();
+  });
+  forgetKeyBtn.addEventListener('click', () => {
+    if (!confirm('Forget the saved Sarvam API key?')) return;
+    clearKey(); showSetup();
+  });
+  resetBtn.addEventListener('click', () => {
+    if (!confirm('Reset the conversation?')) return;
+    convo.innerHTML = ''; convo.appendChild(convoEmpty);
+    resetMeters();
+  });
+
+  // ---------- Status ----------
+  function setStatus(state, text, sub) {
+    statusValue.className = 'status-value ' + state;
+    statusValue.textContent = text;
+    if (sub !== undefined) statusSub.textContent = sub;
+  }
+
+  // ---------- Meters ----------
+  function resetMeters() {
+    ['distress','stress','urgency'].forEach(k => {
+      meters[k].box.className = 'meter';
+      meters[k].val.textContent = '—';
+      meters[k].fill.style.width = '0%';
+    });
+    meters.risk.box.className = 'meter';
+    meters.risk.val.textContent = '—';
+    meters.risk.pill.className = 'meter-pill';
+    meters.risk.pill.textContent = 'Awaiting input';
+  }
+  function updateMeter(name, score) {
+    if (typeof score !== 'number' || isNaN(score)) return;
+    const m = meters[name]; if (!m) return;
+    const pct = Math.round(Math.min(1, Math.max(0, score)) * 100);
+    m.val.textContent = score.toFixed(2);
+    m.fill.style.width = pct + '%';
+    m.box.className = 'meter ' + (pct >= 65 ? 'high' : pct >= 35 ? 'medium' : 'low');
+  }
+  function updateRisk(signal) {
+    const s = (signal || '').toLowerCase();
+    const m = meters.risk;
+    m.val.textContent = signal || '—';
+    m.box.className = 'meter ' + (s === 'high' ? 'high' : s === 'medium' ? 'medium' : 'low');
+    m.pill.className = 'meter-pill ' + (s === 'high' ? 'high' : s === 'medium' ? 'medium' : 'low');
+    m.pill.textContent = s === 'high' ? 'BYPASS verification · escalate'
+                       : s === 'medium' ? 'Verify carefully · medium risk'
+                       : 'Verify normally · low risk';
+  }
+
+  // ---------- Conversation log ----------
+  function appendTurn({ who, text, language, audio, meta }) {
+    if (convoEmpty && convoEmpty.parentNode) convoEmpty.remove();
+    const turn = document.createElement('div');
+    turn.className = 'turn ' + (who === 'voca' ? 'voca right' : 'you');
+    const whoEl = document.createElement('div');
+    whoEl.className = 'who';
+    whoEl.textContent = who === 'voca' ? 'V' : 'You';
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    const tag = document.createElement('div');
+    tag.className = 'who-tag';
+    tag.textContent = who === 'voca' ? 'Voca' : 'You';
+    bubble.appendChild(tag);
+    const txt = document.createElement('div');
+    txt.textContent = text;
+    if (language) txt.setAttribute('lang', language);
+    bubble.appendChild(txt);
+    if (meta) {
+      const m = document.createElement('div'); m.className = 'meta';
+      meta.forEach(s => { const span = document.createElement('span'); span.textContent = s; m.appendChild(span); });
+      bubble.appendChild(m);
+    }
+    if (audio) {
+      const a = document.createElement('audio');
+      a.controls = true; a.src = audio; a.autoplay = true;
+      bubble.appendChild(a);
+    }
+    turn.appendChild(whoEl);
+    turn.appendChild(bubble);
+    convo.appendChild(turn);
+    convo.scrollTop = convo.scrollHeight;
+  }
+
+  // ---------- Sarvam API helpers ----------
+  async function sarvamSTT(blob, hintLang) {
+    const fd = new FormData();
+    // sarvam expects audio file — webm/opus from MediaRecorder is accepted
+    fd.append('file', blob, 'audio.webm');
+    fd.append('model', STT_MODEL);
+    if (hintLang) fd.append('language_code', hintLang);
+    const res = await fetch(SARVAM_BASE + '/speech-to-text', {
+      method: 'POST',
+      headers: { 'api-subscription-key': getKey() },
+      body: fd
+    });
+    if (!res.ok) throw new Error('STT failed: ' + res.status + ' ' + (await res.text()).slice(0, 160));
+    return await res.json();  // { transcript, language_code, request_id }
+  }
+
+  async function sarvamLLM(citizenText, langCode) {
+    const res = await fetch(SARVAM_BASE + '/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'api-subscription-key': getKey(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: LLM_MODEL,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: `Citizen language: ${langCode || 'auto'}\nWhat the citizen said:\n"""\n${citizenText}\n"""\n\nReturn ONLY the JSON object.` }
+        ],
+        temperature: 0.4,
+        max_tokens: 500
+      })
+    });
+    if (!res.ok) throw new Error('LLM failed: ' + res.status + ' ' + (await res.text()).slice(0, 160));
+    const json = await res.json();
+    const content = json.choices && json.choices[0] && json.choices[0].message && json.choices[0].message.content;
+    if (!content) throw new Error('LLM: empty content');
+    // Pull JSON out of any wrapper
+    const match = content.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('LLM: no JSON');
+    return JSON.parse(match[0]);
+  }
+
+  async function sarvamTTS(text, langCode) {
+    const res = await fetch(SARVAM_BASE + '/text-to-speech', {
+      method: 'POST',
+      headers: {
+        'api-subscription-key': getKey(),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        inputs: [text],
+        target_language_code: langCode,
+        speaker: SPEAKER,
+        model: TTS_MODEL,
+        pitch: 0,
+        pace: 1.0,
+        loudness: 1.0,
+        speech_sample_rate: 22050,
+        enable_preprocessing: true
+      })
+    });
+    if (!res.ok) throw new Error('TTS failed: ' + res.status + ' ' + (await res.text()).slice(0, 160));
+    const json = await res.json();
+    if (!json.audios || !json.audios[0]) throw new Error('TTS: empty audio');
+    const wavB64 = json.audios[0];
+    const bin = atob(wavB64);
+    const buf = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+    const blob = new Blob([buf], { type: 'audio/wav' });
+    return URL.createObjectURL(blob);
+  }
+
+  // ---------- Conversation pipeline ----------
+  async function runPipeline({ audioBlob, presetText, presetLang }) {
+    try {
+      // 1) Transcript
+      let transcript, language;
+      if (audioBlob) {
+        setStatus('thinking', 'Transcribing…', 'Sarvam Saarika is converting your audio to text');
+        const stt = await sarvamSTT(audioBlob);
+        transcript = (stt.transcript || '').trim();
+        language = stt.language_code || 'en-IN';
+      } else {
+        transcript = presetText;
+        language = presetLang || 'en-IN';
+      }
+      if (!transcript) {
+        setStatus('idle', 'Ready', 'I didn\'t catch that — try again');
+        return;
+      }
+      appendTurn({ who: 'you', text: transcript, language, meta: ['lang ' + language] });
+
+      // 2) LLM interpretation + risk scoring
+      setStatus('thinking', 'Understanding…', 'Sarvam-M is interpreting and scoring risk');
+      const interp = await sarvamLLM(transcript, language);
+
+      updateMeter('distress', interp.distress_score);
+      updateMeter('stress',   interp.stress_score);
+      updateMeter('urgency',  interp.urgency_score);
+      updateRisk(interp.risk_signal);
+
+      // 3) TTS
+      setStatus('speaking', 'Voca is responding…', 'Bulbul v2 voice — Anushka');
+      const audioUrl = await sarvamTTS(interp.paraphrase, interp.language || language);
+
+      const meta = [
+        'intent: ' + (interp.intent_label || interp.intent || '—'),
+        'risk: ' + (interp.risk_signal || '—'),
+        'decision: ' + (interp.decision || '—')
+      ];
+      appendTurn({ who: 'voca', text: interp.paraphrase, language: interp.language || language, audio: audioUrl, meta });
+
+      // Reset to ready when audio ends — heuristic via setTimeout
+      setStatus('idle', 'Ready', 'Press the mic again to continue the conversation');
+    } catch (e) {
+      console.error(e);
+      setStatus('idle', 'Error', e.message || 'Something went wrong — check your API key in Settings');
+    }
+  }
+
+  // ---------- Mic recording ----------
+  let mediaRecorder = null;
+  let audioChunks = [];
+
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      let mime = '';
+      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) mime = 'audio/webm;codecs=opus';
+      else if (MediaRecorder.isTypeSupported('audio/webm')) mime = 'audio/webm';
+      else if (MediaRecorder.isTypeSupported('audio/mp4')) mime = 'audio/mp4';
+
+      mediaRecorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+      audioChunks = [];
+      mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
+      mediaRecorder.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
+        const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+        runPipeline({ audioBlob: blob });
+      };
+      mediaRecorder.start();
+      micBtn.classList.add('recording');
+      micLabel.textContent = 'Listening… (press to stop)';
+      setStatus('listening', 'Listening…', 'Speak naturally in any Indian language');
+    } catch (e) {
+      console.error(e);
+      setStatus('idle', 'Mic blocked', 'Allow microphone access in your browser, then try again');
+      alert('Microphone permission was denied or unavailable. Check your browser permissions.');
+    }
+  }
+  function stopRecording() {
+    if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+    micBtn.classList.remove('recording');
+    micLabel.textContent = 'Press to talk';
+  }
+
+  micBtn.addEventListener('click', () => {
+    if (micBtn.classList.contains('recording')) stopRecording();
+    else startRecording();
+  });
+
+  // Quickie buttons (use preset text — skip STT)
+  quickiesRow.addEventListener('click', (e) => {
+    const btn = e.target.closest('.quickie');
+    if (!btn) return;
+    runPipeline({ presetText: btn.dataset.text, presetLang: btn.dataset.lang });
+  });
+
+  window.addEventListener('beforeunload', () => stopRecording());
+})();
+</script>
+
+</body>
+</html>
