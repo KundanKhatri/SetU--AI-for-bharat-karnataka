@@ -602,11 +602,84 @@ Paraphrase rules:
     convo.scrollTop = convo.scrollHeight;
   }
 
+  // ---------- WebM/Opus → PCM WAV conversion ----------
+  // Sarvam Saarika does NOT accept audio/webm. It accepts only:
+  //   audio/wav, audio/mp3, audio/mpeg, audio/x-m4a, audio/flac, audio/ogg
+  // Browser MediaRecorder produces audio/webm;codecs=opus by default.
+  // We decode the WebM blob via Web Audio API and re-encode as 16-bit PCM
+  // WAV (mono, 16 kHz — STT-friendly sample rate). Pure browser code,
+  // no library dependency.
+  async function blobToWav(blob, targetSampleRate) {
+    targetSampleRate = targetSampleRate || 16000;
+    const arrayBuf = await blob.arrayBuffer();
+    const ACtx = window.AudioContext || window.webkitAudioContext;
+    if (!ACtx) throw new Error('Web Audio API unavailable');
+
+    // 1) Decode the source audio to PCM at its native sample rate
+    const decodeCtx = new ACtx();
+    let decoded;
+    try {
+      decoded = await decodeCtx.decodeAudioData(arrayBuf.slice(0));
+    } finally {
+      try { await decodeCtx.close(); } catch {}
+    }
+
+    // 2) Resample to targetSampleRate via OfflineAudioContext (mono out)
+    const numFrames = Math.ceil(decoded.duration * targetSampleRate);
+    const offline = new OfflineAudioContext(1, numFrames, targetSampleRate);
+    const src = offline.createBufferSource();
+    src.buffer = decoded;
+
+    // mix channels to mono
+    const merger = offline.createGain();
+    merger.gain.value = 1 / Math.max(1, decoded.numberOfChannels);
+    src.connect(merger);
+    merger.connect(offline.destination);
+    src.start(0);
+
+    const rendered = await offline.startRendering();
+    const pcm = rendered.getChannelData(0); // Float32Array, mono, at targetSampleRate
+
+    // 3) Encode as 16-bit PCM WAV
+    const numSamples = pcm.length;
+    const bytesPerSample = 2;
+    const byteRate = targetSampleRate * 1 * bytesPerSample;
+    const blockAlign = 1 * bytesPerSample;
+    const dataSize = numSamples * bytesPerSample;
+    const buffer = new ArrayBuffer(44 + dataSize);
+    const dv = new DataView(buffer);
+    let off = 0;
+    function ws(s) { for (let i = 0; i < s.length; i++) dv.setUint8(off++, s.charCodeAt(i)); }
+    function u32(v) { dv.setUint32(off, v, true); off += 4; }
+    function u16(v) { dv.setUint16(off, v, true); off += 2; }
+
+    ws('RIFF'); u32(36 + dataSize); ws('WAVE');
+    ws('fmt '); u32(16); u16(1);  // PCM
+    u16(1);                       // mono
+    u32(targetSampleRate);
+    u32(byteRate);
+    u16(blockAlign);
+    u16(16);                      // bits per sample
+    ws('data'); u32(dataSize);
+
+    // PCM samples
+    for (let i = 0; i < numSamples; i++) {
+      const s = Math.max(-1, Math.min(1, pcm[i]));
+      dv.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+      off += 2;
+    }
+    return new Blob([buffer], { type: 'audio/wav' });
+  }
+
   // ---------- Sarvam API helpers ----------
   async function sarvamSTT(blob, hintLang) {
+    // Convert any browser-recorded format → 16 kHz mono PCM WAV (Sarvam-accepted)
+    let payload = blob;
+    if (!/^audio\/(wav|mpeg|mp3)/i.test(blob.type)) {
+      payload = await blobToWav(blob, 16000);
+    }
     const fd = new FormData();
-    // sarvam expects audio file — webm/opus from MediaRecorder is accepted
-    fd.append('file', blob, 'audio.webm');
+    fd.append('file', payload, 'audio.wav');
     fd.append('model', STT_MODEL);
     if (hintLang) fd.append('language_code', hintLang);
     const res = await fetch(SARVAM_BASE + '/speech-to-text', {
