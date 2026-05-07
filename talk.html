@@ -325,7 +325,7 @@
 
       <div class="stage-footer">
         <div>
-          Voice: <strong>meera</strong> (Hindi/Kannada/Marathi/Bengali/Gujarati/Punjabi/EN-IN) · <strong>pavithra</strong> (Tamil/Telugu/Malayalam) · Model: <strong>Bulbul v2</strong>
+          Voice: <strong>manisha</strong> (Hindi/Kannada/Marathi/Bengali/Gujarati/Punjabi/EN-IN) · <strong>vidya</strong> (Tamil/Telugu/Malayalam) · Model: <strong>Bulbul v2</strong>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button class="btn btn-ghost" id="resetBtn" style="font-size:13px;padding:8px 14px;">Reset conversation</button>
@@ -413,17 +413,19 @@
   const KEY_STORAGE = 'voca:sarvam:key';
   const SARVAM_BASE = 'https://api.sarvam.ai';
 
-  // Per-language speaker map — same logic as scripts/voice-samples.json
-  // 'meera':    Sarvam's warmest mature female · best for Hindi/Kannada/Marathi/Bengali/Gujarati/Punjabi/English-IN
-  // 'pavithra': Native South-Indian female · best Tamil/Telugu/Malayalam prosody
+  // Per-language speaker map — Bulbul v2 roster.
+  // 'manisha': Bulbul v2 warm mature female · ideal for empathetic helpline register
+  //            best for Hindi / Kannada / Marathi / Bengali / Gujarati / Punjabi / English-IN
+  // 'vidya':   Bulbul v2 mature South-Indian female · native Tamil / Telugu / Malayalam prosody
+  // 'anushka': Sarvam's flagship multilingual female (younger, more conversational) — fallback
   const SPEAKER_PER_LANGUAGE = {
-    'en-IN': 'meera',  'hi-IN': 'meera',
-    'kn-IN': 'meera',  'mr-IN': 'meera',
-    'bn-IN': 'meera',  'gu-IN': 'meera',
-    'pa-IN': 'meera',
-    'ta-IN': 'pavithra', 'te-IN': 'pavithra', 'ml-IN': 'pavithra'
+    'en-IN': 'manisha',  'hi-IN': 'manisha',
+    'kn-IN': 'manisha',  'mr-IN': 'manisha',
+    'bn-IN': 'manisha',  'gu-IN': 'manisha',
+    'pa-IN': 'manisha',
+    'ta-IN': 'vidya', 'te-IN': 'vidya', 'ml-IN': 'vidya'
   };
-  const DEFAULT_SPEAKER = 'meera';
+  const DEFAULT_SPEAKER = 'manisha';
   function speakerFor(langCode) {
     if (!langCode) return DEFAULT_SPEAKER;
     return SPEAKER_PER_LANGUAGE[langCode] || DEFAULT_SPEAKER;

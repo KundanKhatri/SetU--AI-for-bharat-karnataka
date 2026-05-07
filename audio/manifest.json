@@ -1,0 +1,339 @@
+{
+  "provider": "sarvam",
+  "default_speaker": "manisha",
+  "speaker_per_language": {
+    "en": "manisha",
+    "hi": "manisha",
+    "kn": "manisha",
+    "mr": "manisha",
+    "bn": "manisha",
+    "gu": "manisha",
+    "pa": "manisha",
+    "ta": "vidya",
+    "te": "vidya",
+    "ml": "vidya"
+  },
+  "speaker_rationale": {
+    "manisha": "Warm mature female · Bulbul v2 · empathetic register, ideal for North/Central/Eastern Indian languages · pace 0.95 for caring delivery",
+    "vidya": "Mature South-Indian female · Bulbul v2 · best Tamil/Telugu/Malayalam prosody, feels locally rooted",
+    "anushka": "Sarvam's flagship multilingual female · Bulbul v2 · younger, more conversational · safe fallback if any language fails"
+  },
+  "voice_description": "Default: 'manisha' — Bulbul v2's warm mature female voice. Calm, empathetic, mid-30s — the right register for citizens in distress. Falls back to 'anushka' (Sarvam's flagship multilingual warm female) for any language where manisha is unavailable. The v2 roster has different speakers than v1; meera/pavithra do not exist in v2.",
+  "model": "bulbul:v2",
+  "tts_params": {
+    "pitch": 0,
+    "pace": 0.95,
+    "loudness": 1,
+    "speech_sample_rate": 22050,
+    "enable_preprocessing": true
+  },
+  "scenarios": {
+    "rapid-ack": {
+      "label": "Rapid acknowledgement (distress)",
+      "description": "When distress + risk threshold both fire, Voca skips verification and rapid-acks the citizen in their dialect while routing to a human agent in parallel."
+    },
+    "verify": {
+      "label": "Verification turn (calm)",
+      "description": "Voca's default mode — restate what was heard, ask the citizen to confirm, only act after explicit yes."
+    },
+    "handoff": {
+      "label": "Agent handoff",
+      "description": "Voca telling the citizen they're being connected to a human, with the assurance that context has already been shared."
+    }
+  },
+  "languages": [
+    {
+      "code": "en",
+      "label": "English",
+      "native": "English",
+      "lang_attr": "en-IN",
+      "sarvam_code": "en-IN",
+      "best_for": "default · code-mixed callers"
+    },
+    {
+      "code": "hi",
+      "label": "Hindi",
+      "native": "हिन्दी",
+      "lang_attr": "hi-IN",
+      "sarvam_code": "hi-IN",
+      "best_for": "national reach · Northern + central states"
+    },
+    {
+      "code": "kn",
+      "label": "Kannada",
+      "native": "ಕನ್ನಡ",
+      "lang_attr": "kn-IN",
+      "sarvam_code": "kn-IN",
+      "best_for": "Karnataka 1092 · the wedge market"
+    },
+    {
+      "code": "ta",
+      "label": "Tamil",
+      "native": "தமிழ்",
+      "lang_attr": "ta-IN",
+      "sarvam_code": "ta-IN",
+      "best_for": "Tamil Nadu · expansion phase"
+    },
+    {
+      "code": "te",
+      "label": "Telugu",
+      "native": "తెలుగు",
+      "lang_attr": "te-IN",
+      "sarvam_code": "te-IN",
+      "best_for": "Andhra · Telangana · Karnataka borders"
+    },
+    {
+      "code": "mr",
+      "label": "Marathi",
+      "native": "मराठी",
+      "lang_attr": "mr-IN",
+      "sarvam_code": "mr-IN",
+      "best_for": "Maharashtra · 112 ERSS coverage"
+    },
+    {
+      "code": "bn",
+      "label": "Bengali",
+      "native": "বাংলা",
+      "lang_attr": "bn-IN",
+      "sarvam_code": "bn-IN",
+      "best_for": "West Bengal · Eastern India"
+    },
+    {
+      "code": "gu",
+      "label": "Gujarati",
+      "native": "ગુજરાતી",
+      "lang_attr": "gu-IN",
+      "sarvam_code": "gu-IN",
+      "best_for": "Gujarat · BFSI deployment phase"
+    },
+    {
+      "code": "ml",
+      "label": "Malayalam",
+      "native": "മലയാളം",
+      "lang_attr": "ml-IN",
+      "sarvam_code": "ml-IN",
+      "best_for": "Kerala · 112 expansion"
+    },
+    {
+      "code": "pa",
+      "label": "Punjabi",
+      "native": "ਪੰਜਾਬੀ",
+      "lang_attr": "pa-IN",
+      "sarvam_code": "pa-IN",
+      "best_for": "Punjab · Northern outreach"
+    }
+  ],
+  "samples": [
+    {
+      "lang": "en",
+      "scenario": "rapid-ack",
+      "text": "I hear you. I am with you. Help is coming. Are you somewhere safe right now?",
+      "speaker": "manisha",
+      "url": "audio/rapid-ack-en.wav"
+    },
+    {
+      "lang": "hi",
+      "scenario": "rapid-ack",
+      "text": "मैं सुन रही हूँ। मैं आपके साथ हूँ। मदद आ रही है। आप अभी सुरक्षित जगह पर हैं?",
+      "speaker": "manisha",
+      "url": "audio/rapid-ack-hi.wav"
+    },
+    {
+      "lang": "kn",
+      "scenario": "rapid-ack",
+      "text": "ನಾನು ಕೇಳ್ತಿದೀನಿ. ಜೊತೆಗಿರ್ತೀನಿ. ಸಹಾಯ ಬರ್ತಾ ಇದೆ. ನಿಮ್ಮ ಜಾಗ ಸುರಕ್ಷಿತಾನ?",
+      "speaker": "manisha",
+      "url": "audio/rapid-ack-kn.wav"
+    },
+    {
+      "lang": "ta",
+      "scenario": "rapid-ack",
+      "text": "நான் கேட்கிறேன். உங்களுடன் இருக்கிறேன். உதவி வருகிறது. நீங்கள் பாதுகாப்பான இடத்தில் இருக்கிறீர்களா?",
+      "speaker": "vidya",
+      "url": "audio/rapid-ack-ta.wav"
+    },
+    {
+      "lang": "te",
+      "scenario": "rapid-ack",
+      "text": "నేను వింటున్నాను. మీతో ఉన్నాను. సహాయం వస్తోంది. మీరు ఇప్పుడు సురక్షితంగా ఉన్నారా?",
+      "speaker": "vidya",
+      "url": "audio/rapid-ack-te.wav"
+    },
+    {
+      "lang": "mr",
+      "scenario": "rapid-ack",
+      "text": "मी ऐकत आहे. तुमच्यासोबत आहे. मदत येत आहे. तुम्ही आता सुरक्षित जागी आहात का?",
+      "speaker": "manisha",
+      "url": "audio/rapid-ack-mr.wav"
+    },
+    {
+      "lang": "bn",
+      "scenario": "rapid-ack",
+      "text": "আমি শুনছি। আমি আপনার সাথে আছি। সাহায্য আসছে। আপনি কি এখন নিরাপদ জায়গায় আছেন?",
+      "speaker": "manisha",
+      "url": "audio/rapid-ack-bn.wav"
+    },
+    {
+      "lang": "gu",
+      "scenario": "rapid-ack",
+      "text": "હું સાંભળું છું. તમારી સાથે છું. મદદ આવી રહી છે. તમે અત્યારે સુરક્ષિત જગ્યાએ છો?",
+      "speaker": "manisha",
+      "url": "audio/rapid-ack-gu.wav"
+    },
+    {
+      "lang": "ml",
+      "scenario": "rapid-ack",
+      "text": "ഞാൻ കേൾക്കുന്നു. ഞാൻ നിങ്ങളോടൊപ്പമുണ്ട്. സഹായം വരുന്നു. നിങ്ങൾ ഇപ്പോൾ സുരക്ഷിതമായ സ്ഥലത്താണോ?",
+      "speaker": "vidya",
+      "url": "audio/rapid-ack-ml.wav"
+    },
+    {
+      "lang": "pa",
+      "scenario": "rapid-ack",
+      "text": "ਮੈਂ ਸੁਣ ਰਹੀ ਹਾਂ। ਮੈਂ ਤੁਹਾਡੇ ਨਾਲ ਹਾਂ। ਮਦਦ ਆ ਰਹੀ ਹੈ। ਕੀ ਤੁਸੀਂ ਹੁਣ ਸੁਰੱਖਿਅਤ ਜਗ੍ਹਾ ਤੇ ਹੋ?",
+      "speaker": "manisha",
+      "url": "audio/rapid-ack-pa.wav"
+    },
+    {
+      "lang": "en",
+      "scenario": "verify",
+      "text": "Just to confirm — you need help renewing your ration card on the online portal. Is that right?",
+      "speaker": "manisha",
+      "url": "audio/verify-en.wav"
+    },
+    {
+      "lang": "hi",
+      "scenario": "verify",
+      "text": "बस पुष्टि के लिए — आपको ऑनलाइन पोर्टल पर अपना राशन कार्ड नवीनीकरण करने में मदद चाहिए। क्या यह सही है?",
+      "speaker": "manisha",
+      "url": "audio/verify-hi.wav"
+    },
+    {
+      "lang": "kn",
+      "scenario": "verify",
+      "text": "ಖಚಿತಪಡಿಸಲು — ನಿಮಗೆ ಆನ್‌ಲೈನ್ ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ರೇಷನ್ ಕಾರ್ಡ್ ನವೀಕರಣಕ್ಕೆ ಸಹಾಯ ಬೇಕು. ಸರಿಯಾ?",
+      "speaker": "manisha",
+      "url": "audio/verify-kn.wav"
+    },
+    {
+      "lang": "ta",
+      "scenario": "verify",
+      "text": "உறுதிப்படுத்த — ஆன்லைன் போர்ட்டலில் உங்கள் ரேஷன் கார்டை புதுப்பிக்க உதவி வேண்டும். அது சரியா?",
+      "speaker": "vidya",
+      "url": "audio/verify-ta.wav"
+    },
+    {
+      "lang": "te",
+      "scenario": "verify",
+      "text": "ధృవీకరించడానికి — మీకు ఆన్‌లైన్ పోర్టల్‌లో రేషన్ కార్డ్ రెన్యువల్‌కు సహాయం కావాలి. అది సరియేనా?",
+      "speaker": "vidya",
+      "url": "audio/verify-te.wav"
+    },
+    {
+      "lang": "mr",
+      "scenario": "verify",
+      "text": "खात्री करण्यासाठी — तुम्हाला ऑनलाइन पोर्टलवर रेशन कार्ड नूतनीकरणासाठी मदत हवी आहे. ते बरोबर आहे का?",
+      "speaker": "manisha",
+      "url": "audio/verify-mr.wav"
+    },
+    {
+      "lang": "bn",
+      "scenario": "verify",
+      "text": "নিশ্চিত করতে — আপনার অনলাইন পোর্টালে রেশন কার্ড নবীকরণে সাহায্য দরকার। ঠিক বলেছি?",
+      "speaker": "manisha",
+      "url": "audio/verify-bn.wav"
+    },
+    {
+      "lang": "gu",
+      "scenario": "verify",
+      "text": "પુષ્ટિ માટે — તમારે ઓનલાઇન પોર્ટલ પર રેશન કાર્ડ નવીકરણ માટે મદદ જોઈએ છે. શું તે સાચું છે?",
+      "speaker": "manisha",
+      "url": "audio/verify-gu.wav"
+    },
+    {
+      "lang": "ml",
+      "scenario": "verify",
+      "text": "സ്ഥിരീകരിക്കാൻ — നിങ്ങൾക്ക് ഓൺലൈൻ പോർട്ടലിൽ റേഷൻ കാർഡ് പുതുക്കാൻ സഹായം വേണം. ശരിയാണോ?",
+      "speaker": "vidya",
+      "url": "audio/verify-ml.wav"
+    },
+    {
+      "lang": "pa",
+      "scenario": "verify",
+      "text": "ਪੁਸ਼ਟੀ ਲਈ — ਤੁਹਾਨੂੰ ਆਨਲਾਈਨ ਪੋਰਟਲ ਉੱਤੇ ਰਾਸ਼ਨ ਕਾਰਡ ਨਵੀਨੀਕਰਨ ਵਿੱਚ ਮਦਦ ਚਾਹੀਦੀ ਹੈ। ਕੀ ਇਹ ਸਹੀ ਹੈ?",
+      "speaker": "manisha",
+      "url": "audio/verify-pa.wav"
+    },
+    {
+      "lang": "en",
+      "scenario": "handoff",
+      "text": "I am connecting you to a person now. Please stay with me. They will know what we have discussed.",
+      "speaker": "manisha",
+      "url": "audio/handoff-en.wav"
+    },
+    {
+      "lang": "hi",
+      "scenario": "handoff",
+      "text": "मैं अभी आपको एक व्यक्ति से जोड़ रही हूँ। कृपया मेरे साथ रहिए। उन्हें पता होगा कि हमने क्या बात की।",
+      "speaker": "manisha",
+      "url": "audio/handoff-hi.wav"
+    },
+    {
+      "lang": "kn",
+      "scenario": "handoff",
+      "text": "ನಾನು ಈಗ ನಿಮ್ಮನ್ನು ಒಬ್ಬ ವ್ಯಕ್ತಿಗೆ ಸಂಪರ್ಕಿಸುತ್ತೇನೆ. ದಯವಿಟ್ಟು ನನ್ನೊಂದಿಗೆ ಇರಿ. ನಾವು ಏನು ಮಾತನಾಡಿದ್ದೇವೆ ಎಂದು ಅವರಿಗೆ ತಿಳಿದಿರುತ್ತದೆ.",
+      "speaker": "manisha",
+      "url": "audio/handoff-kn.wav"
+    },
+    {
+      "lang": "ta",
+      "scenario": "handoff",
+      "text": "இப்போது உங்களை ஒரு நபருடன் இணைக்கிறேன். தயவு செய்து என்னுடன் இருங்கள். நாம் என்ன பேசினோம் என்று அவர்களுக்குத் தெரியும்.",
+      "speaker": "vidya",
+      "url": "audio/handoff-ta.wav"
+    },
+    {
+      "lang": "te",
+      "scenario": "handoff",
+      "text": "ఇప్పుడు మిమ్మల్ని ఒక వ్యక్తికి కనెక్ట్ చేస్తున్నాను. దయచేసి నాతో ఉండండి. మనం ఏమి మాట్లాడాము అని వారికి తెలుస్తుంది.",
+      "speaker": "vidya",
+      "url": "audio/handoff-te.wav"
+    },
+    {
+      "lang": "mr",
+      "scenario": "handoff",
+      "text": "मी आता तुम्हाला एका व्यक्तीशी जोडत आहे. कृपया माझ्यासोबत राहा. आपण काय बोललो ते त्यांना कळेल.",
+      "speaker": "manisha",
+      "url": "audio/handoff-mr.wav"
+    },
+    {
+      "lang": "bn",
+      "scenario": "handoff",
+      "text": "আমি এখন আপনাকে একজনের সাথে যোগ করছি। দয়া করে আমার সাথে থাকুন। আমরা কী আলোচনা করেছি তা তিনি জানবেন।",
+      "speaker": "manisha",
+      "url": "audio/handoff-bn.wav"
+    },
+    {
+      "lang": "gu",
+      "scenario": "handoff",
+      "text": "હું હવે તમને એક વ્યક્તિ સાથે જોડી રહી છું. કૃપા કરીને મારી સાથે રહો. આપણે શું વાત કરી તે તેમને ખબર પડશે.",
+      "speaker": "manisha",
+      "url": "audio/handoff-gu.wav"
+    },
+    {
+      "lang": "ml",
+      "scenario": "handoff",
+      "text": "ഇപ്പോൾ ഞാൻ നിങ്ങളെ ഒരാളുമായി ബന്ധിപ്പിക്കുകയാണ്. ദയവായി എന്നോടൊപ്പം നിൽക്കുക. നമ്മൾ എന്ത് സംസാരിച്ചുവെന്ന് അവർക്ക് അറിയാം.",
+      "speaker": "vidya",
+      "url": "audio/handoff-ml.wav"
+    },
+    {
+      "lang": "pa",
+      "scenario": "handoff",
+      "text": "ਮੈਂ ਹੁਣ ਤੁਹਾਨੂੰ ਇੱਕ ਵਿਅਕਤੀ ਨਾਲ ਜੋੜ ਰਹੀ ਹਾਂ। ਕਿਰਪਾ ਕਰਕੇ ਮੇਰੇ ਨਾਲ ਰਹੋ। ਉਨ੍ਹਾਂ ਨੂੰ ਪਤਾ ਹੋਵੇਗਾ ਕਿ ਅਸੀਂ ਕੀ ਗੱਲ ਕੀਤੀ।",
+      "speaker": "manisha",
+      "url": "audio/handoff-pa.wav"
+    }
+  ],
+  "generated_at": "2026-05-07T21:12:37.273Z"
+}

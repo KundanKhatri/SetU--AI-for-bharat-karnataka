@@ -206,7 +206,7 @@
         <div class="source-row">
           <div>
             <div class="source-label">Voice</div>
-            <div class="source-value" id="voiceSpeaker">meera · warm mature female</div>
+            <div class="source-value" id="voiceSpeaker">manisha · warm mature female</div>
           </div>
           <div>
             <div class="source-label">Model</div>
@@ -218,7 +218,7 @@
           </div>
         </div>
         <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--rule);font-size:12.5px;color:#64748b;line-height:1.55;">
-          <strong style="color:var(--ink);">Smart speaker selection:</strong> we use <strong style="color:#7e22ce;">meera</strong> (Sarvam's warmest female) for Hindi, Kannada, Marathi, Bengali, Gujarati, Punjabi, English-IN — and switch to <strong style="color:#7e22ce;">pavithra</strong> (native South-Indian female) for Tamil, Telugu, Malayalam. The voice changes when you change language above so each one sounds locally rooted.
+          <strong style="color:var(--ink);">Smart speaker selection:</strong> we use <strong style="color:#7e22ce;">manisha</strong> (Bulbul v2's warm mature female) for Hindi, Kannada, Marathi, Bengali, Gujarati, Punjabi, English-IN — and switch to <strong style="color:#7e22ce;">vidya</strong> (Bulbul v2 mature South-Indian female) for Tamil, Telugu, Malayalam. The voice changes when you change language above so each one sounds locally rooted.
         </div>
       </div>
 
@@ -463,15 +463,15 @@
     return manifest.samples.find(s => s.lang === currentLang && s.scenario === currentScen);
   }
 
-  // Smart speaker description — matches scripts/voice-samples.json speaker_per_language
+  // Smart speaker description — matches scripts/voice-samples.json speaker_per_language (Bulbul v2 roster)
   const SPEAKER_INFO = {
-    meera:    { name: 'meera',    desc: 'warm mature female' },
-    pavithra: { name: 'pavithra', desc: 'native South-Indian female' },
-    anushka:  { name: 'anushka',  desc: 'warm young female' }
+    manisha:  { name: 'manisha',  desc: 'warm mature female · v2' },
+    vidya:    { name: 'vidya',    desc: 'mature South-Indian female · v2' },
+    anushka:  { name: 'anushka',  desc: 'flagship multilingual female · v2' }
   };
   function speakerForLang(code) {
-    if (['ta','te','ml'].includes(code)) return 'pavithra';
-    return 'meera';
+    if (['ta','te','ml'].includes(code)) return 'vidya';
+    return 'manisha';
   }
   const voiceSpeakerEl = document.getElementById('voiceSpeaker');
   function updateSpeakerDisplay() {
