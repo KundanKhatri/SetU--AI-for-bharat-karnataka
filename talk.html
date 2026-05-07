@@ -325,7 +325,7 @@
 
       <div class="stage-footer">
         <div>
-          Voice: <strong>Anushka</strong> · Model: <strong>Bulbul v2</strong>
+          Voice: <strong>meera</strong> (Hindi/Kannada/Marathi/Bengali/Gujarati/Punjabi/EN-IN) · <strong>pavithra</strong> (Tamil/Telugu/Malayalam) · Model: <strong>Bulbul v2</strong>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button class="btn btn-ghost" id="resetBtn" style="font-size:13px;padding:8px 14px;">Reset conversation</button>
@@ -412,7 +412,23 @@
 (function () {
   const KEY_STORAGE = 'voca:sarvam:key';
   const SARVAM_BASE = 'https://api.sarvam.ai';
-  const SPEAKER = 'anushka';
+
+  // Per-language speaker map — same logic as scripts/voice-samples.json
+  // 'meera':    Sarvam's warmest mature female · best for Hindi/Kannada/Marathi/Bengali/Gujarati/Punjabi/English-IN
+  // 'pavithra': Native South-Indian female · best Tamil/Telugu/Malayalam prosody
+  const SPEAKER_PER_LANGUAGE = {
+    'en-IN': 'meera',  'hi-IN': 'meera',
+    'kn-IN': 'meera',  'mr-IN': 'meera',
+    'bn-IN': 'meera',  'gu-IN': 'meera',
+    'pa-IN': 'meera',
+    'ta-IN': 'pavithra', 'te-IN': 'pavithra', 'ml-IN': 'pavithra'
+  };
+  const DEFAULT_SPEAKER = 'meera';
+  function speakerFor(langCode) {
+    if (!langCode) return DEFAULT_SPEAKER;
+    return SPEAKER_PER_LANGUAGE[langCode] || DEFAULT_SPEAKER;
+  }
+
   const TTS_MODEL = 'bulbul:v2';
   const STT_MODEL = 'saarika:v2';
   const LLM_MODEL = 'sarvam-m';
@@ -628,6 +644,7 @@ Paraphrase rules:
   }
 
   async function sarvamTTS(text, langCode) {
+    const speaker = speakerFor(langCode);
     const res = await fetch(SARVAM_BASE + '/text-to-speech', {
       method: 'POST',
       headers: {
@@ -637,10 +654,10 @@ Paraphrase rules:
       body: JSON.stringify({
         inputs: [text],
         target_language_code: langCode,
-        speaker: SPEAKER,
+        speaker,
         model: TTS_MODEL,
         pitch: 0,
-        pace: 1.0,
+        pace: 0.95,
         loudness: 1.0,
         speech_sample_rate: 22050,
         enable_preprocessing: true
