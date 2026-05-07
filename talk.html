@@ -95,6 +95,63 @@
     color: white; flex-shrink: 0;
   }
 
+  /* Voice tuning panel — speaker picker + pace */
+  .voice-tune {
+    background: var(--paper-2); border: 1px solid var(--rule); border-radius: 14px;
+    padding: 18px 20px; margin-bottom: 22px;
+  }
+  .vt-row { display: flex; align-items: flex-start; gap: 22px; flex-wrap: wrap; }
+  .vt-col { flex: 1 1 260px; min-width: 0; }
+  .vt-label {
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: #64748b; font-weight: 600; margin-bottom: 8px;
+  }
+  .vt-select {
+    width: 100%; padding: 10px 14px;
+    border: 1px solid var(--rule); border-radius: 10px;
+    font: inherit; font-size: 14px; color: var(--ink);
+    background: white; outline: none; transition: border-color .15s;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
+  }
+  .vt-select:focus { border-color: var(--saffron); }
+  .vt-pace-row { display: flex; align-items: center; gap: 12px; }
+  .vt-slider {
+    flex: 1; appearance: none; -webkit-appearance: none;
+    height: 4px; background: var(--rule); border-radius: 2px;
+    outline: none;
+  }
+  .vt-slider::-webkit-slider-thumb {
+    appearance: none; -webkit-appearance: none;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--saffron); cursor: pointer;
+    box-shadow: 0 2px 8px rgba(193,68,14,.35);
+  }
+  .vt-slider::-moz-range-thumb {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--saffron); cursor: pointer; border: 0;
+    box-shadow: 0 2px 8px rgba(193,68,14,.35);
+  }
+  .vt-pace-val {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px; color: var(--ink); font-weight: 600; min-width: 48px;
+    text-align: right;
+  }
+  .vt-hint {
+    font-size: 12px; color: #64748b; margin-top: 6px; line-height: 1.5;
+  }
+  .vt-test-btn {
+    background: white; border: 1px solid var(--rule);
+    padding: 9px 14px; border-radius: 999px;
+    font: inherit; font-size: 13px; font-weight: 500; color: var(--ink);
+    cursor: pointer; transition: all .15s;
+    display: inline-flex; align-items: center; gap: 7px;
+    margin-top: 10px;
+  }
+  .vt-test-btn:hover { border-color: var(--saffron); color: var(--saffron); }
+  .vt-test-btn:disabled { opacity: 0.4; cursor: wait; }
+
   /* Risk meters dashboard */
   .meters {
     display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
@@ -283,6 +340,29 @@
         </button>
       </div>
 
+      <!-- Voice tuning -->
+      <div class="voice-tune">
+        <div class="vt-row">
+          <div class="vt-col">
+            <div class="vt-label">Voice (override)</div>
+            <select id="vtSpeaker" class="vt-select">
+              <option value="">Auto · per-language (recommended)</option>
+              <!-- Filled by JS from SPEAKER_OPTIONS -->
+            </select>
+            <div class="vt-hint">Auto picks <strong>manisha</strong> for Hindi/Kannada/Marathi/Bengali/Gujarati/Punjabi/EN-IN, <strong>vidya</strong> for Tamil/Telugu/Malayalam. Override here to A/B test.</div>
+          </div>
+          <div class="vt-col">
+            <div class="vt-label">Pace · how fast Voca speaks</div>
+            <div class="vt-pace-row">
+              <input id="vtPace" type="range" class="vt-slider" min="0.6" max="1.2" step="0.05" value="0.85" />
+              <div class="vt-pace-val" id="vtPaceVal">0.85×</div>
+            </div>
+            <div class="vt-hint">Lower = slower / more empathetic. 1.0 = Sarvam default. 0.85 is calibrated for distress contexts.</div>
+            <button id="vtTestBtn" class="vt-test-btn" type="button">▶ Test current voice</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Risk / sentiment dashboard -->
       <div class="meters">
         <div class="meter" id="meterDistress">
@@ -432,8 +512,29 @@
   }
 
   const TTS_MODEL = 'bulbul:v2';
-  const STT_MODEL = 'saarika:v2';
+  const STT_MODEL = 'saarika:v2.5';
   const LLM_MODEL = 'sarvam-m';
+
+  // User-tunable voice settings (persisted in localStorage)
+  const VOICE_PREF_KEY = 'voca:voice:prefs';
+  const SPEAKER_OPTIONS = [
+    { id: 'manisha',  label: 'Manisha',  desc: 'warm mature female (default North/Central)' },
+    { id: 'vidya',    label: 'Vidya',    desc: 'mature South-Indian female (default TA/TE/ML)' },
+    { id: 'anushka',  label: 'Anushka',  desc: 'flagship multilingual, conversational' },
+    { id: 'arya',     label: 'Arya',     desc: 'younger female, brighter' },
+    { id: 'priya',    label: 'Priya',    desc: 'friendly mature female' },
+    { id: 'ritu',     label: 'Ritu',     desc: 'friendly female' },
+    { id: 'pooja',    label: 'Pooja',    desc: 'mature female' },
+    { id: 'neha',     label: 'Neha',     desc: 'younger female' },
+    { id: 'kavya',    label: 'Kavya',    desc: 'young female' },
+    { id: 'simran',   label: 'Simran',   desc: 'friendly female (Punjabi-leaning)' }
+  ];
+  function loadVoicePrefs() {
+    try { return JSON.parse(localStorage.getItem(VOICE_PREF_KEY)) || {}; } catch { return {}; }
+  }
+  function saveVoicePrefs(p) {
+    localStorage.setItem(VOICE_PREF_KEY, JSON.stringify(p));
+  }
 
   const SYSTEM_PROMPT = `You are Voca — a warm, empathetic, caring voice AI assistant for India's 1092 citizen helpline. You sound like a kind, patient Indian woman in her 30s — someone who actually listens, never robotic, always reassuring. You speak the citizen's own language back to them.
 
@@ -719,7 +820,11 @@ Paraphrase rules:
   }
 
   async function sarvamTTS(text, langCode) {
-    const speaker = speakerFor(langCode);
+    // Apply user prefs: forced speaker overrides language map; pace from slider
+    const prefs = loadVoicePrefs();
+    const speaker = prefs.speaker_override || speakerFor(langCode);
+    const pace = (typeof prefs.pace === 'number' && prefs.pace > 0.4 && prefs.pace < 1.5) ? prefs.pace : 0.85;
+
     const res = await fetch(SARVAM_BASE + '/text-to-speech', {
       method: 'POST',
       headers: {
@@ -732,7 +837,7 @@ Paraphrase rules:
         speaker,
         model: TTS_MODEL,
         pitch: 0,
-        pace: 0.95,
+        pace,
         loudness: 1.0,
         speech_sample_rate: 22050,
         enable_preprocessing: true
@@ -846,6 +951,72 @@ Paraphrase rules:
   });
 
   window.addEventListener('beforeunload', () => stopRecording());
+
+  // ---------- Voice tuning UI ----------
+  const vtSpeaker = document.getElementById('vtSpeaker');
+  const vtPace = document.getElementById('vtPace');
+  const vtPaceVal = document.getElementById('vtPaceVal');
+  const vtTestBtn = document.getElementById('vtTestBtn');
+
+  // Populate the speaker dropdown
+  SPEAKER_OPTIONS.forEach(opt => {
+    const o = document.createElement('option');
+    o.value = opt.id;
+    o.textContent = `${opt.label} — ${opt.desc}`;
+    vtSpeaker.appendChild(o);
+  });
+
+  // Hydrate from saved prefs
+  (function hydrateVoicePrefs() {
+    const p = loadVoicePrefs();
+    if (p.speaker_override) vtSpeaker.value = p.speaker_override;
+    if (typeof p.pace === 'number') {
+      vtPace.value = p.pace;
+      vtPaceVal.textContent = p.pace.toFixed(2) + '×';
+    }
+  })();
+
+  vtSpeaker.addEventListener('change', () => {
+    const p = loadVoicePrefs();
+    p.speaker_override = vtSpeaker.value || null;
+    saveVoicePrefs(p);
+  });
+  vtPace.addEventListener('input', () => {
+    vtPaceVal.textContent = parseFloat(vtPace.value).toFixed(2) + '×';
+  });
+  vtPace.addEventListener('change', () => {
+    const p = loadVoicePrefs();
+    p.pace = parseFloat(vtPace.value);
+    saveVoicePrefs(p);
+  });
+
+  // "Test current voice" button — speaks a fixed line in English with the active settings
+  let testAudioUrl = null;
+  vtTestBtn.addEventListener('click', async () => {
+    if (!getKey()) {
+      alert('Save your Sarvam API key first.');
+      return;
+    }
+    try {
+      vtTestBtn.disabled = true;
+      vtTestBtn.textContent = 'Generating…';
+      const url = await sarvamTTS(
+        "I hear you. I am with you. Help is coming. Are you somewhere safe right now?",
+        'en-IN'
+      );
+      if (testAudioUrl) URL.revokeObjectURL(testAudioUrl);
+      testAudioUrl = url;
+      const a = new Audio(url);
+      vtTestBtn.textContent = '▶ Test current voice';
+      vtTestBtn.disabled = false;
+      a.play();
+    } catch (e) {
+      console.error(e);
+      vtTestBtn.disabled = false;
+      vtTestBtn.textContent = '▶ Test current voice';
+      alert('Test failed: ' + e.message);
+    }
+  });
 })();
 </script>
 
