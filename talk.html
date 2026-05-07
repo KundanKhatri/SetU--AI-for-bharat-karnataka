@@ -792,6 +792,52 @@ Paraphrase rules:
     return await res.json();  // { transcript, language_code, request_id }
   }
 
+  // Robust extraction & cleanup of JSON from LLM output.
+  // Handles: ```json fences, trailing commas, single-quoted strings,
+  //          unescaped control chars, leading/trailing prose, line-break inside strings.
+  function parseLLMJson(rawContent) {
+    if (!rawContent || typeof rawContent !== 'string') {
+      throw new Error('LLM: empty content');
+    }
+
+    let s = rawContent.trim();
+    // 1) Strip code fences
+    s = s.replace(/^```(?:json|JSON)?\s*/m, '').replace(/```\s*$/m, '');
+    // 2) Find first { and last } (greedy outer braces)
+    const first = s.indexOf('{');
+    const last  = s.lastIndexOf('}');
+    if (first < 0 || last < 0 || last <= first) {
+      throw new Error('LLM: no JSON object found in response');
+    }
+    let candidate = s.slice(first, last + 1);
+
+    // First attempt: parse as-is
+    try { return JSON.parse(candidate); } catch (_) { /* fall through to cleanup */ }
+
+    // 3) Cleanup pass — sanitize common LLM quirks
+    let cleaned = candidate
+      // Strip trailing commas before } or ]
+      .replace(/,(\s*[}\]])/g, '$1')
+      // Smart-quote → straight quote
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'")
+      // Replace single-quoted KEYS with double-quoted (only at object-key positions)
+      .replace(/([{,]\s*)'([^']+?)'(\s*:)/g, '$1"$2"$3')
+      // Replace single-quoted STRING VALUES with double-quoted (after a colon)
+      .replace(/(:\s*)'([^']*?)'(\s*[,}\]])/g, '$1"$2"$3')
+      // Remove literal newlines inside strings (replace with space)
+      .replace(/("(?:[^"\\]|\\.)*?)([\r\n]+)/g, '$1 ')
+      // Strip control chars
+      .replace(/[ -]+/g, ' ');
+
+    try { return JSON.parse(cleaned); } catch (e) {
+      // Last resort: log a console warning and rethrow
+      console.warn('Failed to parse LLM JSON. Raw:', rawContent);
+      console.warn('Cleaned:', cleaned);
+      throw new Error('LLM JSON parse failed after cleanup: ' + e.message);
+    }
+  }
+
   async function sarvamLLM(citizenText, langCode) {
     const res = await fetch(SARVAM_BASE + '/v1/chat/completions', {
       method: 'POST',
@@ -803,20 +849,17 @@ Paraphrase rules:
         model: LLM_MODEL,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: `Citizen language: ${langCode || 'auto'}\nWhat the citizen said:\n"""\n${citizenText}\n"""\n\nReturn ONLY the JSON object.` }
+          { role: 'user', content: `Citizen language: ${langCode || 'auto'}\nWhat the citizen said:\n"""\n${citizenText}\n"""\n\nReturn ONLY a single, syntactically-valid JSON object. No markdown, no commentary, no trailing text. Use double quotes for ALL keys and string values. Do NOT include trailing commas. Keep the paraphrase under 25 words.` }
         ],
-        temperature: 0.4,
-        max_tokens: 500
+        temperature: 0.2,                      // less creativity → more reliable JSON
+        max_tokens: 500,
+        response_format: { type: 'json_object' } // OpenAI-style strict JSON mode (Sarvam-M supports this)
       })
     });
     if (!res.ok) throw new Error('LLM failed: ' + res.status + ' ' + (await res.text()).slice(0, 160));
     const json = await res.json();
     const content = json.choices && json.choices[0] && json.choices[0].message && json.choices[0].message.content;
-    if (!content) throw new Error('LLM: empty content');
-    // Pull JSON out of any wrapper
-    const match = content.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error('LLM: no JSON');
-    return JSON.parse(match[0]);
+    return parseLLMJson(content);
   }
 
   async function sarvamTTS(text, langCode) {
