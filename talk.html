@@ -312,19 +312,8 @@
 <section class="tight">
   <div class="container">
 
-    <!-- Setup (shown until API key entered) -->
-    <div id="setupPanel" class="setup" hidden>
-      <h2>One-time setup — paste your Sarvam API key</h2>
-      <p>The key is stored only in your browser (localStorage). It never leaves your device except to call Sarvam directly. You can change or remove it any time.</p>
-      <input id="apiKeyInput" type="password" class="setup-input" placeholder="sk_..." autocomplete="off" spellcheck="false" />
-      <button id="saveKeyBtn" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:14px;">Save key & start talking →</button>
-      <div class="setup-fine">
-        <strong>Don't have a key?</strong> Get one at <a href="https://dashboard.sarvam.ai" target="_blank" rel="noreferrer">dashboard.sarvam.ai</a> — free trial available. The Saarika STT, Sarvam-M, and Bulbul TTS calls used by this page each cost less than ₹0.10 per turn at typical lengths.
-      </div>
-    </div>
-
-    <!-- Conversation stage (shown after key entered) -->
-    <div id="stagePanel" class="stage" hidden>
+    <!-- Conversation stage — open to all visitors via the voca-proxy Worker -->
+    <div id="stagePanel" class="stage">
 
       <div class="stage-top">
         <div class="status-box">
@@ -409,7 +398,6 @@
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button class="btn btn-ghost" id="resetBtn" style="font-size:13px;padding:8px 14px;">Reset conversation</button>
-          <button class="btn btn-ghost" id="forgetKeyBtn" style="font-size:13px;padding:8px 14px;">Forget API key</button>
         </div>
       </div>
 
@@ -490,8 +478,15 @@
    API key is stored in localStorage, never leaves the browser.
    =========================================================================== */
 (function () {
-  const KEY_STORAGE = 'voca:sarvam:key';
-  const SARVAM_BASE = 'https://api.sarvam.ai';
+  // ============================================================================
+  // PROXY_BASE points at the voca-proxy Cloudflare Worker.
+  // The Worker holds the Sarvam API key as a server-side secret, so visitors
+  // never need to set anything up — they land on /talk and start speaking.
+  //
+  // After deploying the Worker (see proxy/README.md), update this URL to the
+  // 'workers.dev' subdomain that wrangler prints on success.
+  // ============================================================================
+  const PROXY_BASE = 'https://voca-proxy.kundankhatri.workers.dev';
 
   // Per-language speaker map — Bulbul v2 roster.
   // 'manisha': Bulbul v2 warm mature female · ideal for empathetic helpline register
@@ -576,11 +571,7 @@ Paraphrase rules:
 - Never longer than 25 words`;
 
   // ---------- DOM ----------
-  const setupPanel  = document.getElementById('setupPanel');
   const stagePanel  = document.getElementById('stagePanel');
-  const apiKeyInput = document.getElementById('apiKeyInput');
-  const saveKeyBtn  = document.getElementById('saveKeyBtn');
-  const forgetKeyBtn = document.getElementById('forgetKeyBtn');
   const resetBtn    = document.getElementById('resetBtn');
   const micBtn      = document.getElementById('micBtn');
   const micLabel    = document.getElementById('micLabel');
@@ -597,34 +588,9 @@ Paraphrase rules:
     risk:     { box: document.getElementById('meterRisk'),     val: document.getElementById('riskValue'),     pill: document.getElementById('riskPill') }
   };
 
-  // ---------- API key flow ----------
-  function getKey() { return localStorage.getItem(KEY_STORAGE); }
-  function setKey(k) { localStorage.setItem(KEY_STORAGE, k); }
-  function clearKey() { localStorage.removeItem(KEY_STORAGE); }
+  // No API-key setup needed — proxy holds the secret server-side.
+  // Stage is always visible; visitors can talk immediately.
 
-  function showSetup() {
-    setupPanel.hidden = false;
-    stagePanel.hidden = true;
-    setTimeout(() => apiKeyInput.focus(), 100);
-  }
-  function showStage() {
-    setupPanel.hidden = true;
-    stagePanel.hidden = false;
-  }
-  if (getKey()) showStage(); else showSetup();
-
-  saveKeyBtn.addEventListener('click', () => {
-    const v = apiKeyInput.value.trim();
-    if (!v) { apiKeyInput.focus(); return; }
-    setKey(v); showStage();
-  });
-  apiKeyInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') saveKeyBtn.click();
-  });
-  forgetKeyBtn.addEventListener('click', () => {
-    if (!confirm('Forget the saved Sarvam API key?')) return;
-    clearKey(); showSetup();
-  });
   resetBtn.addEventListener('click', () => {
     if (!confirm('Reset the conversation?')) return;
     convo.innerHTML = ''; convo.appendChild(convoEmpty);
@@ -783,9 +749,9 @@ Paraphrase rules:
     fd.append('file', payload, 'audio.wav');
     fd.append('model', STT_MODEL);
     if (hintLang) fd.append('language_code', hintLang);
-    const res = await fetch(SARVAM_BASE + '/speech-to-text', {
+    // Goes through voca-proxy Worker; key is injected server-side.
+    const res = await fetch(PROXY_BASE + '/stt', {
       method: 'POST',
-      headers: { 'api-subscription-key': getKey() },
       body: fd
     });
     if (!res.ok) throw new Error('STT failed: ' + res.status + ' ' + (await res.text()).slice(0, 160));
@@ -839,12 +805,10 @@ Paraphrase rules:
   }
 
   async function sarvamLLM(citizenText, langCode) {
-    const res = await fetch(SARVAM_BASE + '/v1/chat/completions', {
+    // Goes through voca-proxy Worker; key is injected server-side.
+    const res = await fetch(PROXY_BASE + '/llm', {
       method: 'POST',
-      headers: {
-        'api-subscription-key': getKey(),
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: LLM_MODEL,
         messages: [
@@ -868,12 +832,10 @@ Paraphrase rules:
     const speaker = prefs.speaker_override || speakerFor(langCode);
     const pace = (typeof prefs.pace === 'number' && prefs.pace > 0.4 && prefs.pace < 1.5) ? prefs.pace : 0.85;
 
-    const res = await fetch(SARVAM_BASE + '/text-to-speech', {
+    // Goes through voca-proxy Worker; key is injected server-side.
+    const res = await fetch(PROXY_BASE + '/tts', {
       method: 'POST',
-      headers: {
-        'api-subscription-key': getKey(),
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         inputs: [text],
         target_language_code: langCode,
@@ -1036,10 +998,6 @@ Paraphrase rules:
   // "Test current voice" button — speaks a fixed line in English with the active settings
   let testAudioUrl = null;
   vtTestBtn.addEventListener('click', async () => {
-    if (!getKey()) {
-      alert('Save your Sarvam API key first.');
-      return;
-    }
     try {
       vtTestBtn.disabled = true;
       vtTestBtn.textContent = 'Generating…';
