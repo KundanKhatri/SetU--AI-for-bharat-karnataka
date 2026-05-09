@@ -711,20 +711,27 @@
 
   // User-tunable voice settings (persisted in localStorage)
   const VOICE_PREF_KEY = 'voca:voice:prefs';
+  // ONLY speakers that bulbul:v2 actually accepts. Sarvam rejects others with HTTP 400.
+  // Confirmed from API error: anushka, abhilash, manisha, vidya, arya, karun
   const SPEAKER_OPTIONS = [
-    { id: 'manisha',  label: 'Manisha',  desc: 'warm mature female (default North/Central)' },
-    { id: 'vidya',    label: 'Vidya',    desc: 'mature South-Indian female (default TA/TE/ML)' },
-    { id: 'anushka',  label: 'Anushka',  desc: 'flagship multilingual, conversational' },
-    { id: 'arya',     label: 'Arya',     desc: 'younger female, brighter' },
-    { id: 'priya',    label: 'Priya',    desc: 'friendly mature female' },
-    { id: 'ritu',     label: 'Ritu',     desc: 'friendly female' },
-    { id: 'pooja',    label: 'Pooja',    desc: 'mature female' },
-    { id: 'neha',     label: 'Neha',     desc: 'younger female' },
-    { id: 'kavya',    label: 'Kavya',    desc: 'young female' },
-    { id: 'simran',   label: 'Simran',   desc: 'friendly female (Punjabi-leaning)' }
+    { id: 'manisha', label: 'Manisha', desc: 'warm mature female (default North/Central/East)' },
+    { id: 'vidya',   label: 'Vidya',   desc: 'mature South-Indian female (default Tamil/Telugu/Malayalam)' },
+    { id: 'anushka', label: 'Anushka', desc: 'flagship multilingual, conversational' },
+    { id: 'arya',    label: 'Arya',    desc: 'younger female, brighter tone' },
+    { id: 'abhilash',label: 'Abhilash',desc: 'male voice — for handoff context' },
+    { id: 'karun',   label: 'Karun',   desc: 'male voice — calmer, mid-tone' }
   ];
+  const VALID_SPEAKERS = new Set(SPEAKER_OPTIONS.map(s => s.id));
   function loadVoicePrefs() {
-    try { return JSON.parse(localStorage.getItem(VOICE_PREF_KEY)) || {}; } catch { return {}; }
+    try {
+      const p = JSON.parse(localStorage.getItem(VOICE_PREF_KEY)) || {};
+      // Auto-clear stale speakers that no longer exist in bulbul:v2
+      if (p.speaker_override && !VALID_SPEAKERS.has(p.speaker_override)) {
+        delete p.speaker_override;
+        saveVoicePrefs(p);
+      }
+      return p;
+    } catch { return {}; }
   }
   function saveVoicePrefs(p) {
     localStorage.setItem(VOICE_PREF_KEY, JSON.stringify(p));
@@ -1097,7 +1104,9 @@ Paraphrase rules:
   async function sarvamTTS(text, langCode) {
     // Apply user prefs: forced speaker overrides language map; pace from slider
     const prefs = loadVoicePrefs();
-    const speaker = prefs.speaker_override || speakerFor(langCode);
+    let speaker = prefs.speaker_override || speakerFor(langCode);
+    // Defensive: if pref somehow contains a non-v2 speaker, fall back to language-map default
+    if (!VALID_SPEAKERS.has(speaker)) speaker = speakerFor(langCode);
     const pace = (typeof prefs.pace === 'number' && prefs.pace > 0.4 && prefs.pace < 1.5) ? prefs.pace : 0.85;
 
     // Goes through voca-proxy Worker; key is injected server-side.
