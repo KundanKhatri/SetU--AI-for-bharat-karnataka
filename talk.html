@@ -39,6 +39,153 @@
     font-size: 12.5px; color: #64748b; line-height: 1.6;
   }
 
+  /* === Call-style header === */
+  .call-header {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 18px; padding: 18px 22px; margin-bottom: 24px;
+    background: var(--ink); color: white; border-radius: 14px;
+  }
+  .call-id { display: flex; align-items: center; gap: 14px; }
+  .call-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--saffron), var(--saffron-2));
+    display: grid; place-items: center; color: white; font-weight: 700; font-size: 17px;
+    flex-shrink: 0;
+  }
+  .call-name { font-weight: 600; font-size: 15.5px; line-height: 1.1; }
+  .call-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; letter-spacing: .04em; }
+  .call-timer {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 17px; font-weight: 600; color: white;
+    padding: 6px 14px; border-radius: 999px;
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+    min-width: 78px; text-align: center;
+  }
+  .call-header.live .call-timer { background: rgba(220,38,38,.20); border-color: rgba(220,38,38,.40); color: #fca5a5; }
+  .call-header.live .call-timer::before {
+    content: "● "; color: #ef4444; animation: blinkLive 1.4s ease-in-out infinite;
+  }
+  @keyframes blinkLive { 50% { opacity: 0.3; } }
+
+  /* === Scenarios === */
+  .scenario-bar { margin-bottom: 24px; }
+  .scenario-label {
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: #64748b; font-weight: 600; margin-bottom: 12px;
+  }
+  .scenario-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  }
+  @media (max-width: 800px) { .scenario-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .scenario-grid { grid-template-columns: 1fr; } }
+  .scenario {
+    background: white; border: 1px solid var(--rule); border-radius: 12px;
+    padding: 12px 14px; cursor: pointer; transition: all .15s;
+    text-align: left; font: inherit;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .scenario:hover { border-color: var(--saffron); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+  .scenario:disabled { opacity: 0.5; cursor: wait; }
+  .scenario-flag {
+    flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px;
+    background: var(--saffron-soft); color: var(--saffron);
+    display: grid; place-items: center; font-weight: 700; font-size: 13px;
+  }
+  .scenario-title { display: block; font-weight: 600; font-size: 13.5px; line-height: 1.3; color: var(--ink); }
+  .scenario-tag { display: block; font-size: 11px; color: #64748b; margin-top: 3px; letter-spacing: .02em; }
+
+  /* === Big call control === */
+  .call-stage {
+    background: var(--paper-2); border: 1px solid var(--rule); border-radius: 18px;
+    padding: clamp(24px, 4vw, 36px); margin-bottom: 24px;
+    text-align: center;
+  }
+  .call-status { margin-bottom: 24px; }
+  .call-status-label {
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: #64748b; font-weight: 600; margin-bottom: 6px;
+  }
+  .call-status-value {
+    font-family: var(--serif); font-size: clamp(22px, 3vw, 28px);
+    font-weight: 600; letter-spacing: -.01em; line-height: 1.15;
+    color: var(--ink); margin-bottom: 8px;
+  }
+  .call-status-value.listening { color: var(--saffron); }
+  .call-status-value.thinking { color: var(--teal); }
+  .call-status-value.speaking { color: var(--green-2); }
+  .call-status-sub {
+    font-size: 14px; color: var(--ink-3); line-height: 1.5;
+    max-width: 540px; margin: 0 auto;
+  }
+
+  .call-btn {
+    border: 0; border-radius: 999px; cursor: pointer; transition: all .15s;
+    display: inline-flex; align-items: center; gap: 14px;
+    padding: 18px 32px; font: inherit; font-size: 16px; font-weight: 600;
+    color: white; min-width: 200px; justify-content: center;
+  }
+  .call-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+  .call-btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
+  .call-btn-start { background: linear-gradient(135deg, var(--green), var(--green-2)); }
+  .call-btn-start:hover { background: linear-gradient(135deg, #15803d, var(--green-2)); }
+  .call-btn-end {
+    background: linear-gradient(135deg, #b91c1c, #dc2626);
+    box-shadow: 0 0 0 0 rgba(220,38,38,.4);
+    animation: callPulse 1.6s ease-out infinite;
+  }
+  @keyframes callPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,.45); }
+    50%      { box-shadow: 0 0 0 10px rgba(220,38,38,0); }
+  }
+  .call-btn-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,.18); display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .call-btn-end .call-btn-icon svg { transform: rotate(135deg); }
+
+  /* === Real-time mic level === */
+  .mic-level {
+    margin-top: 28px; padding: 16px 20px;
+    background: white; border: 1px solid var(--rule); border-radius: 14px;
+  }
+  .mic-bars {
+    display: flex; align-items: center; justify-content: center;
+    gap: 4px; height: 40px; margin-bottom: 8px;
+  }
+  .mic-bars span {
+    display: block; width: 4px; border-radius: 2px;
+    background: linear-gradient(180deg, var(--saffron), var(--saffron-2));
+    height: 4px; transition: height .08s ease-out;
+  }
+  .mic-level-label {
+    font-size: 12.5px; color: #64748b; letter-spacing: .04em;
+  }
+  .mic-level.user-speaking .mic-level-label { color: var(--saffron); font-weight: 600; }
+
+  /* === Voice tuning details collapsible === */
+  .voice-tune-details {
+    margin-bottom: 24px;
+    background: var(--paper-2); border: 1px solid var(--rule); border-radius: 14px;
+    overflow: hidden;
+  }
+  .voice-tune-details summary {
+    cursor: pointer; padding: 14px 18px;
+    font-size: 13px; font-weight: 600; color: var(--ink);
+    list-style: none; user-select: none;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .voice-tune-details summary::-webkit-details-marker { display: none; }
+  .voice-tune-details summary::after {
+    content: "▾"; color: #94a3b8; transition: transform .15s;
+  }
+  .voice-tune-details[open] summary::after { transform: rotate(180deg); }
+  .voice-tune-details summary:hover { background: white; }
+  .voice-tune-details .voice-tune {
+    margin: 0; border: 0; border-top: 1px solid var(--rule);
+    border-radius: 0; padding: 18px 20px;
+  }
+
   /* Stage (the conversation arena) */
   .stage {
     background: white; border: 1px solid var(--rule); border-radius: 24px;
@@ -315,40 +462,78 @@
     <!-- Conversation stage — open to all visitors via the voca-proxy Worker -->
     <div id="stagePanel" class="stage">
 
-      <div class="stage-top">
-        <div class="status-box">
-          <div class="status-label">Status</div>
-          <div class="status-value" id="statusValue">Ready</div>
-          <div class="status-sub" id="statusSub">Press the mic and speak in any Indian language. Press again to send.</div>
+      <!-- Phone-call style header -->
+      <div class="call-header">
+        <div class="call-id">
+          <div class="call-avatar">V</div>
+          <div>
+            <div class="call-name">Voca · Customer Care</div>
+            <div class="call-sub" id="callSub">Live on Sarvam · 1092-style helpline simulator</div>
+          </div>
         </div>
-        <button id="micBtn" class="mic-button">
-          <span class="mic-circle">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.42 2.72 6.23 6 6.72V21h2v-3.28c3.28-.49 6-3.3 6-6.72h-1.7z"/></svg>
-          </span>
-          <span id="micLabel">Press to talk</span>
-        </button>
+        <div class="call-timer" id="callTimer">00:00</div>
       </div>
 
-      <!-- Voice tuning -->
-      <div class="voice-tune">
-        <div class="vt-row">
-          <div class="vt-col">
-            <div class="vt-label">Voice (override)</div>
-            <select id="vtSpeaker" class="vt-select">
-              <option value="">Auto · per-language (recommended)</option>
-              <!-- Filled by JS from SPEAKER_OPTIONS -->
-            </select>
-            <div class="vt-hint">Auto picks <strong>manisha</strong> for Hindi/Kannada/Marathi/Bengali/Gujarati/Punjabi/EN-IN, <strong>vidya</strong> for Tamil/Telugu/Malayalam. Override here to A/B test.</div>
+      <!-- Pick a scenario row -->
+      <div class="scenario-bar">
+        <div class="scenario-label">Try a real-world scenario:</div>
+        <div class="scenario-grid" id="scenarioGrid">
+          <button class="scenario" data-text="मेरे पति घर में बहुत चिल्ला रहे हैं। मैं कहाँ जाऊँ? डर लग रहा है।" data-lang="hi-IN">
+            <span class="scenario-flag">हि</span>
+            <span class="scenario-title">Domestic violence in progress</span>
+            <span class="scenario-tag">Hindi · HIGH risk</span>
+          </button>
+          <button class="scenario" data-text="ನನ್ ಮಗಳಿಗೆ ಶ್ವಾಸಕೋಶ ಸಮಸ್ಯೆ, ಆಂಬ್ಯುಲೆನ್ಸ್ ಬೇಕು. ಅವಳಿಗೆ 8 ವರ್ಷ ಮಾತ್ರ" data-lang="kn-IN">
+            <span class="scenario-flag">ಕ</span>
+            <span class="scenario-title">Pediatric medical emergency</span>
+            <span class="scenario-tag">Kannada · HIGH risk</span>
+          </button>
+          <button class="scenario" data-text="मेरा रेशन कार्ड पिछले तीन महीने से renew नहीं हो रहा है, ऑनलाइन portal भी काम नहीं कर रहा।" data-lang="hi-IN">
+            <span class="scenario-flag">हि</span>
+            <span class="scenario-title">Stuck ration card renewal</span>
+            <span class="scenario-tag">Hindi · routine grievance</span>
+          </button>
+          <button class="scenario" data-text="My salary credit failed yesterday but the bank says the transaction was processed. I need to know where my money is." data-lang="en-IN">
+            <span class="scenario-flag">EN</span>
+            <span class="scenario-title">Failed bank transaction</span>
+            <span class="scenario-tag">English · BFSI support</span>
+          </button>
+          <button class="scenario" data-text="என் வீட்டில் கடந்த நான்கு நாட்களாக தண்ணீர் வரவில்லை. நான் என்ன செய்ய வேண்டும்?" data-lang="ta-IN">
+            <span class="scenario-flag">த</span>
+            <span class="scenario-title">No water supply for 4 days</span>
+            <span class="scenario-tag">Tamil · utility complaint</span>
+          </button>
+          <button class="scenario" data-text="मला माझी पेन्शन या महिन्यात मिळाली नाही, मी ७० वर्षांचा आहे आणि एकटा राहतो." data-lang="mr-IN">
+            <span class="scenario-flag">म</span>
+            <span class="scenario-title">Senior citizen · pension delay</span>
+            <span class="scenario-tag">Marathi · vulnerable caller</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- The big call control -->
+      <div class="call-stage">
+        <div class="call-status" id="callStatus">
+          <div class="call-status-label">Status</div>
+          <div class="call-status-value" id="statusValue">Ready to call</div>
+          <div class="call-status-sub" id="statusSub">Press <strong>Start call</strong> below. After that, just speak — Voca listens, responds, and the mic auto-arms for your next turn.</div>
+        </div>
+
+        <button id="callBtn" class="call-btn call-btn-start">
+          <span class="call-btn-icon">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2a1 1 0 0 1 1.05-.24c1.16.39 2.39.6 3.65.6a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.27.21 2.5.6 3.65a1 1 0 0 1-.25 1.05l-2.23 2.09z"/></svg>
+          </span>
+          <span id="callBtnLabel">Start call</span>
+        </button>
+
+        <!-- Real-time mic level (visible only during call) -->
+        <div class="mic-level" id="micLevel" hidden>
+          <div class="mic-bars" id="micBars">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
           </div>
-          <div class="vt-col">
-            <div class="vt-label">Pace · how fast Voca speaks</div>
-            <div class="vt-pace-row">
-              <input id="vtPace" type="range" class="vt-slider" min="0.6" max="1.2" step="0.05" value="0.85" />
-              <div class="vt-pace-val" id="vtPaceVal">0.85×</div>
-            </div>
-            <div class="vt-hint">Lower = slower / more empathetic. 1.0 = Sarvam default. 0.85 is calibrated for distress contexts.</div>
-            <button id="vtTestBtn" class="vt-test-btn" type="button">▶ Test current voice</button>
-          </div>
+          <div class="mic-level-label" id="micLevelLabel">Listening for your voice…</div>
         </div>
       </div>
 
@@ -376,28 +561,42 @@
         </div>
       </div>
 
-      <!-- Conversation log -->
+      <!-- Conversation transcript (call-style) -->
       <div class="convo" id="convo">
-        <div class="convo-empty" id="convoEmpty">No turns yet. Press the mic and speak — try in your most natural language and dialect.</div>
+        <div class="convo-empty" id="convoEmpty">No turns yet. Press <strong>Start call</strong> or pick a scenario above.</div>
       </div>
 
-      <!-- Quick prompts -->
-      <div class="quickies">
-        <div class="quickies-label">Or try one of these</div>
-        <div class="quickies-row" id="quickiesRow">
-          <button class="quickie" data-text="मेरे पति घर में बहुत चिल्ला रहे हैं। मैं कहाँ जाऊँ?" data-lang="hi-IN">Hindi · domestic distress</button>
-          <button class="quickie" data-text="ನನ್ ಮಗಳಿಗೆ ಶ್ವಾಸಕೋಶ ಸಮಸ್ಯೆ, ಆಂಬ್ಯುಲೆನ್ಸ್ ಬೇಕು. ಅವಳಿಗೆ 8 ವರ್ಷ" data-lang="kn-IN">Kannada · medical emergency</button>
-          <button class="quickie" data-text="My ration card hasn't been renewed and the online portal isn't working" data-lang="en-IN">English · routine grievance</button>
-          <button class="quickie" data-text="என் வீட்டில் தண்ணீர் வரவில்லை, என்ன செய்வது?" data-lang="ta-IN">Tamil · water complaint</button>
+      <!-- Voice settings · collapsible -->
+      <details class="voice-tune-details">
+        <summary>Voice settings — speaker, pace, test sample</summary>
+        <div class="voice-tune">
+          <div class="vt-row">
+            <div class="vt-col">
+              <div class="vt-label">Voice (override)</div>
+              <select id="vtSpeaker" class="vt-select">
+                <option value="">Auto · per-language (recommended)</option>
+              </select>
+              <div class="vt-hint">Auto picks <strong>manisha</strong> for Hindi/Kannada/Marathi/Bengali/Gujarati/Punjabi/EN-IN, <strong>vidya</strong> for Tamil/Telugu/Malayalam.</div>
+            </div>
+            <div class="vt-col">
+              <div class="vt-label">Pace · how fast Voca speaks</div>
+              <div class="vt-pace-row">
+                <input id="vtPace" type="range" class="vt-slider" min="0.6" max="1.2" step="0.05" value="0.85" />
+                <div class="vt-pace-val" id="vtPaceVal">0.85×</div>
+              </div>
+              <div class="vt-hint">Lower = slower, more empathetic. 0.85 is calibrated for distress contexts.</div>
+              <button id="vtTestBtn" class="vt-test-btn" type="button">▶ Test current voice</button>
+            </div>
+          </div>
         </div>
-      </div>
+      </details>
 
       <div class="stage-footer">
         <div>
           Voice: <strong>manisha</strong> (Hindi/Kannada/Marathi/Bengali/Gujarati/Punjabi/EN-IN) · <strong>vidya</strong> (Tamil/Telugu/Malayalam) · Model: <strong>Bulbul v2</strong>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-ghost" id="resetBtn" style="font-size:13px;padding:8px 14px;">Reset conversation</button>
+          <button class="btn btn-ghost" id="resetBtn" style="font-size:13px;padding:8px 14px;">Reset transcript</button>
         </div>
       </div>
 
@@ -571,15 +770,20 @@ Paraphrase rules:
 - Never longer than 25 words`;
 
   // ---------- DOM ----------
-  const stagePanel  = document.getElementById('stagePanel');
-  const resetBtn    = document.getElementById('resetBtn');
-  const micBtn      = document.getElementById('micBtn');
-  const micLabel    = document.getElementById('micLabel');
-  const statusValue = document.getElementById('statusValue');
-  const statusSub   = document.getElementById('statusSub');
-  const convo       = document.getElementById('convo');
-  const convoEmpty  = document.getElementById('convoEmpty');
-  const quickiesRow = document.getElementById('quickiesRow');
+  const stagePanel    = document.getElementById('stagePanel');
+  const resetBtn      = document.getElementById('resetBtn');
+  const callBtn       = document.getElementById('callBtn');
+  const callBtnLabel  = document.getElementById('callBtnLabel');
+  const callTimerEl   = document.getElementById('callTimer');
+  const callHeader    = document.querySelector('.call-header');
+  const statusValue   = document.getElementById('statusValue');
+  const statusSub     = document.getElementById('statusSub');
+  const convo         = document.getElementById('convo');
+  const convoEmpty    = document.getElementById('convoEmpty');
+  const scenarioGrid  = document.getElementById('scenarioGrid');
+  const micLevelEl    = document.getElementById('micLevel');
+  const micBars       = document.getElementById('micBars');
+  const micLevelLabel = document.getElementById('micLevelLabel');
 
   const meters = {
     distress: { box: document.getElementById('meterDistress'), val: document.getElementById('distressValue'), fill: document.getElementById('distressFill') },
@@ -599,9 +803,10 @@ Paraphrase rules:
 
   // ---------- Status ----------
   function setStatus(state, text, sub) {
-    statusValue.className = 'status-value ' + state;
+    // class drives color; works for both old .status-value AND new .call-status-value
+    statusValue.className = 'call-status-value ' + state;
     statusValue.textContent = text;
-    if (sub !== undefined) statusSub.textContent = sub;
+    if (sub !== undefined) statusSub.innerHTML = sub;
   }
 
   // ---------- Meters ----------
@@ -928,7 +1133,7 @@ Paraphrase rules:
       // 1) Transcript
       let transcript, language;
       if (audioBlob) {
-        setStatus('thinking', 'Transcribing…', 'Sarvam Saarika is converting your audio to text');
+        setStatus('thinking', 'Transcribing your turn…', 'Sarvam Saarika converting your audio to text');
         const stt = await sarvamSTT(audioBlob);
         transcript = (stt.transcript || '').trim();
         language = stt.language_code || 'en-IN';
@@ -937,13 +1142,19 @@ Paraphrase rules:
         language = presetLang || 'en-IN';
       }
       if (!transcript) {
-        setStatus('idle', 'Ready', 'I didn\'t catch that — try again');
+        // Empty transcript — return to listening if we're in a live call
+        if (callState === 'thinking' && mediaStream) {
+          setCallState('listening');
+          setStatus('listening', 'I didn\'t catch that — go ahead', 'Try again, a bit louder this time');
+        } else {
+          setStatus('idle', 'Ready', 'I didn\'t catch that — try again');
+        }
         return;
       }
       appendTurn({ who: 'you', text: transcript, language, meta: ['lang ' + language] });
 
       // 2) LLM interpretation + risk scoring
-      setStatus('thinking', 'Understanding…', 'Sarvam-M is interpreting and scoring risk');
+      setStatus('thinking', 'Understanding what you said…', 'Sarvam-M is interpreting and scoring risk');
       const interp = await sarvamLLM(transcript, language);
 
       updateMeter('distress', interp.distress_score);
@@ -952,73 +1163,291 @@ Paraphrase rules:
       updateRisk(interp.risk_signal);
 
       // 3) TTS
-      setStatus('speaking', 'Voca is responding…', 'Bulbul v2 voice — Anushka');
-      const audioUrl = await sarvamTTS(interp.paraphrase, interp.language || language);
+      const interpLang = interp.language || language;
+      const speakerName = (loadVoicePrefs().speaker_override || speakerFor(interpLang));
+      setCallState('speaking');
+      setStatus('speaking', 'Voca is responding…', 'Bulbul v2 · ' + speakerName + ' · ' + interpLang);
+      const audioUrl = await sarvamTTS(interp.paraphrase, interpLang);
 
       const meta = [
         'intent: ' + (interp.intent_label || interp.intent || '—'),
         'risk: ' + (interp.risk_signal || '—'),
         'decision: ' + (interp.decision || '—')
       ];
-      appendTurn({ who: 'voca', text: interp.paraphrase, language: interp.language || language, audio: audioUrl, meta });
+      appendTurn({ who: 'voca', text: interp.paraphrase, language: interpLang, audio: audioUrl, meta });
 
-      // Reset to ready when audio ends — heuristic via setTimeout
-      setStatus('idle', 'Ready', 'Press the mic again to continue the conversation');
+      // 4) Play the response. When TTS finishes:
+      //    - in a live call → go back to 'listening' so VAD picks up the next user turn
+      //    - otherwise → reset to 'idle'
+      const a = new Audio(audioUrl);
+      currentTtsAudio = a;
+      a.onended = () => {
+        currentTtsAudio = null;
+        if (mediaStream && callState === 'speaking') {
+          setCallState('listening');
+          setStatus('listening', 'Voca is listening — your turn', 'Just speak; mic auto-arms when you do, auto-sends when you pause');
+        } else if (!mediaStream) {
+          setStatus('idle', 'Ready', 'Press Start call to continue, or pick another scenario');
+        }
+      };
+      a.onerror = a.onended; // treat error like ended so the loop doesn't hang
+      try {
+        await a.play();
+      } catch (playErr) {
+        // Autoplay was blocked — the bubble's own <audio controls> still works
+        console.warn('Auto-play blocked:', playErr);
+        if (mediaStream && callState === 'speaking') {
+          setCallState('listening');
+          setStatus('listening', 'Voca is listening — your turn', 'Click the play icon on the bubble above to hear my last response');
+        }
+      }
     } catch (e) {
       console.error(e);
-      setStatus('idle', 'Error', e.message || 'Something went wrong — check your API key in Settings');
+      // If the pipeline blows up mid-call, drop back to listening so the user can try again
+      if (mediaStream) {
+        setCallState('listening');
+        setStatus('listening', 'Hit a snag — go ahead and try again', e.message || 'See browser console for details');
+      } else {
+        setStatus('idle', 'Error', e.message || 'Something went wrong — see browser console for details');
+      }
     }
   }
 
-  // ---------- Mic recording ----------
+  // ============================================================================
+  // CALL STATE MACHINE — VAD-driven, continuous live conversation
+  // ============================================================================
+  // States: idle → connecting → listening → recording → thinking → speaking → listening …
+  //
+  // Flow once the user presses "Start call":
+  //   1) Acquire mic; spin up Web Audio analyser + MediaRecorder
+  //   2) VAD detects speech → start a recording chunk
+  //   3) VAD detects 1.5s of silence → stop the chunk → run STT/LLM/TTS pipeline
+  //   4) Voca's TTS plays through; while it plays the user can still speak (interrupt)
+  //   5) When TTS ends, VAD goes back to listening — no button press needed
+  //   6) "End call" tears it all down
+
+  const VAD_TUNING = {
+    rmsThresholdSpeak:   0.025,   // start-speech RMS threshold
+    rmsThresholdSilence: 0.018,   // hysteresis: lower = end-of-speech
+    silenceTimeoutMs:    1500,    // how long of silence ends a turn
+    minSpeechMs:         400,     // ignore micro-blips
+    maxRecordingMs:      30000    // hard cap per turn
+  };
+
+  let callState = 'idle';   // idle | connecting | listening | recording | thinking | speaking
+  let mediaStream = null;
   let mediaRecorder = null;
   let audioChunks = [];
+  let audioCtx = null;
+  let analyser = null;
+  let vadRafId = null;
+  let speakingMs = 0;
+  let silenceMs = 0;
+  let recordingStartedAt = 0;
+  let isInRecording = false;
+  let callStartedAt = 0;
+  let callTimerInterval = null;
+  let currentTtsAudio = null;
 
-  async function startRecording() {
+  function setCallState(s) { callState = s; }
+
+  function prettyDuration(ms) {
+    const total = Math.max(0, Math.floor(ms / 1000));
+    const m = String(Math.floor(total / 60)).padStart(2, '0');
+    const ss = String(total % 60).padStart(2, '0');
+    return m + ':' + ss;
+  }
+  function startCallTimer() {
+    callStartedAt = Date.now();
+    if (callTimerInterval) clearInterval(callTimerInterval);
+    callTimerInterval = setInterval(() => {
+      callTimerEl.textContent = prettyDuration(Date.now() - callStartedAt);
+    }, 1000);
+  }
+  function stopCallTimer() {
+    if (callTimerInterval) clearInterval(callTimerInterval);
+    callTimerInterval = null;
+    callTimerEl.textContent = '00:00';
+  }
+
+  function setMicLevel(rms, isSpeechActive) {
+    // Render 15 bars; rightmost lights up first based on rms
+    const barCount = micBars.children.length;
+    const intensity = Math.min(1, rms / 0.18); // 0..1
+    for (let i = 0; i < barCount; i++) {
+      const distFromCenter = Math.abs(i - (barCount - 1) / 2) / ((barCount - 1) / 2);
+      const localIntensity = Math.max(0, intensity - distFromCenter * 0.35);
+      const h = 4 + localIntensity * 36;
+      micBars.children[i].style.height = h + 'px';
+    }
+    micLevelEl.classList.toggle('user-speaking', isSpeechActive);
+    micLevelLabel.textContent = isSpeechActive ? 'You are speaking…' :
+                                callState === 'speaking' ? 'Voca is responding (you can interrupt)…' :
+                                callState === 'thinking' ? 'Voca is thinking…' :
+                                'Listening for your voice…';
+  }
+
+  function vadLoop() {
+    if (!analyser) return;
+    const data = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteTimeDomainData(data);
+    let rms = 0;
+    for (let i = 0; i < data.length; i++) {
+      const v = (data[i] - 128) / 128;
+      rms += v * v;
+    }
+    rms = Math.sqrt(rms / data.length);
+
+    const dt = 16; // approximate ms per frame
+    if (rms > VAD_TUNING.rmsThresholdSpeak) {
+      speakingMs += dt; silenceMs = 0;
+    } else if (rms < VAD_TUNING.rmsThresholdSilence) {
+      silenceMs += dt;
+      if (isInRecording) speakingMs = Math.max(0, speakingMs - dt * 0.2);
+    }
+
+    // Detect transitions
+    if (!isInRecording && speakingMs > VAD_TUNING.minSpeechMs) {
+      // User started speaking — start a recording chunk
+      // If Voca is currently speaking, interrupt
+      if (callState === 'speaking' && currentTtsAudio) {
+        try { currentTtsAudio.pause(); currentTtsAudio.currentTime = 0; } catch {}
+        currentTtsAudio = null;
+      }
+      startRecordingChunk();
+    } else if (isInRecording) {
+      const elapsed = Date.now() - recordingStartedAt;
+      const tooLong = elapsed > VAD_TUNING.maxRecordingMs;
+      const longEnoughSilence = silenceMs > VAD_TUNING.silenceTimeoutMs;
+      if (tooLong || longEnoughSilence) {
+        stopRecordingChunk();
+      }
+    }
+
+    setMicLevel(rms, isInRecording);
+    vadRafId = requestAnimationFrame(vadLoop);
+  }
+
+  function startRecordingChunk() {
+    if (!mediaStream || isInRecording) return;
+    let mime = '';
+    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) mime = 'audio/webm;codecs=opus';
+    else if (MediaRecorder.isTypeSupported('audio/webm')) mime = 'audio/webm';
+    else if (MediaRecorder.isTypeSupported('audio/mp4')) mime = 'audio/mp4';
+
+    audioChunks = [];
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      let mime = '';
-      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) mime = 'audio/webm;codecs=opus';
-      else if (MediaRecorder.isTypeSupported('audio/webm')) mime = 'audio/webm';
-      else if (MediaRecorder.isTypeSupported('audio/mp4')) mime = 'audio/mp4';
-
-      mediaRecorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
-      audioChunks = [];
-      mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
-      mediaRecorder.onstop = () => {
-        stream.getTracks().forEach(t => t.stop());
-        const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
-        runPipeline({ audioBlob: blob });
-      };
-      mediaRecorder.start();
-      micBtn.classList.add('recording');
-      micLabel.textContent = 'Listening… (press to stop)';
-      setStatus('listening', 'Listening…', 'Speak naturally in any Indian language');
+      mediaRecorder = mime ? new MediaRecorder(mediaStream, { mimeType: mime }) : new MediaRecorder(mediaStream);
     } catch (e) {
-      console.error(e);
-      setStatus('idle', 'Mic blocked', 'Allow microphone access in your browser, then try again');
-      alert('Microphone permission was denied or unavailable. Check your browser permissions.');
+      console.error('MediaRecorder init failed', e);
+      return;
+    }
+    mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+      isInRecording = false;
+      speakingMs = 0; silenceMs = 0;
+      setCallState('thinking');
+      setStatus('thinking', 'Voca is processing…', 'Transcribing, interpreting, and preparing a response');
+      runPipeline({ audioBlob: blob });
+    };
+    mediaRecorder.start();
+    isInRecording = true;
+    recordingStartedAt = Date.now();
+    setCallState('recording');
+    setStatus('listening', 'Listening to you…', 'Speak naturally — I\'ll send when you pause');
+  }
+
+  function stopRecordingChunk() {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      try { mediaRecorder.stop(); } catch {}
     }
   }
-  function stopRecording() {
-    if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
-    micBtn.classList.remove('recording');
-    micLabel.textContent = 'Press to talk';
+
+  async function startCall() {
+    if (callState !== 'idle') return;
+    setCallState('connecting');
+    setStatus('thinking', 'Connecting…', 'Asking for microphone permission');
+    callBtn.disabled = true;
+    try {
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+      });
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const src = audioCtx.createMediaStreamSource(mediaStream);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 2048;
+      src.connect(analyser);
+      // (no destination connection — we don't want to play the mic back)
+
+      // UI flip: call is now live
+      callBtn.disabled = false;
+      callBtn.classList.remove('call-btn-start');
+      callBtn.classList.add('call-btn-end');
+      callBtnLabel.textContent = 'End call';
+      callHeader.classList.add('live');
+      micLevelEl.hidden = false;
+      startCallTimer();
+
+      setCallState('listening');
+      setStatus('listening', 'Voca is on the line', 'Just start speaking — the mic auto-arms when you do');
+
+      isInRecording = false;
+      speakingMs = 0; silenceMs = 0;
+      vadLoop();
+    } catch (e) {
+      console.error(e);
+      callBtn.disabled = false;
+      setCallState('idle');
+      setStatus('idle', 'Mic blocked', 'Allow microphone access in your browser, then click Start call again');
+      alert('Microphone permission denied or unavailable. Check your browser permissions and try again.');
+    }
   }
 
-  micBtn.addEventListener('click', () => {
-    if (micBtn.classList.contains('recording')) stopRecording();
-    else startRecording();
+  function endCall() {
+    // Stop recording in flight
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      try { mediaRecorder.stop(); } catch {}
+    }
+    isInRecording = false;
+    if (vadRafId) { cancelAnimationFrame(vadRafId); vadRafId = null; }
+    if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+    if (audioCtx) { try { audioCtx.close(); } catch {}; audioCtx = null; }
+    analyser = null;
+    if (currentTtsAudio) { try { currentTtsAudio.pause(); } catch {}; currentTtsAudio = null; }
+
+    // UI reset
+    callBtn.classList.remove('call-btn-end');
+    callBtn.classList.add('call-btn-start');
+    callBtnLabel.textContent = 'Start call';
+    callHeader.classList.remove('live');
+    micLevelEl.hidden = true;
+    stopCallTimer();
+
+    setCallState('idle');
+    setStatus('idle', 'Call ended', 'Press Start call to talk again, or pick another scenario above');
+  }
+
+  callBtn.addEventListener('click', () => {
+    if (callState === 'idle') startCall();
+    else endCall();
   });
 
-  // Quickie buttons (use preset text — skip STT)
-  quickiesRow.addEventListener('click', (e) => {
-    const btn = e.target.closest('.quickie');
+  // Scenario buttons (preset text — skip STT, run rest of pipeline)
+  scenarioGrid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.scenario');
     if (!btn) return;
-    runPipeline({ presetText: btn.dataset.text, presetLang: btn.dataset.lang });
+    // Disable all scenario buttons during processing
+    document.querySelectorAll('.scenario').forEach(b => b.disabled = true);
+    setCallState('thinking');
+    setStatus('thinking', 'Voca is processing the scenario…', 'Generating a real Voca response in the scenario language');
+    runPipeline({ presetText: btn.dataset.text, presetLang: btn.dataset.lang })
+      .finally(() => {
+        document.querySelectorAll('.scenario').forEach(b => b.disabled = false);
+      });
   });
 
-  window.addEventListener('beforeunload', () => stopRecording());
+  window.addEventListener('beforeunload', endCall);
 
   // ---------- Voice tuning UI ----------
   const vtSpeaker = document.getElementById('vtSpeaker');
