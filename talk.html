@@ -758,9 +758,73 @@ Paraphrase rules:
     return await res.json();  // { transcript, language_code, request_id }
   }
 
+  // Walk a JSON-ish string char-by-char. Inside any string value, if a `"`
+  // appears that ISN'T the closing quote (i.e. next non-whitespace char isn't
+  // ',' '}' ']' ':' or end-of-input), escape it. Fixes the most common LLM
+  // breakage: unescaped quotes inside the `paraphrase` string.
+  function escapeUnescapedQuotesInStrings(s) {
+    let out = '';
+    let inString = false;
+    let escaped  = false;
+    for (let i = 0; i < s.length; i++) {
+      const c = s[i];
+      if (escaped) { out += c; escaped = false; continue; }
+      if (c === '\\') { out += c; escaped = true; continue; }
+      if (c !== '"') { out += c; continue; }
+      // c === '"'
+      if (!inString) { out += c; inString = true; continue; }
+      // We're inside a string and saw an unescaped quote.
+      // Look ahead — skip whitespace; if next non-ws is , } ] : or EOF, treat as end-of-string.
+      let j = i + 1;
+      while (j < s.length && /\s/.test(s[j])) j++;
+      const next = s[j];
+      if (j === s.length || next === ',' || next === '}' || next === ']' || next === ':') {
+        // True end of string
+        out += c;
+        inString = false;
+      } else {
+        // Internal unescaped quote — escape it
+        out += '\\"';
+      }
+    }
+    return out;
+  }
+
+  // Last-resort regex extraction. Pulls the fields we need directly from the
+  // raw LLM output, even if the JSON is total garbage. Returns a partial
+  // interp object that's good enough to keep the conversation moving.
+  function regexExtractFields(raw) {
+    const grabNum = (key) => {
+      const m = raw.match(new RegExp('["\']?' + key + '["\']?\\s*:\\s*([0-9]*\\.?[0-9]+)'));
+      return m ? Math.max(0, Math.min(1, parseFloat(m[1]))) : 0;
+    };
+    const grabEnum = (key, allowed, fallback) => {
+      const m = raw.match(new RegExp('["\']?' + key + '["\']?\\s*:\\s*["\']?(' + allowed.join('|') + ')["\']?', 'i'));
+      return m ? m[1].toUpperCase() : fallback;
+    };
+    const grabStr = (key) => {
+      // Greedy — captures everything up to the next " followed by , } ] : or EOF.
+      const re = new RegExp('["\']?' + key + '["\']?\\s*:\\s*["\']([\\s\\S]*?)["\'](?=\\s*[,}\\]:]|\\s*$)');
+      const m = raw.match(re);
+      return m ? m[1] : '';
+    };
+    return {
+      intent: grabStr('intent') || 'unknown',
+      intent_label: grabStr('intent_label') || 'Unspecified',
+      entities: {},
+      risk_signal: grabEnum('risk_signal', ['LOW','MEDIUM','HIGH'], 'LOW'),
+      confidence: grabNum('confidence') || 0.5,
+      language: grabStr('language') || 'en-IN',
+      distress_score: grabNum('distress_score'),
+      stress_score: grabNum('stress_score'),
+      urgency_score: grabNum('urgency_score'),
+      decision: grabEnum('decision', ['VERIFY','BYPASS'], 'VERIFY'),
+      paraphrase: grabStr('paraphrase') || 'I heard you. Could you say that again so I can be sure I have it right?'
+    };
+  }
+
   // Robust extraction & cleanup of JSON from LLM output.
-  // Handles: ```json fences, trailing commas, single-quoted strings,
-  //          unescaped control chars, leading/trailing prose, line-break inside strings.
+  // Multi-pass: strict parse → cleanup pass → quote-escape pass → regex fallback.
   function parseLLMJson(rawContent) {
     if (!rawContent || typeof rawContent !== 'string') {
       throw new Error('LLM: empty content');
@@ -773,35 +837,34 @@ Paraphrase rules:
     const first = s.indexOf('{');
     const last  = s.lastIndexOf('}');
     if (first < 0 || last < 0 || last <= first) {
-      throw new Error('LLM: no JSON object found in response');
+      console.warn('No JSON object in LLM response. Raw:', rawContent);
+      return regexExtractFields(rawContent);
     }
     let candidate = s.slice(first, last + 1);
 
-    // First attempt: parse as-is
-    try { return JSON.parse(candidate); } catch (_) { /* fall through to cleanup */ }
+    // Pass A — try strict parse
+    try { return JSON.parse(candidate); } catch (_) { /* fall through */ }
 
-    // 3) Cleanup pass — sanitize common LLM quirks
+    // Pass B — common-quirk cleanup
     let cleaned = candidate
-      // Strip trailing commas before } or ]
-      .replace(/,(\s*[}\]])/g, '$1')
-      // Smart-quote → straight quote
-      .replace(/[“”]/g, '"')
-      .replace(/[‘’]/g, "'")
-      // Replace single-quoted KEYS with double-quoted (only at object-key positions)
-      .replace(/([{,]\s*)'([^']+?)'(\s*:)/g, '$1"$2"$3')
-      // Replace single-quoted STRING VALUES with double-quoted (after a colon)
-      .replace(/(:\s*)'([^']*?)'(\s*[,}\]])/g, '$1"$2"$3')
-      // Remove literal newlines inside strings (replace with space)
-      .replace(/("(?:[^"\\]|\\.)*?)([\r\n]+)/g, '$1 ')
-      // Strip control chars
-      .replace(/[\x00-\x1F\x7F]+/g, " ");
+      .replace(/,(\s*[}\]])/g, '$1')                        // trailing commas
+      .replace(/[“”]/g, '"').replace(/[‘’]/g, "'")          // smart quotes → straight
+      .replace(/([{,]\s*)'([^']+?)'(\s*:)/g, '$1"$2"$3')    // single-quoted keys
+      .replace(/(:\s*)'([^']*?)'(\s*[,}\]])/g, '$1"$2"$3')  // single-quoted values
+      .replace(/("(?:[^"\\]|\\.)*?)([\r\n]+)/g, '$1 ')      // newlines inside strings
+      .replace(/[\x00-\x1F\x7F]+/g, ' ');                   // control chars
+    try { return JSON.parse(cleaned); } catch (_) { /* fall through */ }
 
-    try { return JSON.parse(cleaned); } catch (e) {
-      // Last resort: log a console warning and rethrow
-      console.warn('Failed to parse LLM JSON. Raw:', rawContent);
-      console.warn('Cleaned:', cleaned);
-      throw new Error('LLM JSON parse failed after cleanup: ' + e.message);
-    }
+    // Pass C — escape unescaped quotes inside strings (most common deep failure)
+    let escaped;
+    try { escaped = escapeUnescapedQuotesInStrings(cleaned); }
+    catch (_) { escaped = cleaned; }
+    try { return JSON.parse(escaped); } catch (_) { /* fall through */ }
+
+    // Pass D — regex-extract known fields. Conversation continues even if JSON is unsalvageable.
+    console.warn('LLM JSON unsalvageable; falling back to regex extraction. Raw:', rawContent);
+    console.warn('Cleaned:', cleaned);
+    return regexExtractFields(rawContent);
   }
 
   async function sarvamLLM(citizenText, langCode) {
@@ -816,7 +879,7 @@ Paraphrase rules:
           { role: 'user', content: `Citizen language: ${langCode || 'auto'}\nWhat the citizen said:\n"""\n${citizenText}\n"""\n\nReturn ONLY a single, syntactically-valid JSON object. No markdown, no commentary, no trailing text. Use double quotes for ALL keys and string values. Do NOT include trailing commas. Keep the paraphrase under 25 words.` }
         ],
         temperature: 0.2,                      // less creativity → more reliable JSON
-        max_tokens: 500,
+        max_tokens: 800,    // bumped from 500 — Indic text is more tokens per char; truncation was breaking JSON
         response_format: { type: 'json_object' } // OpenAI-style strict JSON mode (Sarvam-M supports this)
       })
     });
