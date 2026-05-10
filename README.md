@@ -6,7 +6,7 @@ Voca is a verify-before-act voice AI for India's citizen helplines. It hears the
 
 ## Live site
 
-🌐 **https://kundankhatri.github.io/SetU--AI-for-bharat-karnataka/**
+
 
 The site walks through how Voca works for everyone — including a picture-story explainer designed so anyone, regardless of technical background, can understand it in 60 seconds.
 
